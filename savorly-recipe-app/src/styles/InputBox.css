@@ -1,0 +1,35 @@
+.input-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1rem;
+}
+
+.user-input {
+	flex-grow: 1;
+	padding: 1rem;
+	margin: 1rem 0;
+	border-radius: 8px;
+	border: 1px solid #7189ff;
+}
+
+.submit-btn {
+	border-radius: 8px;
+	border-style: none;
+	box-sizing: border-box;
+	outline: none;
+	color: white;
+	display: inline-block;
+	padding: 0.5rem 1.2rem;
+	font-size: 1rem;
+	font-weight: 500;
+	font-family: inherit;
+	height: 50px;
+	background-color: #ff80c8;
+	cursor: pointer;
+	transition: 0.25s;
+}
+.submit-btn:hover,
+.submit-btn:focus {
+  background-color: #ffb4df;
+}
