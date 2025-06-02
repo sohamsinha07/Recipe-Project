@@ -1,3 +1,11 @@
+:root {
+	--tea-green: #c7efcf;
+	--bittersweet: #FE5F55;
+	--beige: #EEF5DB;
+	--pearl: #D6D1B1;
+	--fawn: #F0B67F;
+}
+
 html,
 body {
   margin: 0;
