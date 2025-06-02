@@ -87,7 +87,7 @@ export default function Navbar() {
           </Button>
           <Button
             component={NavLink}
-            to="/my-kitchen"
+            to="/my_kitchen"
             sx={{
               color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
               textTransform: "none",
@@ -109,16 +109,18 @@ export default function Navbar() {
           <IconButton size="large" aria-label="notifications">
             <NotificationsIcon sx={{ color: "#555" }} />
           </IconButton>
-          <Avatar
-            sx={{
-              bgcolor: "#B5EAEA",
-              color: "#2F3C7E",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            A
-          </Avatar>
+          <Button component={NavLink} to="/profile">
+            <Avatar
+              sx={{
+                bgcolor: "#B5EAEA",
+                color: "#2F3C7E",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              A
+            </Avatar>
+          </Button>
         </Box>
       </Toolbar>
     </AppBar>
