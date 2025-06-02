@@ -6,6 +6,8 @@ import App from "./App";
 import HomePage from "./routes/HomePage";
 import ProfilePage from "./routes/ProfilePage";
 
+import "./styles/global.css";
+
 export const router = createBrowserRouter([
   {
     path: "/",
