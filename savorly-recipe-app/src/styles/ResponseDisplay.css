@@ -1,0 +1,27 @@
+.response-display {
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+	gap: 1rem;
+}
+
+.user-message {
+	align-self: flex-end;
+	padding: 1rem;
+	background-color: #7189ff;
+	border-radius: 16px 16px 0 16px;
+	color: white;
+	max-width: 60%;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.bot-message {
+	align-self: flex-start;
+	padding: 1rem;
+	background-color: #d9e0ff;
+	border-radius: 16px 16px 16px 0;
+	max-width: 60%;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
