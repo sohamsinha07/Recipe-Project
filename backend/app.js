@@ -11,6 +11,7 @@ const app = express();
 const port = 3000;
 
 import chatbotRouter from './routes/chatbot.js'
+import edamamRouter from './routes/edamam.js'
 
 // use middleware to parse json request bodies
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use(cors());
 
 // use routes
 app.use("/chat", chatbotRouter);
+app.use("/edamam", edamamRouter);
 
 
 app.listen(port, () => {
