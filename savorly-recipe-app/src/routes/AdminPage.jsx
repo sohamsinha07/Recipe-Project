@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import RecipeReviewTabs from "../components/RecipeReviewTabs";
+import RecipeGrid from "../components/RecipeGrid";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
 
@@ -15,7 +17,9 @@ export default function AdminPage() {
   
   return (
     <div className="admin-page">
-      <AdminHeader />
+         <div>
+      <AdminHeader /* pass counts as props if you want */ />
+    
       <RecipeReviewTabs filter={filter} setFilter={setFilter} />
       <div className="controls-bar">
         {/* Sorting and view toggle (list/grid) */}
@@ -25,6 +29,7 @@ export default function AdminPage() {
         </select>
       </div>
       <RecipeGrid recipes={recipes} filter={filter} sort={sort} />
+      </div>
     </div>
   );
 }
