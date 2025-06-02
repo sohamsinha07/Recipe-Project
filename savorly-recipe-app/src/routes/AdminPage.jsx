@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import AdminHeader from "../components/AdminHeader";
-import RecipeReviewTabs from "../components/RecipeReviewTabs";
-import RecipeGrid from "../components/RecipeGrid";
 import axios from "axios";
 
 export default function AdminPage() {
