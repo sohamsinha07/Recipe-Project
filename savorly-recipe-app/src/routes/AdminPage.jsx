@@ -3,6 +3,10 @@ import RecipeReviewTabs from "../components/RecipeReviewTabs";
 import RecipeGrid from "../components/RecipeGrid";
 import AdminHeader from "../components/AdminHeader";
 import axios from "axios";
+import Footer from "../components/homepage/Footer";
+import PopularSection from "../components/homepage/PopularSection";
+
+
 
 export default function AdminPage() {
   const [recipes, setRecipes] = useState([]);
@@ -28,7 +32,9 @@ export default function AdminPage() {
           <option value="oldest">Oldest First</option>
         </select>
       </div>
+      <PopularSection />
       <RecipeGrid recipes={recipes} filter={filter} sort={sort} />
+      <Footer />
       </div>
     </div>
   );
