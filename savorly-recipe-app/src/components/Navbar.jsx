@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { AppBar, Toolbar, IconButton, Typography, Box, Button } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -8,7 +8,15 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LoginModal from "./LoginModal";
 
 export default function Navbar() {
+  const location = useLocation();
   const [loginOpen, setLoginOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("login") === "true") {
+      setLoginOpen(true);
+    }
+  }, [location.search]);
 
   return (
     <>
