@@ -1,48 +1,45 @@
 import { Box, Typography } from "@mui/material";
+import "../../styles/homePage.css";
 
 export default function StatsSection() {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        gap: 8,
-        py: 4,
-        backgroundColor: "#FFF",
-      }}
-    >
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+    <Box className="stats-section-container">
+      {/* Recipes Stat */}
+      <Box className="stats-item">
+        <Typography variant="h5" className="stats-item-heading">
           12,500+
         </Typography>
-        <Typography variant="body2" sx={{ color: "#777" }}>
+        <Typography variant="body2" className="stats-item-text">
           Recipes
         </Typography>
       </Box>
 
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+      {/* Home Cooks Stats */}
+      <Box className="stats-item">
+        <Typography variant="h5" className="stats-item-heading">
           8,200+
         </Typography>
-        <Typography variant="body2" sx={{ color: "#777" }}>
+        <Typography variant="body2" className="stats-item-text">
           Home Cooks
         </Typography>
       </Box>
 
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+      {/* Reviews Stats */}
+      <Box className="stats-item">
+        <Typography variant="h5" className="stats-item-heading">
           45,000+
         </Typography>
-        <Typography variant="body2" sx={{ color: "#777" }}>
+        <Typography variant="body2" className="stats-item-text">
           Reviews
         </Typography>
       </Box>
 
-      <Box sx={{ textAlign: "center" }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+      {/* Cuisines Stats */}
+      <Box className="stats-item">
+        <Typography variant="h5" className="stats-item-heading">
           150+
         </Typography>
-        <Typography variant="body2" sx={{ color: "#777" }}>
+        <Typography variant="body2" className="stats-item-text">
           Cuisines
         </Typography>
       </Box>
