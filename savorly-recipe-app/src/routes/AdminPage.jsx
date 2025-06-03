@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
-import RecipeReviewTabs from "../components/RecipeReviewTabs";
-import RecipeGrid from "../components/RecipeGrid";
-import AdminHeader from "../components/AdminHeader";
+import RecipeReviewTabs from "../components/admin/RecipeReviewTabs";
+import AdminRecipeGrid from "../components/admin/AdminRecipeGrid";
+import AdminHeader from "../components/admin/AdminHeader";
 import axios from "axios";
 import Footer from "../components/homepage/Footer";
-import PopularSection from "../components/homepage/PopularSection";
-
 
 
 export default function AdminPage() {
@@ -18,12 +16,23 @@ export default function AdminPage() {
       setRecipes(res.data);
     });
   }, [filter]);
+
+  // Handler stubs:
+  const handleApprove = (recipe) => {
+    // call your approve API, then refresh recipes
+  };
+  const handleReject = (recipe) => {
+    // call your reject API, then refresh recipes
+  };
+  const handleEdit = (recipe) => {
+    // navigate to edit page, open modal, etc
+  };
   
   return (
     <div className="admin-page">
          <div>
       <AdminHeader /* pass counts as props if you want */ />
-    
+      
       <RecipeReviewTabs filter={filter} setFilter={setFilter} />
       <div className="controls-bar">
         {/* Sorting and view toggle (list/grid) */}
@@ -32,8 +41,12 @@ export default function AdminPage() {
           <option value="oldest">Oldest First</option>
         </select>
       </div>
-      <PopularSection />
-      <RecipeGrid recipes={recipes} filter={filter} sort={sort} />
+      <AdminRecipeGrid
+  recipes={recipes}
+  onApprove={handleApprove}
+  onReject={handleReject}
+  onEdit={handleEdit}
+/>
       <Footer />
       </div>
     </div>

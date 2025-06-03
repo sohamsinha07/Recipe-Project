@@ -9,7 +9,7 @@ import RecipesPage from "./routes/RecipesPage";
 import CategoriesPage from "./routes/CategoriesPage";
 import MyKitchenPage from "./routes/MyKitchenPage";
 import AdminPage from "./routes/AdminPage";
-import AdminLayout from "./components/AdminLayout";
+import AdminLayout from "./components/admin/AdminLayout";
 
 
 import "./styles/global.css";
