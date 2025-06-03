@@ -148,9 +148,11 @@ export default function LoginModal({ open, onClose }) {
         <Box sx={{ textAlign: "center" }}>
           <Button
             variant="contained"
-            component={Link}
-            to="/register"
-            className="login-register-button "
+            className="login-register-button"
+            onClick={() => {
+              onClose(); // first close the modal
+              navigate("/register"); // then navigate to /register
+            }}
           >
             Register
           </Button>
