@@ -1,8 +1,8 @@
 .chatbot-container {
 	display: flex;
 	flex-direction: column;
-	background-color: #f3f4f5;
-	border: 2rem, solid, #f3f4f5;
+	background-color: #f8f9fa;;
+	border: 1px solid #e9ecef;
 	padding: 1rem;
 	border-radius: 16px;
 	height: 60vh;

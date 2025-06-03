@@ -3,6 +3,7 @@ import { collection, addDoc, query, orderBy, onSnapshot, doc, Timestamp, deleteD
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { FaReply, FaTrash, FaEdit, FaHeart, FaRegHeart } from 'react-icons/fa';
+import '../styles/Comments.css'
 
 
 const Comments = ({ recipeId, currentUserId }) => {
@@ -11,7 +12,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 	const [newComment, setNewComment] = useState([]);
 	const [newReplies, setNewReplies] = useState({});
 	const [showReplyForm, setShowReplyForm] = useState({});
-	// const [editingComment, setEditingComment] = useState(null);
+	const [userCache, setUserCache] = useState({});
 	const [loading, setLoading] = useState(true);
 
 	// fetch comments
@@ -35,6 +36,10 @@ const Comments = ({ recipeId, currentUserId }) => {
 				// filter for a specific recipe, given its id
 				if (commentData.recipeId === recipeId) {
 
+					// saving comment's username
+					commentData.username = await getUserName(commentData.userId);
+
+					// fetch comment replies
 					const repliesQuery = query(
 						collection(db, 'replies'),
 						where('commentId', '==', docSnapshot.id),
@@ -163,6 +168,35 @@ const Comments = ({ recipeId, currentUserId }) => {
 		});
 	};
 
+	// get user's name from the user database
+	// store in user cache if not there already
+	const getUserName = async (userId) => {
+		if (!userId) return 'Anonymous';
+		if (userCache[userId]) return userCache[userId];
+
+		// if not in cache, fetch from firebase:
+		try {
+			const userDoc = await getDocs(
+				query(collection(db, 'users'), where('userId', '==', userId))
+			);
+
+			if (!userDoc.empty) {
+				const userData = userDoc.docs[0].data();
+				const userName = userData.name || 'Anonymous';
+
+				//cache
+				setUserCache(prev => ({ ...prev, [userId]: userName}));
+
+				return userName;
+			} else {
+				return 'Anonymous';
+			}
+		} catch (error) {
+			console.error('Error fetching user name:', error)
+			return 'Anonymous';
+		}
+	}
+
 	if (loading) {
 		return <div className="comments-loading">Loading comments...</div>
 	}
@@ -208,9 +242,8 @@ const Comments = ({ recipeId, currentUserId }) => {
 										{comment.userId ? comment.userId.charAt(0).toUpperCase() : '?'}
 									</div>
 									<div className="user-info">
-										<span className="username">User {comment.userId?.slice(-4) || 'Anonymous'}</span>
+										<span className="username">{comment.username || 'Anonymous'}</span>
 										<span className="comment-date">{formatDate(comment.createdAt)}</span>
-										{comment.editedAt && <span className="edited-tag">(edited)</span>}
 									</div>
 								</div>
 
@@ -296,7 +329,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 														{reply.userId ? reply.userId.charAt(0).toUpperCase() : '?'}
 													</div>
 													<div className="user-info">
-														<span className="username">User {reply.userId?.slice(-4) || 'Anonymous'}</span>
+														<span className="username">{reply.username || 'Anonymous'}</span>
 														<span className="reply-date">{formatDate(reply.createdAt)}</span>
 													</div>
 												</div>

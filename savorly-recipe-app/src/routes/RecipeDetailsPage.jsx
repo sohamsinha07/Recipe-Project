@@ -135,11 +135,11 @@ const RecipeDetailsPage = () => {
 							<span>{recipe.servings} servings</span>
 						</div>
 					)}
-					{recipe.calories && (
+					{/* {recipe.calories && (
 						<div className='meta-item'>
 							<span>{Math.round(recipe.calories)} calories</span>
 						</div>
-					)}
+					)} */}
 				</div>
 
 				<div className='recipe-steps'>
