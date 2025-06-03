@@ -1,20 +1,46 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import ChatPage from '../components/ChatPage'
 import { FaArrowLeft } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import { FaClock } from 'react-icons/fa';
 import { HiUsers } from "react-icons/hi";
+import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 
 const RecipeDetailsPage = () => {
+
+	const [copySuccess, setCopySuccess] = useState("");
+	const textAreaRef = useRef(null);
+	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
+		autoClose: 2000,
+		closeOnClick: true,
+		pauseOnHover: false,
+		draggable: false,
+		progress: undefined,
+	});
+
+	async function copyToClip() {
+		await navigator.clipboard.writeText(location.href);
+		setCopySuccess("Copied");
+	}
+
 	return (
 		<div className='details-page'>
 			<div className='header'>
 				<button><FaArrowLeft /> Back to Recipes</button>
 				<div className='header-right'>
 					<button><FaRegHeart /> Save Recipe</button>
-					<button><FiShare2 /> Share</button>
+					<div>
+						<button
+							onClick={function(event) {
+								copyToClip()
+								notifyCopy()
+							}}
+						><FiShare2 /> Share
+						</button>
+						<ToastContainer />
+					</div>
 				</div>
 
 			</div>
@@ -29,12 +55,12 @@ const RecipeDetailsPage = () => {
 				<div className='recipe-meta'>
 					<span className='rating'>⭐⭐⭐⭐⭐</span>
 					<div className='meta-item'>
-							<FaClock />
-							<span>x min</span>
-						</div>
-						<div className='meta-item'>
-							<HiUsers />
-							<span>x servings</span>
+						<FaClock />
+						<span>x min</span>
+					</div>
+					<div className='meta-item'>
+						<HiUsers />
+						<span>x servings</span>
 					</div>
 				</div>
 
