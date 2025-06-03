@@ -58,6 +58,7 @@
 	margin-bottom: 3rem;
 }
 
+/*image should fit over placeholder/container*/
 .recipe-img {
 	width: 100%;
 	height: 300px;
@@ -75,6 +76,7 @@
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 1rem;
+	margin-top: 2rem;
 }
 
 .meta-item {
@@ -158,4 +160,5 @@
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
+	margin-top: 2rem;
 }

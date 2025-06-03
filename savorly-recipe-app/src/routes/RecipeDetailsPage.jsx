@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ChatPage from '../components/ChatPage'
+import ChatPage from '../components/chatbot/ChatPage'
 import { FaArrowLeft } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
@@ -10,6 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import Comments from '../components/Comments';
 
 const RecipeDetailsPage = () => {
 
@@ -104,15 +105,15 @@ const RecipeDetailsPage = () => {
 			<div className='recipe-content'>
 				<div className='recipe-img-container'>
 					{recipe.image && (
-					<img
-						className='recipe-img'
-						src={recipe.image}
-						alt={recipe.title}
+						<img
+							className='recipe-img'
+							src={recipe.image}
+							alt={recipe.title}
 						// onError={(e) => {
 						// 	e.target.src = 'https://placehold.co/600x400';
 						// }}
 						>
-					</img>
+						</img>
 					)}
 				</div>
 
@@ -134,11 +135,11 @@ const RecipeDetailsPage = () => {
 							<span>{recipe.servings} servings</span>
 						</div>
 					)}
-					{recipe.calories && (
+					{/* {recipe.calories && (
 						<div className='meta-item'>
 							<span>{Math.round(recipe.calories)} calories</span>
 						</div>
-					)}
+					)} */}
 				</div>
 
 				<div className='recipe-steps'>
@@ -190,7 +191,11 @@ const RecipeDetailsPage = () => {
 
 			</div>
 			<div className='comment-section'>
-				<h2>Comments</h2>
+				<Comments
+					recipeId={`${type}-${id}`}
+					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
+					// currentUserId={currentUser?.uid || null}
+				/>
 			</div>
 		</div>
 	)

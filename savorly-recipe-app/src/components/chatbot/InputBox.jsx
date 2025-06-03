@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/InputBox.css';
+import '../../styles/InputBox.css';
 
 const InputBox = ({ value, onChange, disabled }) => {
 
