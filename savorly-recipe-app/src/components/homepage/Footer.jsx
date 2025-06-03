@@ -10,7 +10,7 @@ export default function Footer() {
         py: 3,
       }}
     >
-      <Typography variant="body2">© 2024 Savorly. All rights reserved.</Typography>
+      <Typography variant="body2">© 2025 Savorly. All rights reserved.</Typography>
     </Box>
   );
 }

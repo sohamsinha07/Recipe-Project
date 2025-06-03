@@ -1,242 +1,112 @@
-import { Box, Typography, Grid, Card, CardContent, CardMedia, Button } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import StarIcon from "@mui/icons-material/Star";
+
+import "../../styles/homePage.css";
 
 export default function PopularSection() {
-  // You’ll eventually replace hardcoded cards with dynamic data from your API/Firestore.
-  // For now, we’re just showing 4 static examples with gradient placeholders.
+  // Mock data
+  const cardsData = [
+    {
+      id: 1,
+      title: "Creamy Mushroom Risotto",
+      subtitle: "Rich and creamy Italian comfort food",
+      rating: 4.9,
+      reviews: 234,
+      time: "35 min",
+      badgeText: "Trending",
+      badgeClass: "popular-badge",
+      gradient: "linear-gradient(135deg, #FF8474, #FF5B5B)",
+    },
+    {
+      id: 2,
+      title: "Asian Fusion Tacos",
+      subtitle: "Korean-Mexican fusion at its finest",
+      rating: 4.7,
+      reviews: 89,
+      time: "25 min",
+      badgeText: "New",
+      badgeClass: "popular-badge popular-badge-new",
+      gradient: "linear-gradient(135deg, #E8F5E9, #A5D6A7)",
+    },
+    {
+      id: 3,
+      title: "Classic French Onion Soup",
+      subtitle: "Traditional French comfort in a bowl",
+      rating: 4.8,
+      reviews: 156,
+      time: "45 min",
+      badgeText: "Chef's Choice",
+      badgeClass: "popular-badge popular-badge-choice",
+      gradient: "linear-gradient(135deg, #F3E5AB, #D6A558)",
+    },
+    {
+      id: 4,
+      title: "Mediterranean Quinoa Salad",
+      subtitle: "Fresh, healthy, and incredibly flavorful",
+      rating: 4.6,
+      reviews: 203,
+      time: "20 min",
+      badgeText: null, // no badge for this one
+      badgeClass: "",
+      gradient: "linear-gradient(135deg, #E1F5FE, #B3E5FC)",
+    },
+  ];
 
   return (
-    <Box sx={{ py: 6, backgroundColor: "#FBFBFB" }}>
-      <Box sx={{ px: { xs: 2, md: 0 }, maxWidth: 1200, margin: "0 auto" }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 3,
-          }}
-        >
+    <Box className="popular-section-container">
+      {/* Wrapper for centering + responsive padding */}
+      <Box className="section-wrapper">
+        {/* Header Row */}
+        <Box className="popular-header">
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            <Typography variant="h4" className="popular-title">
               Popular This Week
             </Typography>
-            <Typography variant="body2" sx={{ color: "#555" }}>
+            <Typography variant="body2" className="popular-subtitle">
               Most loved recipes by our community
             </Typography>
           </Box>
-          <Button
-            size="small"
-            sx={{
-              textTransform: "none",
-              color: "#F25C54",
-              fontWeight: 600,
-            }}
-            endIcon={<ArrowForwardIosIcon sx={{ fontSize: "0.75rem" }} />}
-          >
+
+          <Button size="small" className="popular-viewall-button" endIcon={<ArrowForwardIosIcon />}>
             View All
           </Button>
         </Box>
 
-        <Grid container spacing={3}>
-          {/* ----- Card 1: Trending ----- */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ position: "relative", borderRadius: 2, boxShadow: 3 }}>
-              <CardMedia
-                component="div"
-                sx={{
-                  height: 140,
-                  background: "linear-gradient(135deg, #FF8474, #FF5B5B)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "white",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
-              >
-                Recipe Image
-              </CardMedia>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Creamy Mushroom Risotto
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#777", mb: 1 }}>
-                  Rich and creamy Italian comfort food
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                  >
-                    ★ 4.9 (234)
-                  </Typography>
-                  <Typography variant="caption">35 min</Typography>
+        {/* Grid of cards */}
+        <Grid container spacing={3} className="popular-grid">
+          {cardsData.map((card) => (
+            <Grid key={card.id}>
+              <Card className="popular-card">
+                {/* Top gradient banner (title for now) */}
+                <Box className="popular-card-media" style={{ background: card.gradient }}>
+                  {card.title}
                 </Box>
-              </CardContent>
 
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  left: 8,
-                  backgroundColor: "#2C3E50",
-                  color: "#FFF",
-                  px: 1.2,
-                  borderRadius: 1,
-                  fontSize: "0.625rem",
-                  fontWeight: 700,
-                }}
-              >
-                Trending
-              </Box>
-            </Card>
-          </Grid>
-
-          {/* ----- Card 2: New ----- */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ position: "relative", borderRadius: 2, boxShadow: 3 }}>
-              <CardMedia
-                component="div"
-                sx={{
-                  height: 140,
-                  background: "linear-gradient(135deg, #E8F5E9, #A5D6A7)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#333",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
-              >
-                Recipe Image
-              </CardMedia>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Asian Fusion Tacos
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#777", mb: 1 }}>
-                  Korean-Mexican fusion at its finest
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                  >
-                    ★ 4.7 (89)
+                <CardContent>
+                  {/* Title and subtitle */}
+                  <Typography variant="h6" className="popular-card-title">
+                    {card.title}
                   </Typography>
-                  <Typography variant="caption">25 min</Typography>
-                </Box>
-              </CardContent>
-
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  left: 8,
-                  backgroundColor: "#388E3C",
-                  color: "#FFF",
-                  px: 1.2,
-                  borderRadius: 1,
-                  fontSize: "0.625rem",
-                  fontWeight: 700,
-                }}
-              >
-                New
-              </Box>
-            </Card>
-          </Grid>
-
-          {/* ----- Card 3: Chef’s Choice ----- */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ position: "relative", borderRadius: 2, boxShadow: 3 }}>
-              <CardMedia
-                component="div"
-                sx={{
-                  height: 140,
-                  background: "linear-gradient(135deg, #F3E5AB, #D6A558)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#333",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
-              >
-                Recipe Image
-              </CardMedia>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Classic French Onion Soup
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#777", mb: 1 }}>
-                  Traditional French comfort in a bowl
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                  >
-                    ★ 4.8 (156)
+                  <Typography variant="body2" className="popular-card-desc">
+                    {card.subtitle}
                   </Typography>
-                  <Typography variant="caption">45 min</Typography>
-                </Box>
-              </CardContent>
 
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  left: 8,
-                  backgroundColor: "#A67F00",
-                  color: "#FFF",
-                  px: 1.2,
-                  borderRadius: 1,
-                  fontSize: "0.625rem",
-                  fontWeight: 700,
-                }}
-              >
-                Chef’s Choice
-              </Box>
-            </Card>
-          </Grid>
+                  {/* Star + reviews and Time */}
+                  <Box className="popular-meta">
+                    <Typography variant="caption" className="popular-meta-item">
+                      <StarIcon className="popular-star-icon" />
+                      {card.rating} ({card.reviews})
+                    </Typography>
+                    <Typography variant="caption">{card.time}</Typography>
+                  </Box>
+                </CardContent>
 
-          {/* ----- Card 4: No badge ----- */}
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
-              <CardMedia
-                component="div"
-                sx={{
-                  height: 140,
-                  background: "linear-gradient(135deg, #E1F5FE, #B3E5FC)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#333",
-                  fontWeight: 600,
-                  fontSize: "1rem",
-                }}
-              >
-                Recipe Image
-              </CardMedia>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Mediterranean Quinoa Salad
-                </Typography>
-                <Typography variant="body2" sx={{ color: "#777", mb: 1 }}>
-                  Fresh, healthy, and incredibly flavorful
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "flex", alignItems: "center", gap: 0.5 }}
-                  >
-                    ★ 4.6 (203)
-                  </Typography>
-                  <Typography variant="caption">20 min</Typography>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                {/* Badge, if present */}
+                {card.badgeText && <Box className={card.badgeClass}>{card.badgeText}</Box>}
+              </Card>
+            </Grid>
+          ))}
         </Grid>
       </Box>
     </Box>
