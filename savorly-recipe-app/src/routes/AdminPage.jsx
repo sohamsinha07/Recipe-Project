@@ -6,12 +6,39 @@ import axios from "axios";
 import Footer from "../components/homepage/Footer";
 import "../styles/admin.css";
 
+const sampleRecipes = [
+  {
+    title: "Mediterranean Quinoa Bowl",
+    description: "Healthy and delicious bowl with fresh vegetables blah blah blah blah blah blah blah blah blah blah blah blah blah",
+    rating: 4.8,
+    time: "25 min",
+  },
+  {
+    title: "Spicy Thai Curry",
+    description: "Aromatic curry with coconut milk and vegetables",
+    rating: 4.6,
+    time: "35 min",
+  },
+  {
+    title: "Classic Chocolate Cake",
+    description: "Rich and moist chocolate cake with ganache",
+    rating: 4.9,
+    time: "60 min",
+  },
+  {
+    title: "Fresh Garden Salad",
+    description: "Crisp vegetables with homemade vinaigrette",
+    rating: 4.4,
+    time: "15 min",
+  },
+];
 
 
 export default function AdminPage() {
   const [recipes, setRecipes] = useState([]);
   const [filter, setFilter] = useState("all"); // all, pending, approved
   const [sort, setSort] = useState("newest");
+  const [view, setView] = useState("grid");
 
 
   useEffect(() => {
@@ -34,14 +61,22 @@ export default function AdminPage() {
   return (
     <div className="admin-page">
          <div>
-         <AdminHeader  />
+         <AdminHeader pendingCount={12} approvedCount={8} />
+        
+         <RecipeReviewTabs
+        tab={filter}
+        setTab={setFilter}
+        sort={sort}
+        setSort={setSort}
+        view={view}
+        setView={setView}
+      />
       
-      <RecipeReviewTabs filter={filter} setFilter={setFilter} />
-      
-      <AdminRecipeGrid
+      <AdminRecipeGrid sampleRecipes={sampleRecipes} view={view}
   onApprove={handleApprove}
   onReject={handleReject}
   onEdit={handleEdit}
+  
 />
       <Footer />
       </div>

@@ -1,47 +1,54 @@
 import React from "react";
-import AdminRecipeCard from "./AdminRecipeCard";
-import { Box } from "@mui/material";
-const sampleRecipes = [
-  {
-    title: "Mediterranean Quinoa Bowl",
-    description: "Healthy and delicious bowl with fresh vegetables blah blah blah blah blah blah blah blah blah blah blah blah blah",
-    rating: 4.8,
-    time: "25 min",
-  },
-  {
-    title: "Spicy Thai Curry",
-    description: "Aromatic curry with coconut milk and vegetables",
-    rating: 4.6,
-    time: "35 min",
-  },
-  {
-    title: "Classic Chocolate Cake",
-    description: "Rich and moist chocolate cake with ganache",
-    rating: 4.9,
-    time: "60 min",
-  },
-  {
-    title: "Fresh Garden Salad",
-    description: "Crisp vegetables with homemade vinaigrette",
-    rating: 4.4,
-    time: "15 min",
-  },
-];
+import AdminRecipeCard from "./AdminRecipeCard"; // Use your styled card
+// No need to define sampleRecipes here if it's passed as a prop
 
-export default function AdminRecipeGrid({ recipes, onApprove, onReject, onEdit }) {
+export default function AdminRecipeGrid({
+  sampleRecipes = [],
+  view = "grid", // Default to grid
+  onApprove,
+  onReject,
+  onEdit
+}) {
+  if (!sampleRecipes.length) {
+    return <div style={{ padding: 32 }}>No recipes found.</div>;
+  }
+
+  // Grid view
+  if (view === "grid") {
+    return (
+      <div className="popular-grid" style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "2rem",
+        marginTop: "2rem",
+        alignItems: "stretch"
+      }}>
+        {sampleRecipes.map((recipe, i) => (
+          <AdminRecipeCard
+            key={i}
+            recipe={recipe}
+            onApprove={() => onApprove(recipe)}
+            onReject={() => onReject(recipe)}
+            onEdit={() => onEdit(recipe)}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  // List view
   return (
-    <div className="popular-grid" style={{ display: "flex", flexWrap: "wrap", gap: "24px", marginTop: "32px" }}>
-      {sampleRecipes.map((recipe) => (
+    <div className="admin-list-view">
+      {sampleRecipes.map((recipe, i) => (
         <AdminRecipeCard
-          key={recipe.id}
+          key={i}
           recipe={recipe}
-          onApprove={onApprove}
-          onReject={onReject}
-          onEdit={onEdit}
+          list
+          onApprove={() => onApprove(recipe)}
+          onReject={() => onReject(recipe)}
+          onEdit={() => onEdit(recipe)}
         />
       ))}
-      </div>
+    </div>
   );
 }
-
-

@@ -1,20 +1,21 @@
 .admin-header-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 36px 40px 16px 40px;
+    padding: 36px 40px 10px 40px;
     background: #fff;
     display: flex;
     flex-direction: column;
-    gap: 18px;
   }
   
   .admin-header-row {
+    width: 100%;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 24px;
   }
   
+  /* Logo/Name left */
   .admin-header-left {
     display: flex;
     align-items: center;
@@ -42,6 +43,43 @@
     font-weight: 700;
   }
   
+  /* Center Title & Subtitle */
+  .admin-header-center {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+  }
+  
+  .admin-header-dash-title {
+    color: #1a202c;
+    font-size: 2.5rem;
+    font-weight: 700;
+    font-family: Inter, sans-serif;
+    margin-bottom: 0;
+    line-height: 1.15;
+  }
+  
+  .admin-header-dash-desc {
+    color: #718096;
+    font-size: 1.2rem;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    margin-top: 4px;
+    line-height: 1.2;
+  }
+  
+  /* Stats + User block right */
+  .admin-header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    min-width: 170px;
+    justify-content: flex-end;
+  }
+  
   .admin-header-stats {
     display: flex;
     align-items: center;
@@ -59,20 +97,25 @@
     color: #e53e3e;
     font-size: 24px;
     font-weight: 700;
-    line-height: 1.2;
+    font-family: Inter, sans-serif;
+    line-height: 1.1;
   }
+  
   .admin-header-stat-count-approved {
     color: #38a169;
     font-size: 24px;
     font-weight: 700;
-    line-height: 1.2;
+    font-family: Inter, sans-serif;
+    line-height: 1.1;
   }
   
   .admin-header-stat-label {
     color: #718096;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 1.2;
+    font-family: Inter, sans-serif;
+    line-height: 1.1;
+    margin-top: -2px;
   }
   
   .admin-header-user {
@@ -88,20 +131,29 @@
     font-family: Inter, sans-serif;
     font-weight: 600;
   }
-  
-  .admin-header-dash-title {
-    color: #1a202c;
-    font-size: 32px;
-    font-weight: 700;
-    font-family: Inter, sans-serif;
-    margin-top: 12px;
-    margin-bottom: 4px;
+
+  .admin-recipe-card {
+    width: 340px;
+    min-height: 420px;  /* Match to fit all expected card content */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px #0001;
+    margin: 0 12px;
+    padding: 0;
   }
   
-  .admin-header-dash-desc {
-    color: #718096;
-    font-size: 16px;
-    font-family: Inter, sans-serif;
-    font-weight: 400;
+  .admin-grid-view {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2.5rem 2rem;           /* row gap, column gap */
+    justify-content: flex-start; /* Align cards to left */
+    align-items: stretch;
+    margin: 0 auto 32px auto;
+    padding: 0 32px;            /* Side margins */
+    max-width: 1400px;          /* Prevents stretching too wide on big screens */
+    box-sizing: border-box;
   }
   
