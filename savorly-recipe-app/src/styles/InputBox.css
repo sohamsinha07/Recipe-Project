@@ -2,15 +2,16 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	width: 100%;
 	gap: 1rem;
 }
 
 .user-input {
 	flex-grow: 1;
 	padding: 1rem;
-	margin: 1rem 0;
+	margin: 0;
 	border-radius: 8px;
-	border: 1px solid #7189ff;
+	border: 1px solid #D1D5DB;
 }
 
 .submit-btn {
@@ -22,14 +23,14 @@
 	display: inline-block;
 	padding: 0.5rem 1.2rem;
 	font-size: 1rem;
-	font-weight: 500;
 	font-family: inherit;
 	height: 50px;
-	background-color: #ff80c8;
+	background-color: var(--tea-green);
 	cursor: pointer;
 	transition: 0.25s;
+	flex-shrink: 0;
 }
 .submit-btn:hover,
 .submit-btn:focus {
-  background-color: #ffb4df;
+  background-color: #99daa5;
 }
