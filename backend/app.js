@@ -12,6 +12,7 @@ const port = 3000;
 
 import chatbotRouter from "./routes/chatbot.js";
 import edamamRouter from "./routes/edamam.js";
+import recipeDetailsRouter from "./routes/recipe-details.js";
 import authRouter from "./routes/auth.js";
 
 // use middleware to parse json request bodies
@@ -22,6 +23,7 @@ app.use(cors());
 // use routes
 app.use("/chat", chatbotRouter);
 app.use("/edamam", edamamRouter);
+app.use("/recipe-details", recipeDetailsRouter);
 app.use("/auth", authRouter);
 
 app.listen(port, () => {

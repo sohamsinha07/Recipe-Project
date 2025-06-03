@@ -3,14 +3,17 @@
 	flex-direction: column;
 	padding: 1rem;
 	gap: 1rem;
+	overflow-y: auto; 
+    flex-grow: 1; 
+    margin-bottom: 1rem;
 }
 
 .user-message {
 	align-self: flex-end;
 	padding: 1rem;
-	background-color: #7189ff;
+	background-color: var(--tea-green);
 	border-radius: 16px 16px 0 16px;
-	color: white;
+	color: rgb(0, 0, 0);
 	max-width: 60%;
 	white-space: pre-wrap;
 	word-wrap: break-word;
@@ -19,7 +22,7 @@
 .bot-message {
 	align-self: flex-start;
 	padding: 1rem;
-	background-color: #d9e0ff;
+	background-color: white;
 	border-radius: 16px 16px 16px 0;
 	max-width: 60%;
 	white-space: pre-wrap;

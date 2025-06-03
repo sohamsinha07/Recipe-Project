@@ -9,6 +9,7 @@ import ProfilePage from "./routes/ProfilePage";
 import RecipesPage from "./routes/RecipesPage";
 import CategoriesPage from "./routes/CategoriesPage";
 import MyKitchenPage from "./routes/MyKitchenPage";
+import RecipeDetailsPage from "./routes/RecipeDetailsPage";
 
 import "./styles/global.css";
 
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: "categories", element: <CategoriesPage /> },
       { path: "my_kitchen", element: <MyKitchenPage /> },
       { path: "profile", element: <ProfilePage /> },
+	  { path: "recipe/:type/:id", element: <RecipeDetailsPage /> },
     ],
   },
 ]);

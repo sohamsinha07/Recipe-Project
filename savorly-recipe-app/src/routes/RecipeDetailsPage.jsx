@@ -1,0 +1,199 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import ChatPage from '../components/ChatPage'
+import { FaArrowLeft } from "react-icons/fa";
+import { FaRegHeart } from "react-icons/fa";
+import { FiShare2 } from "react-icons/fi";
+import { FaClock } from 'react-icons/fa';
+import { HiUsers } from "react-icons/hi";
+import { ToastContainer, toast } from 'react-toastify';
+import '../styles/RecipeDetailsPage.css'
+import { db } from '../firebase';
+import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+
+const RecipeDetailsPage = () => {
+
+	const { type, id } = useParams(); // type = edamam or user, id = recipe id
+	const navigate = useNavigate()
+	const [recipe, setRecipe] = useState(null);
+	const [isSaved, setIsSaved] = useState(false);
+	const [copySuccess, setCopySuccess] = useState("");
+	const textAreaRef = useRef(null);
+	const [loading, setLoading] = useState(true);
+
+	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
+		autoClose: 2000,
+		closeOnClick: true,
+		pauseOnHover: false,
+		draggable: false,
+		progress: undefined,
+	});
+
+	async function copyToClip() {
+		await navigator.clipboard.writeText(location.href);
+		setCopySuccess("Copied");
+	}
+
+	useEffect(() => {
+		const fetchRecipe = async () => {
+			try {
+				setLoading(true);
+
+				// if the recipe is from edamam, fetch via API (backend)
+				if (type === 'edamam') {
+					const response = await fetch(`/recipe-details?id=${encodeURIComponent(id)}`);
+					if (!response.ok) {
+						throw new Error('Failed to fetch recipe');
+					}
+					const data = await response.json();
+					setRecipe(data.hits[0]?.recipe || data.recipe);
+
+					// if it's user generated, fetch from firebase
+				} else if (type === 'user') {
+
+					const docRef = doc(db, 'recipes', id);
+					const docSnap = await getDoc(docRef);
+
+					if (docSnap.exists()) {
+						setRecipe(docSnap.data());
+					} else {
+						throw new Error('Recipe not found');
+					}
+				}
+			} catch (error) {
+				console.error('Error loading recipe:', error);
+				setError(error.message);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		if (type && id) {
+			fetchRecipe();
+		}
+	}, [type, id]);
+
+	if (!recipe) {
+		return (
+			<div className="details-page">
+				<div className="error">Recipe not found</div>
+			</div>
+		);
+	}
+
+	return (
+
+		<div className='details-page'>
+			<div className='header'>
+				<button><FaArrowLeft /> Back to Recipes</button>
+				<div className='header-right'>
+					<button><FaRegHeart /> Save Recipe</button>
+					<div>
+						<button
+							onClick={function (event) {
+								copyToClip()
+								notifyCopy()
+							}}
+						><FiShare2 /> Share
+						</button>
+						<ToastContainer />
+					</div>
+				</div>
+
+			</div>
+			<div className='recipe-content'>
+				<div className='recipe-img-container'>
+					{recipe.image && (
+					<img
+						className='recipe-img'
+						src={recipe.image}
+						alt={recipe.title}
+						// onError={(e) => {
+						// 	e.target.src = 'https://placehold.co/600x400';
+						// }}
+						>
+					</img>
+					)}
+				</div>
+
+				<h1 className='recipe-title'>{recipe.title}</h1>
+				{recipe.description && (
+					<p className='recipe-description'>Description</p>
+				)}
+				<div className='recipe-meta'>
+					<span className='rating'>⭐⭐⭐⭐⭐</span>
+					{recipe.totalTime && (
+						<div className='meta-item'>
+							<FaClock />
+							<span>{recipe.totalTime} min</span>
+						</div>
+					)}
+					{recipe.servings && (
+						<div className='meta-item'>
+							<HiUsers />
+							<span>{recipe.servings} servings</span>
+						</div>
+					)}
+					{recipe.calories && (
+						<div className='meta-item'>
+							<span>{Math.round(recipe.calories)} calories</span>
+						</div>
+					)}
+				</div>
+
+				<div className='recipe-steps'>
+					{/* left side */}
+					<div className='ingredients-instructions'>
+
+						<div className='ingredients-section'>
+							<h2>Ingredients</h2>
+							<ul className='ingredients-list'>
+								{(recipe.ingredients || []).map((ingredient, index) => (
+									<li key={index}>
+										<input type="checkbox" id={`ingredient-${index}`} />
+										<label htmlFor={`ingredient-${index}`}>{ingredient}</label>
+									</li>
+								))}
+							</ul>
+						</div>
+						<div className='instructions-section'>
+							<h2>Instructions</h2>
+							{recipe.instructions && recipe.instructions.length > 0 ? (
+								<ol className='instructions-list'>
+									{(Array.isArray(recipe.instructions) ? recipe.instructions : recipe.instructions.split('\n'))
+										.filter(step => step.trim())
+										.map((step, index) => (
+											<li key={index}>
+												<span className='step-number'>{index + 1}</span>
+												<span>{step}</span>
+											</li>
+										))}
+								</ol>
+							) : (
+								<div className='no-instructions'>
+									<p>Detailed instructions not available.</p>
+									{recipe.url && (
+										<a href={recipe.url} target="_blank" rel="noopener noreferrer">
+											View full recipe at source
+										</a>
+									)}
+								</div>
+							)}
+						</div>
+					</div>
+					<div className='details-right-side'>
+						<ChatPage />
+						<div className='nutrition-facts'></div>
+						{/* nutrition facts */}
+					</div>
+				</div>
+
+			</div>
+			<div className='comment-section'>
+				<h2>Comments</h2>
+			</div>
+		</div>
+	)
+}
+
+export default RecipeDetailsPage

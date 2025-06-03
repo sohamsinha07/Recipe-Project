@@ -1,12 +1,13 @@
-import { Outlet } from "react-router-dom";
+import HomePage from "./routes/HomePage";
 import Navbar from "./components/Navbar";
-import ChatPage from "./components/ChatPage";
+import RecipeDetailsPage from "./routes/RecipeDetailsPage";
+import { Routes, Route, Outlet} from "react-router-dom";
 
 export default function App() {
   return (
     <>
-      <Navbar />
-      <Outlet />
+	  <Navbar />
+	  <Outlet />
     </>
   );
 }
