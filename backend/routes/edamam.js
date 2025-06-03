@@ -11,7 +11,7 @@ router.get("/recipes", async (req, res) => {
 
 	try {
 		const response = await fetch(
-			`https://api.edamam.com/api/recipes/v2?type=public&app_id=${appId}&app_key=${apiKey}&diet=balanced`,
+			`https://api.edamam.com/api/recipes/v2?type=public&q=${query}&app_id=${appId}&app_key=${apiKey}&to=20`,
 			{
 				headers: {
 					"Edamam-Account-User": "imjel",

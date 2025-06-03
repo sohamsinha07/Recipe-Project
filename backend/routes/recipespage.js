@@ -1,35 +1,61 @@
-// backend/routes/recipespage.js
-const express = require("express");
-const axios = require("axios");
+import express from "express";
+import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
 const router = express.Router();
-require("dotenv").config();
 
-router.get("/recipes", async (req, res) => {
-  const query = req.query.q || "chicken";
-  const { EDAMAM_APP_ID, EDAMAM_APP_KEY } = process.env;
+const EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2";
 
+const queryTerms = [
+  "chicken", "pasta", "salad", "curry", "fish", "soup",
+  "tofu", "beef", "eggs", "shrimp", "cheese", "lentils",
+  "stew", "sandwich", "broccoli", "mushroom", "bacon",
+  "quinoa", "wrap", "cauliflower"
+];
+
+function shuffleArray(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
+
+router.get("/", async (req, res) => {
   try {
-    const response = await axios.get("https://api.edamam.com/search", {
-      params: {
-        q: query,
-        app_id: EDAMAM_APP_ID,
-        app_key: EDAMAM_APP_KEY,
-        to: 12,
-      },
-    });
+    const selectedTerms = shuffleArray(queryTerms).slice(0, 6); 
+    const allResults = [];
 
-    const formatted = response.data.hits.map((hit) => ({
-      title: hit.recipe.label,
-      description: hit.recipe.ingredientLines.slice(0, 2).join(", "),
-      rating: (Math.random() * 1 + 4).toFixed(1),
-      time: hit.recipe.totalTime ? `${hit.recipe.totalTime} min` : "N/A",
-    }));
+    for (const term of selectedTerms) {
+      const response = await axios.get(EDAMAM_BASE_URL, {
+        params: {
+          type: "public",
+          q: term,
+          app_id: process.env.VITE_EDAMAM_APP_ID,
+          app_key: process.env.VITE_EDAMAM_API_KEY,
+          to: 4,
+        },
+        headers: {
+          "Edamam-Account-User": "imjel",
+        },
+      });
 
-    res.json(formatted);
+      const hits = response.data.hits || [];
+      const formatted = hits.map((hit) => ({
+        title: hit.recipe.label,
+        description: hit.recipe.ingredientLines.slice(0, 2).join(", "),
+        rating: (Math.random() * 1 + 4).toFixed(1),
+        time: hit.recipe.totalTime ? `${hit.recipe.totalTime} min` : "N/A",
+      }));
+
+      allResults.push(...formatted);
+    }
+
+    const uniqueShuffled = shuffleArray(allResults).slice(0, 20);
+    res.json(uniqueShuffled);
+
   } catch (error) {
-    console.error("Failed to fetch from Edamam:", error);
-    res.status(500).json({ error: "Failed to fetch recipes" });
+    console.error("❌ Edamam API error:", error.message);
+    console.error("🔍 Full error:", error.response?.data || error);
+    res.status(500).json({ error: "Failed to fetch diverse recipes" });
   }
 });
 
-module.exports = router;
+export default router;

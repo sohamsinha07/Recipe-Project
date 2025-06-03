@@ -5,14 +5,15 @@ import OpenAi from "openai";
 import cors from "cors";
 import db from './firebase.js';
 
+
 dotenv.config(); // Load the .env file
 
 const app = express();
 const port = 3000;
-const recipeRoutes = require("./routes/recipespage");
 
 import chatbotRouter from './routes/chatbot.js'
 import edamamRouter from './routes/edamam.js'
+import recipeRoutes from './routes/recipespage.js'
 
 // use middleware to parse json request bodies
 app.use(express.json());
@@ -22,6 +23,8 @@ app.use(cors());
 // use routes
 app.use("/chat", chatbotRouter);
 app.use("/edamam", edamamRouter);
+app.use("/recipes", recipeRoutes);
+
 
 
 app.listen(port, () => {
