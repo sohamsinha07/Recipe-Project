@@ -9,6 +9,7 @@ dotenv.config(); // Load the .env file
 
 const app = express();
 const port = 3000;
+const recipeRoutes = require("./routes/recipespage");
 
 import chatbotRouter from './routes/chatbot.js'
 
