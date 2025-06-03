@@ -121,31 +121,31 @@ export default function RecipeReviewTabs({
           gap: 12,
           display: "flex"
         }}>
-          <div style={{
-            width: 160,
-            height: 40,
-            padding: "0 12px",
-            background: "white",
-            borderRadius: 8,
-            outline: "1px #E2E8F0 solid",
-            outlineOffset: "-1px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between"
-          }}>
-            <span style={{
-              color: "#4A5568",
-              fontSize: 14,
-              fontFamily: "Inter",
-              fontWeight: 500,
-              lineHeight: "16.8px"
-            }}>
-              {sort === "newest" ? "Newest First" : "Oldest First"}
-            </span>
-            <svg width="16" height="16" viewBox="0 0 16 16">
-              <polyline points="4,6 8,10 12,6" style={{ fill: "none", stroke: "#718096", strokeWidth: 1.5 }}/>
-            </svg>
-          </div>
+          <select
+  value={sort}
+  onChange={e => setSort?.(e.target.value)}
+  style={{
+    width: 160,
+    height: 40,
+    padding: "0 12px",
+    background: "white",
+    borderRadius: 8,
+    outline: "1px #E2E8F0 solid",
+    outlineOffset: "-1px",
+    color: "#4A5568",
+    fontSize: 14,
+    fontFamily: "Inter",
+    fontWeight: 500,
+    lineHeight: "16.8px",
+    appearance: "none",
+    border: "none",
+    // Optionally add some left padding for the dropdown arrow
+  }}
+>
+  <option value="newest">Newest First</option>
+  <option value="oldest">Oldest First</option>
+</select>
+
           {/* View Toggle Buttons */}
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <div style={{

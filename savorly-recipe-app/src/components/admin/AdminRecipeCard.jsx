@@ -64,7 +64,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
               <span>{recipe.rating}</span>
             </div>
             <div className="popular-meta-item">
-              <span>{recipe.time} min</span>
+              <span>{recipe.time}</span>
             </div>
           </div>
           {/* Admin Actions */}

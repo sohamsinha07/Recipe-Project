@@ -30,7 +30,7 @@ const sampleRecipes = [
 
 export default function AdminRecipeGrid({ recipes, onApprove, onReject, onEdit }) {
   return (
-    <Box display="flex" flexWrap="wrap" gap={2}>
+    <div className="popular-grid" style={{ display: "flex", flexWrap: "wrap", gap: "24px", marginTop: "32px" }}>
       {sampleRecipes.map((recipe) => (
         <AdminRecipeCard
           key={recipe.id}
@@ -40,6 +40,8 @@ export default function AdminRecipeGrid({ recipes, onApprove, onReject, onEdit }
           onEdit={onEdit}
         />
       ))}
-    </Box>
+      </div>
   );
 }
+
+
