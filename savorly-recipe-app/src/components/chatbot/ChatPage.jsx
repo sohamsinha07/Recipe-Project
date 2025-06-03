@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InputBox from './InputBox'
 import ResponseDisplay from './ResponseDisplay';
 import { LuSend } from "react-icons/lu";
-import '../styles/ChatPage.css'
+import '../../styles/ChatPage.css'
 import { RiRobot2Line } from "react-icons/ri";
 
 export const ChatPage = () => {
@@ -52,7 +52,7 @@ export const ChatPage = () => {
 		<div className='chatbot-container'>
 			<div className='chatbot-title'>
 				<RiRobot2Line className='robot-icon' />
-				<h1>Recipe Bot</h1>
+				<h2>Recipe Bot</h2>
 			</div>
 
 

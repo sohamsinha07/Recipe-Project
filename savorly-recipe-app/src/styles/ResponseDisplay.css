@@ -13,7 +13,7 @@
 	padding: 1rem;
 	background-color: var(--tea-green);
 	border-radius: 16px 16px 0 16px;
-	color: rgb(0, 0, 0);
+	color: rgb(61, 61, 61);
 	max-width: 60%;
 	white-space: pre-wrap;
 	word-wrap: break-word;
@@ -23,6 +23,7 @@
 	align-self: flex-start;
 	padding: 1rem;
 	background-color: white;
+	color: rgb(61, 61, 61);
 	border-radius: 16px 16px 16px 0;
 	max-width: 60%;
 	white-space: pre-wrap;
