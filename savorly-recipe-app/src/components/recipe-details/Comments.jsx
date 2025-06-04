@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { FaReply, FaTrash, FaHeart, FaRegHeart } from 'react-icons/fa';
 import '../../styles/Comments.css'
 import RatingBox from "./RatingBox";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
 
 const Comments = ({ recipeId, currentUserId }) => {
@@ -15,6 +16,43 @@ const Comments = ({ recipeId, currentUserId }) => {
 	const [showReplyForm, setShowReplyForm] = useState({});
 	const [userCache, setUserCache] = useState({});
 	const [loading, setLoading] = useState(true);
+
+	// states for dialog (on delete)
+	const [deleteItem, setDeleteItem] = useState({
+		type: null, // 'comment' or 'reply'
+		id: null, // commentId or replyId
+		parentId: null // for replies
+	});
+	const [confirmOpen, setConfirmOpen] = useState(false);
+
+	const openConfirm = (type, id, parentId = null) => {
+		setDeleteItem({ type, id, parentId });
+		setConfirmOpen(true);
+	};
+
+	const closeConfirm = () => {
+		setConfirmOpen(false);
+		setDeleteItem({ type: null, id: null, parentId: null });
+	};
+
+	const handleDelete = async () => {
+		if (!deleteItem.id || !currentUserId) return;
+
+		try {
+			if (deleteItem.type === 'comment') {
+				await deleteDoc(doc(db, 'comments', deleteItem.id));
+				toast.success('Comment deleted successfully!');
+			} else if (deleteItem.type === 'reply') {
+				await deleteDoc(doc(db, 'replies', deleteItem.id));
+				toast.success('Reply deleted successfully!');
+			}
+			closeConfirm();
+		} catch (error) {
+			console.error(`Error deleting ${deleteItem.type}:`, error);
+			toast.error(`Failed to delete ${deleteItem.type}`);
+		}
+	};
+
 
 	// fetch comments
 	useEffect(() => {
@@ -137,35 +175,36 @@ const Comments = ({ recipeId, currentUserId }) => {
 		}
 	}
 
-	// delete comment
-	const handleDeleteComment = async (commentId) => {
-		if (!currentUserId) return;
+	// // delete comment
+	// const handleDeleteComment = async (commentId) => {
+	// 	if (!currentUserId) return;
+	// 	setConfirmOpen(false);
 
-		if (window.confirm('Are you sure you want to delete this comment?')) {
-			try {
-				await deleteDoc(doc(db, 'comments', commentId));
-				toast.success('Comment deleted successfully!');
-			} catch (error) {
-				console.error('Error deleting comment:', error);
-				toast.error('Failed to delete comment');
-			}
-		}
-	};
+	// 	try {
+	// 		await deleteDoc(doc(db, 'comments', commentId));
+	// 		toast.success('Comment deleted successfully!');
+	// 	} catch (error) {
+	// 		console.error('Error deleting comment:', error);
+	// 		toast.error('Failed to delete comment');
+	// 	}
 
-	// delete reply
-	const handleDeleteReply = async (commentId, replyId) => {
-		if (!currentUserId) return;
+	// };
 
-		if (window.confirm('Are you sure you want to delete this reply?')) {
-			try {
-				await deleteDoc(doc(db, 'replies', replyId));
-				toast.success('Reply deleted successfully!');
-			} catch (error) {
-				console.error('Error deleting reply:', error);
-				toast.error('Failed to delete reply');
-			}
-		}
-	};
+	// // delete reply
+	// const handleDeleteReply = async (commentId, replyId) => {
+	// 	if (!currentUserId) return;
+	// 	setConfirmOpen(false);
+
+	// 	// if (window.confirm('Are you sure you want to delete this reply?')) {
+	// 	try {
+	// 		await deleteDoc(doc(db, 'replies', replyId));
+	// 		toast.success('Reply deleted successfully!');
+	// 	} catch (error) {
+	// 		console.error('Error deleting reply:', error);
+	// 		toast.error('Failed to delete reply');
+	// 	}
+	// 	// }
+	// };
 
 	// Handling likes on comments
 	const handleLikeComment = async (commentId, currentLikes, likedBy = []) => {
@@ -276,7 +315,8 @@ const Comments = ({ recipeId, currentUserId }) => {
 								{currentUserId === comment.userId && (
 									<div className="comment-actions">
 										<button
-											onClick={() => handleDeleteComment(comment.id)}
+											// onClick={() => handleDeleteComment(comment.id)}
+											onClick={() => openConfirm('comment', comment.id)}
 											className="action-btn delete-btn"
 										>
 											<FaTrash />
@@ -362,7 +402,8 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 												{currentUserId === reply.userId && (
 													<button
-														onClick={() => handleDeleteReply(comment.id, reply.id)}
+														// onClick={() => handleDeleteReply(comment.id, reply.id)}
+														onClick={() => openConfirm('reply', reply.id, comment.id)}
 														className="action-btn delete-btn"
 													>
 														<FaTrash />
@@ -380,7 +421,26 @@ const Comments = ({ recipeId, currentUserId }) => {
 					))
 				)}
 			</div>
+			<Dialog open={confirmOpen} onClose={closeConfirm}>
+				<DialogTitle>
+					Delete {deleteItem.type === 'comment' ? 'Comment' : 'Reply'}
+				</DialogTitle>
+				<DialogContent>
+					Are you sure you want to delete this {deleteItem.type}?
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={closeConfirm}>Cancel</Button>
+					<Button
+						color="error"
+						onClick={handleDelete}
+						disabled={!deleteItem.id}
+					>
+						Delete
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
+
 	);
 };
 
