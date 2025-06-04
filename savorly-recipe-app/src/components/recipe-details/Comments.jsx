@@ -19,7 +19,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 	// fetch comments
 	useEffect(() => {
 		if (!recipeId) {
-			setLoading (false);
+			setLoading(false);
 			return;
 		}
 
@@ -46,23 +46,42 @@ const Comments = ({ recipeId, currentUserId }) => {
 					commentData.username = await getUserName(commentData.userId);
 
 					// fetch comment replies
+					const repliesRef = collection(db, 'replies');
 					const repliesQuery = query(
-						collection(db, 'replies'),
+						repliesRef,
 						where('commentId', '==', docSnapshot.id),
 						orderBy('createdAt', 'asc')
 					);
 
-					const repliesSnapshot = await getDocs(repliesQuery);
+					const repliesUnsubscribe = onSnapshot(repliesQuery, async (repliesSnapshot) => {
+						const replies = await Promise.all(
+							repliesSnapshot.docs.map(async (replyDoc) => {
+								const replyData = { id: replyDoc.id, ...replyDoc.data() };
+								replyData.username = await getUserName(replyData.userId);
+								return replyData;
+							})
+						);
+						// update a comment's replies
+						setComments(prevComments => {
+							return prevComments.map(comment => {
+								if (comment.id === docSnapshot.id) {
+									return { ...comment, replies };
+								}
+								return comment;
+							});
+						});
+					});
 
-					const replies = await Promise.all(
-						repliesSnapshot.docs.map(async (replyDoc) => {
+					// store replies
+					const initialReplies = await Promise.all(
+						(await getDocs(repliesQuery)).docs.map(async (replyDoc) => {
 							const replyData = { id: replyDoc.id, ...replyDoc.data() };
 							replyData.username = await getUserName(replyData.userId);
 							return replyData;
 						})
 					);
 
-					commentData.replies = replies;
+					commentData.replies = initialReplies;
 					commentsData.push(commentData);
 				}
 			}
@@ -214,7 +233,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 			{currentUserId ? (
 				<form onSubmit={handleAddComment} className='add-comment-form'>
-					<RatingBox recipeId={recipeId}/>
+					<RatingBox recipeId={recipeId} />
 					<textarea
 						value={newComment}
 						onChange={(e) => setNewComment(e.target.value)}
