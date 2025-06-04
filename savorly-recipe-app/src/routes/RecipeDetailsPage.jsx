@@ -11,9 +11,13 @@ import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
 import Comments from '../components/Comments';
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { Rating } from '@mui/material';
+import RatingBox from '../components/RatingBox';
 
 const RecipeDetailsPage = () => {
 
+	const location = useLocation();
 	const { type, id } = useParams(); // type = edamam or user, id = recipe id
 	const navigate = useNavigate()
 	const [recipe, setRecipe] = useState(null);
@@ -21,6 +25,7 @@ const RecipeDetailsPage = () => {
 	const [copySuccess, setCopySuccess] = useState("");
 	const textAreaRef = useRef(null);
 	const [loading, setLoading] = useState(true);
+	const [averageRating, setAverageRating] = useState(0);
 
 	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
 		autoClose: 2000,
@@ -57,6 +62,12 @@ const RecipeDetailsPage = () => {
 
 					if (docSnap.exists()) {
 						setRecipe(docSnap.data());
+
+						const data = docSnap.data();
+						setRecipe(data);
+						if (data.averageRating) {
+							setAverageRating(data.averageRating);
+						}
 					} else {
 						throw new Error('Recipe not found');
 					}
@@ -86,7 +97,9 @@ const RecipeDetailsPage = () => {
 
 		<div className='details-page'>
 			<div className='header'>
-				<button><FaArrowLeft /> Back to Recipes</button>
+				<Link to="/recipes">
+					<button><FaArrowLeft /> Back to Recipes</button>
+				</Link>
 				<div className='header-right'>
 					<button><FaRegHeart /> Save Recipe</button>
 					<div>
@@ -109,9 +122,6 @@ const RecipeDetailsPage = () => {
 							className='recipe-img'
 							src={recipe.image}
 							alt={recipe.title}
-						// onError={(e) => {
-						// 	e.target.src = 'https://placehold.co/600x400';
-						// }}
 						>
 						</img>
 					)}
@@ -122,7 +132,14 @@ const RecipeDetailsPage = () => {
 					<p className='recipe-description'>Description</p>
 				)}
 				<div className='recipe-meta'>
-					<span className='rating'>⭐⭐⭐⭐⭐</span>
+					<span className='rating'>
+						<Rating
+							name="read-only"
+							value={averageRating}
+							readOnly
+							precision={0.5}
+						/>
+					</span>
 					{recipe.totalTime && (
 						<div className='meta-item'>
 							<FaClock />
@@ -135,11 +152,6 @@ const RecipeDetailsPage = () => {
 							<span>{recipe.servings} servings</span>
 						</div>
 					)}
-					{/* {recipe.calories && (
-						<div className='meta-item'>
-							<span>{Math.round(recipe.calories)} calories</span>
-						</div>
-					)} */}
 				</div>
 
 				<div className='recipe-steps'>
@@ -192,7 +204,8 @@ const RecipeDetailsPage = () => {
 			</div>
 			<div className='comment-section'>
 				<Comments
-					recipeId={`${type}-${id}`}
+					// recipeId={`${type}-${id}`}
+					recipeId={id}
 					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
 					// currentUserId={currentUser?.uid || null}
 				/>

@@ -35,6 +35,10 @@
 	transform: translateY(-1px);
 }
 
+a:link {
+	text-decoration: none;
+}
+
 .header-right {
 	display: flex;
 	gap: 1rem;

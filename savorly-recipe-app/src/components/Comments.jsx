@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react"
-import { collection, addDoc, query, orderBy, onSnapshot, doc, Timestamp, deleteDoc, updateDoc, getDocs, where } from 'firebase/firestore'
+import { collection, addDoc, query, orderBy, onSnapshot, doc, Timestamp, deleteDoc, updateDoc, getDocs, where, getDoc } from 'firebase/firestore'
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { FaReply, FaTrash, FaEdit, FaHeart, FaRegHeart } from 'react-icons/fa';
 import '../styles/Comments.css'
+import RatingBox from "./RatingBox";
 
 
 const Comments = ({ recipeId, currentUserId }) => {
@@ -38,6 +39,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 					// saving comment's username
 					commentData.username = await getUserName(commentData.userId);
+					console.log('username:', commentData.username);
 
 					// fetch comment replies
 					const repliesQuery = query(
@@ -48,10 +50,13 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 					const repliesSnapshot = await getDocs(repliesQuery);
 
-					const replies = repliesSnapshot.docs.map(replyDoc => ({
-						id: replyDoc.id,
-						...replyDoc.data(),
-					}));
+					const replies = await Promise.all(
+						repliesSnapshot.docs.map(async (replyDoc) => {
+							const replyData = { id: replyDoc.id, ...replyDoc.data() };
+							replyData.username = await getUserName(replyData.userId);
+							return replyData;
+						})
+					);
 
 					commentData.replies = replies;
 					commentsData.push(commentData);
@@ -92,12 +97,12 @@ const Comments = ({ recipeId, currentUserId }) => {
 		if (!newReply?.trim() || !currentUserId) return;
 
 		try {
-			
+
 			await addDoc(collection(db, 'replies'), {
 				content: newReply.trim(),
 				createdAt: Timestamp.now(),
 				userId: currentUserId,
-				commentId, 
+				commentId,
 				likes: 0,
 				likedBy: []
 			});
@@ -176,21 +181,18 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 		// if not in cache, fetch from firebase:
 		try {
-			const userDoc = await getDocs(
-				query(collection(db, 'users'), where('userId', '==', userId))
-			);
+			const userRef = doc(db, 'users', userId);
+			const userDocSnap = await getDoc(userRef);
 
-			if (!userDoc.empty) {
-				const userData = userDoc.docs[0].data();
-				const userName = userData.name || 'Anonymous';
+			if (userDocSnap.exists()) {
+				const userData = userDocSnap.data();
+				const userName = userData.username || 'Anonymous';
 
-				//cache
-				setUserCache(prev => ({ ...prev, [userId]: userName}));
-
+				// Update cache
+				setUserCache(prev => ({ ...prev, [userId]: userName }));
 				return userName;
-			} else {
-				return 'Anonymous';
 			}
+			return 'Anonymous';
 		} catch (error) {
 			console.error('Error fetching user name:', error)
 			return 'Anonymous';
@@ -208,6 +210,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 			{currentUserId ? (
 				<form onSubmit={handleAddComment} className='add-comment-form'>
+					<RatingBox recipeId={recipeId}/>
 					<textarea
 						value={newComment}
 						onChange={(e) => setNewComment(e.target.value)}
