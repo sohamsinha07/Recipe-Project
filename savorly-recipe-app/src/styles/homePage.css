@@ -2,18 +2,43 @@
    TitleSection.jsx styles
    ================================================ */
 .title-section-container {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  padding-top: 64px;
-  padding-bottom: 64px;
+  height: 60vh;
+  min-height: 350px;
   background-color: #eef5db;
 }
+
+.slide-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.534); /* 40% black */
+  z-index: 2;
+}
+
+.title-section-content {
+  position: relative;
+  z-index: 3;
+  color: white;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
 .title-section-heading {
   font-weight: 700 !important;
   margin-bottom: 1rem !important;
 }
 
 .title-section-subtitle {
-  color: #d3d3d3;
+  color: #ffffff;
   margin-bottom: 32px !important;
 }
 .title-section-button-row {
@@ -33,8 +58,8 @@
   background-color: #c94d44 !important;
 }
 .title-section-create-button {
-  border-color: #6d6d6d60 !important;
-  background-color: #fe605500 !important;
+  border-color: #6d6d6d00 !important;
+  background-color: #ffffff !important;
   color: #fe5f55 !important;
   text-transform: none !important;
   padding: 10px 24px !important;
@@ -42,7 +67,25 @@
   border-radius: 6px !important;
 }
 .title-section-create-button:hover {
-  background-color: #d8cecd67 !important;
+  background-color: #dadada !important;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+.swiper-slide .zoom-slide {
+  transform: scale(1);
+}
+.swiper-slide-active .zoom-slide {
+  animation: zoomIn 7s linear forwards;
+}
+.swiper-slide-prev .zoom-slide {
+  transform: scale(1.1) !important;
 }
 
 /* ================================================

@@ -14,7 +14,6 @@ import RecipeDetailsPage from "./routes/RecipeDetailsPage";
 import AdminPage from "./routes/AdminPage";
 import AdminLayout from "./components/admin/AdminLayout";
 
-
 import "./styles/global.css";
 
 export const router = createBrowserRouter([
@@ -37,10 +36,8 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     element: <AdminLayout />, // no navbar
-    children: [
-      { index: true, element: <AdminPage /> }
-    ]
-  }
+    children: [{ index: true, element: <AdminPage /> }],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
