@@ -75,6 +75,11 @@ a:link {
 	font-weight: bold;
 }
 
+.recipe-description {
+	margin-top: 1rem;
+	color: #666;
+}
+
 .recipe-meta {
 	display: flex;
 	align-items: center;
@@ -135,6 +140,7 @@ a:link {
 
 .instructions-list li {
 	display: flex;
+	flex-direction: row;
 	align-items: flex-start;
 	gap: 1rem;
 	padding: 1rem 0;
@@ -156,6 +162,7 @@ a:link {
 	justify-content: center;
 	font-weight: bold;
 	font-size: 1rem;
+	flex-shrink: 0;
 }
 
 /* Right side of content */
