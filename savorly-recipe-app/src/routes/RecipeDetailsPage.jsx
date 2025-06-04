@@ -11,9 +11,10 @@ import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
 import Comments from '../components/Comments';
-
+import { Link, NavLink, useLocation } from "react-router-dom";
 const RecipeDetailsPage = () => {
 
+	const location = useLocation();
 	const { type, id } = useParams(); // type = edamam or user, id = recipe id
 	const navigate = useNavigate()
 	const [recipe, setRecipe] = useState(null);
@@ -86,7 +87,9 @@ const RecipeDetailsPage = () => {
 
 		<div className='details-page'>
 			<div className='header'>
-				<button><FaArrowLeft /> Back to Recipes</button>
+				<Link to="/recipes">
+					<button><FaArrowLeft /> Back to Recipes</button>
+				</Link>
 				<div className='header-right'>
 					<button><FaRegHeart /> Save Recipe</button>
 					<div>
