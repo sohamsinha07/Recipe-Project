@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Rating } from '@mui/material';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import '../styles/RatingBox.css';
+import '../../styles/RatingBox.css';
 
 const RatingBox = ({ recipeId }) => {
 	const [userRating, setUserRating] = useState(0);
@@ -61,7 +61,7 @@ const RatingBox = ({ recipeId }) => {
 		}
 	}
 
-	if (!recipeId) return null; {
+	if (!recipeId) return null 
 		return (
 			<div className='rating-container'>
 				<h3>Rate this Recipe</h3>
@@ -75,7 +75,6 @@ const RatingBox = ({ recipeId }) => {
 				)}
 			</div>
 		)
-	}
 
 }
 

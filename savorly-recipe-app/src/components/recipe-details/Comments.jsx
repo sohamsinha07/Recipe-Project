@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react"
 import { collection, addDoc, query, orderBy, onSnapshot, doc, Timestamp, deleteDoc, updateDoc, getDocs, where, getDoc } from 'firebase/firestore'
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { toast } from 'react-toastify';
 import { FaReply, FaTrash, FaHeart, FaRegHeart } from 'react-icons/fa';
-import '../styles/Comments.css'
+import '../../styles/Comments.css'
 import RatingBox from "./RatingBox";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 
 
-const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
+const Comments = ({ recipeId, currentUserId }) => {
 
 	const [comments, setComments] = useState([]);
 	const [newComment, setNewComment] = useState([]);
@@ -16,13 +17,55 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 	const [userCache, setUserCache] = useState({});
 	const [loading, setLoading] = useState(true);
 
+	// states for dialog (on delete)
+	const [deleteItem, setDeleteItem] = useState({
+		type: null, // 'comment' or 'reply'
+		id: null, // commentId or replyId
+		parentId: null // for replies
+	});
+	const [confirmOpen, setConfirmOpen] = useState(false);
+
+	const openConfirm = (type, id, parentId = null) => {
+		setDeleteItem({ type, id, parentId });
+		setConfirmOpen(true);
+	};
+
+	const closeConfirm = () => {
+		setConfirmOpen(false);
+		setDeleteItem({ type: null, id: null, parentId: null });
+	};
+
+	const handleDelete = async () => {
+		if (!deleteItem.id || !currentUserId) return;
+
+		try {
+			if (deleteItem.type === 'comment') {
+				await deleteDoc(doc(db, 'comments', deleteItem.id));
+				toast.success('Comment deleted successfully!');
+			} else if (deleteItem.type === 'reply') {
+				await deleteDoc(doc(db, 'replies', deleteItem.id));
+				toast.success('Reply deleted successfully!');
+			}
+			closeConfirm();
+		} catch (error) {
+			console.error(`Error deleting ${deleteItem.type}:`, error);
+			toast.error(`Failed to delete ${deleteItem.type}`);
+		}
+	};
+
+
 	// fetch comments
 	useEffect(() => {
-		if (!commentsRecipeId) return;
+		if (!recipeId) {
+			setLoading(false);
+			return;
+		}
+
 
 		const commentsRef = collection(db, 'comments');
 		const q = query(
 			commentsRef,
+			where('recipeId', '==', recipeId),
 			orderBy('createdAt', 'desc')
 		)
 
@@ -35,30 +78,48 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 				const commentData = { id: docSnapshot.id, ...docSnapshot.data() };
 
 				// filter for a specific recipe, given its id
-				if (commentData.recipeId === commentsRecipeId) {
+				if (commentData.recipeId === recipeId) {
 
 					// saving comment's username
 					commentData.username = await getUserName(commentData.userId);
-					console.log('username:', commentData.username);
 
 					// fetch comment replies
+					const repliesRef = collection(db, 'replies');
 					const repliesQuery = query(
-						collection(db, 'replies'),
+						repliesRef,
 						where('commentId', '==', docSnapshot.id),
 						orderBy('createdAt', 'asc')
 					);
 
-					const repliesSnapshot = await getDocs(repliesQuery);
+					const repliesUnsubscribe = onSnapshot(repliesQuery, async (repliesSnapshot) => {
+						const replies = await Promise.all(
+							repliesSnapshot.docs.map(async (replyDoc) => {
+								const replyData = { id: replyDoc.id, ...replyDoc.data() };
+								replyData.username = await getUserName(replyData.userId);
+								return replyData;
+							})
+						);
+						// update a comment's replies
+						setComments(prevComments => {
+							return prevComments.map(comment => {
+								if (comment.id === docSnapshot.id) {
+									return { ...comment, replies };
+								}
+								return comment;
+							});
+						});
+					});
 
-					const replies = await Promise.all(
-						repliesSnapshot.docs.map(async (replyDoc) => {
+					// store replies
+					const initialReplies = await Promise.all(
+						(await getDocs(repliesQuery)).docs.map(async (replyDoc) => {
 							const replyData = { id: replyDoc.id, ...replyDoc.data() };
 							replyData.username = await getUserName(replyData.userId);
 							return replyData;
 						})
 					);
 
-					commentData.replies = replies;
+					commentData.replies = initialReplies;
 					commentsData.push(commentData);
 				}
 			}
@@ -67,7 +128,7 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 			setLoading(false);
 		})
 		return () => unsubscribe();
-	}, [commentsRecipeId]);
+	}, [recipeId]);
 
 	// Adding a new comment
 	const handleAddComment = async (e) => {
@@ -114,35 +175,36 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 		}
 	}
 
-	// delete comment
-	const handleDeleteComment = async (commentId) => {
-		if (!currentUserId) return;
+	// // delete comment
+	// const handleDeleteComment = async (commentId) => {
+	// 	if (!currentUserId) return;
+	// 	setConfirmOpen(false);
 
-		if (window.confirm('Are you sure you want to delete this comment?')) {
-			try {
-				await deleteDoc(doc(db, 'comments', commentId));
-				toast.success('Comment deleted successfully!');
-			} catch (error) {
-				console.error('Error deleting comment:', error);
-				toast.error('Failed to delete comment');
-			}
-		}
-	};
+	// 	try {
+	// 		await deleteDoc(doc(db, 'comments', commentId));
+	// 		toast.success('Comment deleted successfully!');
+	// 	} catch (error) {
+	// 		console.error('Error deleting comment:', error);
+	// 		toast.error('Failed to delete comment');
+	// 	}
 
-	// delete reply
-	const handleDeleteReply = async (commentId, replyId) => {
-		if (!currentUserId) return;
+	// };
 
-		if (window.confirm('Are you sure you want to delete this reply?')) {
-			try {
-				await deleteDoc(doc(db, 'replies', replyId));
-				toast.success('Reply deleted successfully!');
-			} catch (error) {
-				console.error('Error deleting reply:', error);
-				toast.error('Failed to delete reply');
-			}
-		}
-	};
+	// // delete reply
+	// const handleDeleteReply = async (commentId, replyId) => {
+	// 	if (!currentUserId) return;
+	// 	setConfirmOpen(false);
+
+	// 	// if (window.confirm('Are you sure you want to delete this reply?')) {
+	// 	try {
+	// 		await deleteDoc(doc(db, 'replies', replyId));
+	// 		toast.success('Reply deleted successfully!');
+	// 	} catch (error) {
+	// 		console.error('Error deleting reply:', error);
+	// 		toast.error('Failed to delete reply');
+	// 	}
+	// 	// }
+	// };
 
 	// Handling likes on comments
 	const handleLikeComment = async (commentId, currentLikes, likedBy = []) => {
@@ -210,7 +272,7 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 
 			{currentUserId ? (
 				<form onSubmit={handleAddComment} className='add-comment-form'>
-					<RatingBox recipeId={recipeId}/>
+					<RatingBox recipeId={recipeId} />
 					<textarea
 						value={newComment}
 						onChange={(e) => setNewComment(e.target.value)}
@@ -253,7 +315,8 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 								{currentUserId === comment.userId && (
 									<div className="comment-actions">
 										<button
-											onClick={() => handleDeleteComment(comment.id)}
+											// onClick={() => handleDeleteComment(comment.id)}
+											onClick={() => openConfirm('comment', comment.id)}
 											className="action-btn delete-btn"
 										>
 											<FaTrash />
@@ -339,7 +402,8 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 
 												{currentUserId === reply.userId && (
 													<button
-														onClick={() => handleDeleteReply(comment.id, reply.id)}
+														// onClick={() => handleDeleteReply(comment.id, reply.id)}
+														onClick={() => openConfirm('reply', reply.id, comment.id)}
 														className="action-btn delete-btn"
 													>
 														<FaTrash />
@@ -357,7 +421,26 @@ const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 					))
 				)}
 			</div>
+			<Dialog open={confirmOpen} onClose={closeConfirm}>
+				<DialogTitle>
+					Delete {deleteItem.type === 'comment' ? 'Comment' : 'Reply'}
+				</DialogTitle>
+				<DialogContent>
+					Are you sure you want to delete this {deleteItem.type}?
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={closeConfirm}>Cancel</Button>
+					<Button
+						color="error"
+						onClick={handleDelete}
+						disabled={!deleteItem.id}
+					>
+						Delete
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
+
 	);
 };
 
