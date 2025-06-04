@@ -1,7 +1,7 @@
 .admin-header-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 36px 40px 10px 40px;
+    padding: 24px 40px 10px 40px;
     background: #fff;
     display: flex;
     flex-direction: column;
@@ -146,8 +146,7 @@
 
   .admin-recipe-card {
     width: 340px;
-    min-height: 420px;  
-    max-height: 410px;
+    min-height: 300px;  
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -167,7 +166,6 @@
     display: flex;
     gap: 12px;
     margin-top: 16px;
-    margin-bottom: 8px;
   }
 
   .admin-recipe-card-image {

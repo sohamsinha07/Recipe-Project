@@ -1,4 +1,17 @@
 import React from "react";
+function getTimeAgo(createdAt) {
+  const created = createdAt?.seconds
+    ? new Date(createdAt.seconds * 1000)
+    : new Date(createdAt);
+  const now = new Date();
+  const diffMs = now - created;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
+
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+  return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+}
 
 export default function AdminRecipeCard({
   recipe = {
@@ -14,6 +27,7 @@ export default function AdminRecipeCard({
   return (
     <div style={{
       width: 400,
+      height: 450,
       background: 'white',
       borderRadius: 12,
       outline: '1px #E2E8F0 solid',
@@ -23,24 +37,40 @@ export default function AdminRecipeCard({
       overflow: 'hidden'
     }}>
       {/* Recipe image placeholder */}
-      <div style={{
-        width: "100%",
-        height: 200,
-        background: 'linear-gradient(225deg, #FF6B6B 0%, #FFE66D 100%)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}>
-        <div style={{
-          opacity: 0.85,
-          color: 'white',
-          fontSize: 18,
-          fontFamily: 'Inter, sans-serif',
-          fontWeight: 500
-        }}>
-          Recipe Image
-        </div>
-      </div>
+      <div
+  style={{
+    width: "100%",
+    height: 200,
+    background: 'linear-gradient(225deg, #FF6B6B 0%, #FFE66D 100%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    overflow: 'hidden'
+  }}
+>
+  {recipe.image ? (
+    <img
+      src={recipe.image}
+      alt="Recipe"
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  ) : (
+    <div
+      style={{
+        opacity: 0.85,
+        color: 'white',
+        fontSize: 18,
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 500
+      }}
+    >
+      Recipe Image
+    </div>
+  )}
+</div>
+
       {/* Card content */}
       <div style={{
         width: "100%",
@@ -78,6 +108,7 @@ export default function AdminRecipeCard({
             color: "#A0AEC0",
             fontSize: 12,
             fontWeight: 400,
+            
           }}>
           </div>
           
@@ -95,9 +126,11 @@ export default function AdminRecipeCard({
         {/* Description */}
         <div style={{
           color: "#718096",
-          fontSize: 15,
+          fontSize: 17,
           fontFamily: "Inter, sans-serif",
-          fontWeight: 400
+          fontWeight: 400,
+          wordBreak: "break-word",
+          marginBottom: 8
         }}>
           {recipe.description}
         </div>
@@ -125,7 +158,7 @@ export default function AdminRecipeCard({
               <rect x="7" y="4" width="1.5" height="4" rx="0.75" fill="#A0AEC0" />
               <rect x="7" y="7.5" width="3" height="1.2" rx="0.6" fill="#A0AEC0" />
             </svg>
-            {recipe.time}
+            {recipe.totalTime + " min"}
           </div>
           <div
       style={{
@@ -138,14 +171,14 @@ export default function AdminRecipeCard({
         marginRight: 30,
         textAlign: "right"
       }}>
-      {recipe.submittedAgo ? `${recipe.submittedAgo} hour${recipe.submittedAgo > 1 ? "s" : ""} ago` : ""}
+       {recipe.createdAt ? getTimeAgo(recipe.createdAt) : ""}
     </div>
         </div>
         {/* Action buttons */}
         <div style={{
           display: "flex",
           gap: 14,
-          marginTop: "auto" 
+          marginTop: 20,
         }}>
           <button
             onClick={onReject}
