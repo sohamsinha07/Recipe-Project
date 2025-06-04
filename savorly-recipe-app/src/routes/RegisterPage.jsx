@@ -49,7 +49,7 @@ export default function RegisterPage() {
       return;
     }
 
-    // Immediately show “Checking availability…” in the helperText
+    // Immediately show "Checking availability…" in the helperText
     setUsernameStatus("checking");
 
     setTimeout(async () => {
@@ -86,7 +86,7 @@ export default function RegisterPage() {
       return;
     }
 
-    // Immediately show “Checking email…”
+    // Immediately show "Checking email…"
     setEmailStatus("checking");
     setErrors((prev) => ({ ...prev, email: "" }));
 
