@@ -39,7 +39,7 @@ export default function PasswordFields({
           onChange={onPasswordChange}
           InputProps={{
             endAdornment: (
-              <IconButton onClick={() => toggleShowPwd} edge="end" size="small">
+              <IconButton onClick={toggleShowPwd} edge="end" size="small">
                 {showPwd ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             ),
@@ -90,7 +90,7 @@ export default function PasswordFields({
           helperText={confirmErrorMessage}
           InputProps={{
             endAdornment: (
-              <IconButton onClick={() => toggleShowConfirm} edge="end" size="small">
+              <IconButton onClick={toggleShowConfirm} edge="end" size="small">
                 {showConfirm ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             ),
