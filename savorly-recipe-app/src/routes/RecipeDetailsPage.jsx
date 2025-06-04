@@ -39,6 +39,7 @@ const RecipeDetailsPage = () => {
 	async function copyToClip() {
 		await navigator.clipboard.writeText(location.href);
 		setCopySuccess("Copied");
+		notifyCopy();
 	}
 
 	useEffect(() => {
@@ -107,7 +108,6 @@ const RecipeDetailsPage = () => {
 						<button
 							onClick={function (event) {
 								copyToClip()
-								notifyCopy()
 							}}
 						><FiShare2 /> Share
 						</button>
