@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box } from "@mui/material";
+import { AuthContext } from "../AuthContext";
 
 // Import components
 import FormHeader from "../components/registerPage/FormHeader";
@@ -15,6 +16,7 @@ import leftSideImage from "../assets/registerPage_images/dish_1.png";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [values, setValues] = useState({
     firstName: "",
@@ -102,7 +104,6 @@ export default function RegisterPage() {
         return;
       }
 
-      // Format ok, now call backend to see if it’s taken
       try {
         const res = await axios.get(`/auth/check-email?email=${encodeURIComponent(email)}`);
         if (res.data.exists) {
@@ -176,7 +177,7 @@ export default function RegisterPage() {
 
       const response = await axios.post("/auth/register", payload);
       if (response.status === 201) {
-        console.log("User created: ", response.data.uid);
+        await login({ email: values.email, password: values.password });
         navigate("/profile");
       }
     } catch (err) {
