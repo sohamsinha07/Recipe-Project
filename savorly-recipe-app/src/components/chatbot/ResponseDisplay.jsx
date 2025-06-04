@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/ResponseDisplay.css';
+import '../../styles/ResponseDisplay.css';
 
 const ResponseDisplay = ({ messages }) => {
 	return (

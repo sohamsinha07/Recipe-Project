@@ -1,0 +1,164 @@
+.details-page {
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem 2rem;
+	max-width: 1200px;
+}
+
+.header {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 6rem;
+	text-align: center;
+	padding-bottom: 1rem;
+	margin: .25rem 0.5rem 2rem;
+}
+
+.header button {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	border: 1.5px #dfdfdf solid;
+	border-radius: 8px;
+	background-color: white;
+	color: #333;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.header button:hover {
+	background-color: var(--tea-green);
+	transform: translateY(-1px);
+}
+
+.header-right {
+	display: flex;
+	gap: 1rem;
+}
+
+.recipe-content {
+	background-color: white;
+	overflow: hidden;
+	margin: 2rem 0.5rem 2rem;
+}
+
+.recipe-img-container {
+	width: 100%;
+	height: 300px;
+	background: linear-gradient(135deg, var(--bittersweet), var(--fawn));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	border-radius: 16px;
+	margin-bottom: 3rem;
+}
+
+/*image should fit over placeholder/container*/
+.recipe-img {
+	width: 100%;
+	height: 300px;
+	border-radius: 16px;
+	object-fit: cover;
+}
+
+.recipe-title {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+.recipe-meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 1rem;
+	margin-top: 2rem;
+}
+
+.meta-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #666;
+}
+
+.meta-item svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Left side of content */
+
+.ingredients-instructions {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.recipe-steps {
+	display: grid;
+	grid-template-columns: 1fr 350px;
+	gap: 3rem;
+}
+
+.ingredients-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.ingredients-list li {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.ingredients-list input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	accent-color: #feca57;
+}
+
+.instructions-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.instructions-list li {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+	padding: 1rem 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.instructions-list li:last-child {
+	border-bottom: none;
+}
+
+.step-number {
+	background-color: #feca57;
+	color: white;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+	font-size: 1rem;
+}
+
+/* Right side of content */
+
+.details-right-side {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	margin-top: 2rem;
+}

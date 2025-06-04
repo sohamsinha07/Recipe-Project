@@ -1,0 +1,96 @@
+/* ================================================
+   LoginModal.jsx styles
+   ================================================ */
+.login-dialog-container {
+  border-radius: 8px !important;
+}
+
+.login-title {
+  background-color: #f25c54;
+  color: white;
+  font-weight: 600 !important;
+  text-align: center;
+}
+.login-content {
+  padding-top: 1rem !important;
+}
+.login-subtitle {
+  margin-bottom: 1rem !important;
+  text-align: center;
+  color: #555;
+}
+
+.login-input .MuiFilledInput-root {
+  background-color: #e6e6e6 !important;
+  border-radius: 6px 6px 0px 0px !important;
+  margin-bottom: 0.3rem !important;
+}
+.login-input .MuiInputLabel-root {
+  font-weight: bold !important;
+}
+
+.login-password-input .MuiFilledInput-root {
+  background-color: #e6e6e6 !important;
+  border-radius: 6px 6px 0px 0px !important;
+  margin-bottom: 0.2rem !important;
+}
+.login-password-input .MuiInputLabel-root {
+  font-weight: bold !important;
+}
+
+.login-forgot {
+  text-transform: none !important;
+  font-size: 0.875rem !important;
+  color: #f25c54 !important;
+}
+.login-forgot:hover {
+  text-decoration: underline !important;
+}
+
+.login-button {
+  background-color: #f25c54 !important;
+  color: rgb(255, 255, 255) !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  padding: 9.6px 0 !important;
+  margin-bottom: 1.5rem !important;
+  border-radius: 6px !important;
+}
+.login-button:hover {
+  background-color: #c94d44 !important;
+}
+
+.login-divider-text {
+  margin: 0 12px !important;
+  color: #777;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+
+.login-google-button {
+  text-transform: none !important;
+  border-color: #afafaf !important;
+  color: #555 !important;
+  border-radius: 6px !important;
+  padding: 8.5px 0 !important;
+}
+.login-google-button:hover {
+  background-color: #00000017;
+}
+
+.login-register-button {
+  text-transform: none !important;
+  background-color: #f25c54 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  padding: 8px 32px !important;
+  border-radius: 6px !important;
+}
+.login-register-button:hover {
+  background-color: #c94d44;
+}
+
+/* replaced: sx={{ p: 1 }} */
+.login-dialog-actions {
+  padding: 7px !important; /* 1 × 8px */
+}

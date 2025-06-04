@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import InputBox from './InputBox'
 import ResponseDisplay from './ResponseDisplay';
+import { LuSend } from "react-icons/lu";
+import '../../styles/ChatPage.css'
+import { RiRobot2Line } from "react-icons/ri";
 
 export const ChatPage = () => {
 
@@ -38,7 +41,7 @@ export const ChatPage = () => {
 
 			const botMessage = data;
 			setMessages(prev => [...prev, botMessage]);
-			
+
 		} catch (error) {
 			console.error("Fetch failed:", error);
 		} finally {
@@ -46,17 +49,26 @@ export const ChatPage = () => {
 		}
 	};
 	return (
-		<div>
-			<h1>Chatbot</h1>
+		<div className='chatbot-container'>
+			<div className='chatbot-title'>
+				<RiRobot2Line className='robot-icon' />
+				<h2>Recipe Bot</h2>
+			</div>
+
+
 			<ResponseDisplay messages={messages} />
-			<form onSubmit={handleSend}>
-				<InputBox
-					value={inputValue}
-					onChange={(e) => setInputValue(e.target.value)}
-					disabled={loading}
-				/>
-				<button className='submit-btn' type='submit' disabled={loading}>Submit</button>
-			</form>
+
+			<div className='input-container'>
+				<form onSubmit={handleSend} style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+
+					<InputBox
+						value={inputValue}
+						onChange={(e) => setInputValue(e.target.value)}
+						disabled={loading}
+					/>
+					<button className='submit-btn' type='submit' disabled={loading}><LuSend size={30} /></button>
+				</form>
+			</div>
 
 			{loading && <div>Loading...</div>}
 

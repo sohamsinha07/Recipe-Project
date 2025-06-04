@@ -1,11 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { useLocation, Outlet } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import ChatPage from "./components/ChatPage";
+
 
 export default function App() {
+  const location = useLocation();
+  const isRegisterPage = location.pathname === "/register";
+
   return (
     <>
-      <Navbar />
+      {!isRegisterPage && <Navbar />}
       <Outlet />
     </>
   );
