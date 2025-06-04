@@ -204,8 +204,9 @@ const RecipeDetailsPage = () => {
 			</div>
 			<div className='comment-section'>
 				<Comments
-					// recipeId={`${type}-${id}`}
+					commentsRecipeId={`${type}-${id}`}
 					recipeId={id}
+					// recipeId={id}
 					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
 					// currentUserId={currentUser?.uid || null}
 				/>

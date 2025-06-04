@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react"
 import { collection, addDoc, query, orderBy, onSnapshot, doc, Timestamp, deleteDoc, updateDoc, getDocs, where, getDoc } from 'firebase/firestore'
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
-import { FaReply, FaTrash, FaEdit, FaHeart, FaRegHeart } from 'react-icons/fa';
+import { FaReply, FaTrash, FaHeart, FaRegHeart } from 'react-icons/fa';
 import '../styles/Comments.css'
 import RatingBox from "./RatingBox";
 
 
-const Comments = ({ recipeId, currentUserId }) => {
+const Comments = ({ recipeId, currentUserId, commentsRecipeId }) => {
 
 	const [comments, setComments] = useState([]);
 	const [newComment, setNewComment] = useState([]);
@@ -18,7 +18,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 	// fetch comments
 	useEffect(() => {
-		if (!recipeId) return;
+		if (!commentsRecipeId) return;
 
 		const commentsRef = collection(db, 'comments');
 		const q = query(
@@ -35,7 +35,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 				const commentData = { id: docSnapshot.id, ...docSnapshot.data() };
 
 				// filter for a specific recipe, given its id
-				if (commentData.recipeId === recipeId) {
+				if (commentData.recipeId === commentsRecipeId) {
 
 					// saving comment's username
 					commentData.username = await getUserName(commentData.userId);
@@ -67,7 +67,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 			setLoading(false);
 		})
 		return () => unsubscribe();
-	}, [recipeId]);
+	}, [commentsRecipeId]);
 
 	// Adding a new comment
 	const handleAddComment = async (e) => {
