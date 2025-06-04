@@ -1,7 +1,7 @@
-import axios from "axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../AuthContext";
 import {
   Dialog,
   DialogTitle,
@@ -22,6 +22,7 @@ import GoogleLogo from "../assets/google.png";
 import "../styles/loginAndRegister.css";
 
 export default function LoginModal({ open, onClose }) {
+  const { login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -32,8 +33,8 @@ export default function LoginModal({ open, onClose }) {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post("/auth/login", { email, password });
-      const { idToken, uid } = response.data;
+      await login({ email, password });
+      setErrorMsg("");
       onClose();
       navigate("/profile");
     } catch (err) {
@@ -50,7 +51,7 @@ export default function LoginModal({ open, onClose }) {
       fullWidth
       classes={{ paper: "login-dialog-container" }}
     >
-      {/* Dialog Title with accent background */}
+      {/* Dialog Title */}
       <DialogTitle className="login-title">Log in to Savorly</DialogTitle>
 
       <DialogContent className="login-content">
