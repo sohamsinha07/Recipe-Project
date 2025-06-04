@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChatPage from '../components/chatbot/ChatPage'
 import { FaArrowLeft } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import { FaClock } from 'react-icons/fa';
 import { HiUsers } from "react-icons/hi";
+import { FaHeart } from 'react-icons/fa';
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
@@ -13,6 +14,7 @@ import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/fir
 import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
+import { AuthContext } from '../AuthContext';
 
 const RecipeDetailsPage = () => {
 
@@ -25,6 +27,7 @@ const RecipeDetailsPage = () => {
 	const textAreaRef = useRef(null);
 	const [loading, setLoading] = useState(true);
 	const [averageRating, setAverageRating] = useState(0);
+	const { user, login, logout } = useContext(AuthContext);
 
 	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
 		autoClose: 2000,
@@ -85,6 +88,44 @@ const RecipeDetailsPage = () => {
 		}
 	}, [type, id]);
 
+	// check if the recipe is saved for this user
+	useEffect(() => {
+		const checkIfSaved = async () => {
+			if (user?.uid && id) {
+				const savedRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+				const docSnap = await getDoc(savedRef);
+				setIsSaved(docSnap.exists());
+			}
+		}
+		checkIfSaved();
+	}, [user, id])
+
+	const handleSaveRecipe = async () => {
+		if (!user) {
+			toast.info('Please login to save recipes');
+			return;
+		}
+		try {
+			const userRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+
+			if (isSaved) {
+				await deleteDoc(userRef);
+				toast.success('Recipe removed from saved');
+			} else {
+				await setDoc(userRef, {
+					recipeId: id,
+					// savedAt: new Date(),
+					// recipeType: type,
+				});
+				toast.success('Recipe saved!');
+			}
+			setIsSaved(!isSaved);
+		} catch (error) {
+			console.error('Error saving recipe:', error);
+		}
+
+	}
+
 	if (!recipe) {
 		return (
 			<div className="details-page">
@@ -101,7 +142,10 @@ const RecipeDetailsPage = () => {
 					<button><FaArrowLeft /> Back to Recipes</button>
 				</Link>
 				<div className='header-right'>
-					<button><FaRegHeart /> Save Recipe</button>
+					<button onClick={handleSaveRecipe}>
+						{isSaved? <FaHeart /> : <FaRegHeart/>}
+						{isSaved? 'Unsave Recipe' : 'Save Recipe'}
+					</button>
 					<div>
 						<button
 							onClick={function (event) {
@@ -204,9 +248,8 @@ const RecipeDetailsPage = () => {
 			<div className='comment-section'>
 				<Comments
 					recipeId={id}
-					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
-					// commentsRecipeId={`${type}-${id}`}
-					// currentUserId={currentUser?.uid || null}
+					// currentUserId={'bmEllYa1L8YLdeKOxE8r'}
+					currentUserId={user?.uid || null}
 				/>
 			</div>
 		</div>
