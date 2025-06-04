@@ -66,25 +66,27 @@ export default function AdminRecipeGrid({
           {/* Info */}
           <div style={{ flex: 3, minWidth: 0 }}>
             <div style={{
-              fontWeight: 700, fontSize: 18, color: "#1A202C",
+              fontWeight: 700, fontSize: 18, color: "#1A202C", fontFamily: "Inter, sans-serif",
               whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
             }}>
-              {recipe.title}
+              <div className="list-title">
+                  {recipe.title}
+                </div>
             </div>
             <div style={{
-              color: "#718096", fontSize: 14,
+              color: "#718096", fontSize: 14, fontFamily: "Inter, sans-serif",
               overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"
             }}>
               {recipe.description}
             </div>
           </div>
           {/* Author */}
-          <div style={{ flex: 1, color: "#718096", fontSize: 14 }}>
+          <div style={{ flex: 1, color: "#718096", fontSize: 14, fontFamily: "Inter, sans-serif" }}>
             {recipe.author || "-"}
           </div>
           {/* Time */}
           <div style={{
-            flex: 1, display: "flex", alignItems: "center", color: "#718096", fontSize: 14
+            flex: 1, display: "flex", alignItems: "center", color: "#718096", fontSize: 14, fontFamily: "Inter, sans-serif"
           }}>
             <svg width="15" height="15" style={{ marginRight: 3 }}>
               <circle cx="7.5" cy="7.5" r="6" stroke="#A0AEC0" strokeWidth="1.2" fill="none" />
@@ -101,6 +103,7 @@ export default function AdminRecipeGrid({
               borderRadius: 12,
               padding: "2px 10px",
               fontWeight: 500,
+              fontFamily: "Inter, sans-serif",
               fontSize: 13
             }}>
               Pending

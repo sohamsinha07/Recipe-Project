@@ -9,7 +9,7 @@ import "../styles/admin.css";
 const sampleRecipes = [
   {
     title: "Mediterranean Quinoa Bowl",
-    description: "Healthy and delicious bowl with fresh vegetables blah blah blah blah blah blah blah blah blah blah blah blah blah",
+    description: "Healthy and delicious bowl with fresh vegetables",
     rating: 4.8,
     time: "25 min",
     author: "Sarah Kim",
@@ -20,6 +20,7 @@ const sampleRecipes = [
     description: "Aromatic curry with coconut milk and vegetables",
     rating: 4.6,
     time: "35 min",
+    author: "Mike Chen",
     submittedAgo: 3
   },
   {
@@ -27,12 +28,15 @@ const sampleRecipes = [
     description: "Rich and moist chocolate cake with ganache",
     rating: 4.9,
     time: "60 min",
+    author: "Emma Wilson",
     submittedAgo: 8
   },
   {
     title: "Fresh Garden Salad",
     description: "Crisp vegetables with homemade vinaigrette",
     rating: 4.4,
+    time: "30 min",
+    author: "Mary Waters",
     submittedAgo: 5
   },
 ];

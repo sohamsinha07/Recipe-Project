@@ -185,7 +185,7 @@ export default function RecipeReviewTabs({
               style={{
                 width: 36,
                 height: 36,
-                background: view === "grid" ? "#E53E3E" : "#F7FAFC",
+                background: view === "grid" ? "#E53E3E" : "#E2E8F0",
                 borderRadius: 6,
                 outline: view === "grid" ? "none" : "1px #E2E8F0 solid",
                 outlineOffset: "-1px",
@@ -208,7 +208,7 @@ export default function RecipeReviewTabs({
               style={{
                 width: 36,
                 height: 36,
-                background: view === "list" ? "#E53E3E" : "#F7FAFC",
+                background: view === "list" ? "#E53E3E" : "#E2E8F0",
                 borderRadius: 6,
                 outline: view === "list" ? "none" : "1px #E2E8F0 solid",
                 outlineOffset: "-1px",
