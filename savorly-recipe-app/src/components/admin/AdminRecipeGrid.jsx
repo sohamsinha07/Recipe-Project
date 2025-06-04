@@ -2,13 +2,9 @@ import React from "react";
 import AdminRecipeCard from "./AdminRecipeCard"; 
 
 export default function AdminRecipeGrid({
-  sampleRecipes = [],
-  view = "grid", // Default to grid
-  onApprove,
-  onReject,
-  onEdit
+  recipes, view, onApprove, onReject, onEdit
 }) {
-  if (!sampleRecipes.length) {
+  if (!recipes.length) {
     return <div style={{ padding: 32 }}>No recipes found.</div>;
   }
 
@@ -26,7 +22,7 @@ export default function AdminRecipeGrid({
         minHeight: "600px",
         padding: "32px 40px"
       }}>
-        {sampleRecipes.map((recipe, i) => (
+        {recipes.map((recipe, i) => (
           <AdminRecipeCard
             key={i}
             recipe={recipe}
@@ -42,7 +38,7 @@ export default function AdminRecipeGrid({
   // List view
   return (
     <div className="admin-list-view">
-      {sampleRecipes.map((recipe, i) => (
+      {recipes.map((recipe, i) => (
         <AdminRecipeCard
           key={i}
           recipe={recipe}

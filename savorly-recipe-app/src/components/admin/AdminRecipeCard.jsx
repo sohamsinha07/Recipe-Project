@@ -7,7 +7,6 @@ export default function AdminRecipeCard({
     author: "Sarah Kim",
     time: "45 min",
     status: "pending",
-    submittedAgo: "2 hours ago"
   },
   onApprove,
   onReject,
@@ -78,10 +77,10 @@ export default function AdminRecipeCard({
           <div style={{
             color: "#A0AEC0",
             fontSize: 12,
-            fontWeight: 400
+            fontWeight: 400,
           }}>
-            {recipe.submittedAgo}
           </div>
+          
         </div>
         {/* Title */}
         <div style={{
@@ -128,12 +127,25 @@ export default function AdminRecipeCard({
             </svg>
             {recipe.time}
           </div>
+          <div
+      style={{
+        color: "#A0AEC0",
+        fontSize: 14,
+        fontFamily: "Inter, sans-serif",
+        fontWeight: 400,
+        whiteSpace: "nowrap",
+        marginLeft: "auto",
+        marginRight: 30,
+        textAlign: "right"
+      }}>
+      {recipe.submittedAgo ? `${recipe.submittedAgo} hour${recipe.submittedAgo > 1 ? "s" : ""} ago` : ""}
+    </div>
         </div>
         {/* Action buttons */}
         <div style={{
           display: "flex",
           gap: 14,
-          marginTop: "auto" // <-- THIS is key to align the button row to the bottom
+          marginTop: "auto" 
         }}>
           <button
             onClick={onReject}
@@ -170,6 +182,7 @@ export default function AdminRecipeCard({
             Approve &amp; Publish
           </button>
         </div>
+        
       </div>
     </div>
   );
