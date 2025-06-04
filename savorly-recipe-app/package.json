@@ -16,14 +16,15 @@
     "@mui/material": "^7.1.1",
     "@mui/x-date-pickers": "^8.5.0",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "firebase": "^11.8.1",
     "firestore": "^1.1.6",
-    "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.6.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "savorly-recipe-app": "file:"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
