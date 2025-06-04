@@ -10,11 +10,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
-// import Comments from '../components/recipe-details/Comments';
 import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
-import RatingBox from '../components/RatingBox';
 
 const RecipeDetailsPage = () => {
 
