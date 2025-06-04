@@ -10,7 +10,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
-import Comments from '../components/Comments';
+// import Comments from '../components/recipe-details/Comments';
+import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
 import RatingBox from '../components/RatingBox';
@@ -204,10 +205,9 @@ const RecipeDetailsPage = () => {
 			</div>
 			<div className='comment-section'>
 				<Comments
-					commentsRecipeId={`${type}-${id}`}
 					recipeId={id}
-					// recipeId={id}
 					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
+					// commentsRecipeId={`${type}-${id}`}
 					// currentUserId={currentUser?.uid || null}
 				/>
 			</div>
