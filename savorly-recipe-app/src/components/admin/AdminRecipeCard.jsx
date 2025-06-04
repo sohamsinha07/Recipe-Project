@@ -64,7 +64,8 @@ export default function AdminRecipeCard({
             gap: 6,
             fontSize: 12,
             fontWeight: 500,
-            color: "#C53030"
+            color: "#C53030",
+            fontFamily: "Inter, sans-serif"
           }}>
             {/* Pending SVG */}
             <svg width="14" height="14" viewBox="0 0 14 14" style={{ marginRight: 2 }}>
