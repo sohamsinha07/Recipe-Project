@@ -7,6 +7,7 @@ import { FiShare2 } from "react-icons/fi";
 import { FaClock } from 'react-icons/fa';
 import { HiUsers } from "react-icons/hi";
 import { FaHeart } from 'react-icons/fa';
+import { HiUser } from 'react-icons/hi';
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
@@ -171,8 +172,11 @@ const RecipeDetailsPage = () => {
 				</div>
 
 				<h1 className='recipe-title'>{recipe.title}</h1>
+				<div className='recipe-author-desc'>
+					
+				</div>
 				{recipe.description && (
-					<p className='recipe-description'>Description</p>
+					<p className='recipe-description'>{recipe.description}</p>
 				)}
 				<div className='recipe-meta'>
 					<span className='rating'>
@@ -183,6 +187,12 @@ const RecipeDetailsPage = () => {
 							precision={0.5}
 						/>
 					</span>
+					{recipe.author && (
+						<div className='meta-item'>
+							<HiUser />
+							<span>By: {recipe.author}</span>
+						</div>
+					)}
 					{recipe.totalTime && (
 						<div className='meta-item'>
 							<FaClock />
