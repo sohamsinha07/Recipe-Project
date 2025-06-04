@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { FaReply, FaTrash, FaEdit, FaHeart, FaRegHeart } from 'react-icons/fa';
 import '../styles/Comments.css'
+import RatingBox from "./RatingBox";
 
 
 const Comments = ({ recipeId, currentUserId }) => {
@@ -209,6 +210,7 @@ const Comments = ({ recipeId, currentUserId }) => {
 
 			{currentUserId ? (
 				<form onSubmit={handleAddComment} className='add-comment-form'>
+					<RatingBox recipeId={recipeId}/>
 					<textarea
 						value={newComment}
 						onChange={(e) => setNewComment(e.target.value)}
