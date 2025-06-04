@@ -1,6 +1,5 @@
 import React from "react";
-import AdminRecipeCard from "./AdminRecipeCard"; // Use your styled card
-// No need to define sampleRecipes here if it's passed as a prop
+import AdminRecipeCard from "./AdminRecipeCard"; 
 
 export default function AdminRecipeGrid({
   sampleRecipes = [],
@@ -17,11 +16,15 @@ export default function AdminRecipeGrid({
   if (view === "grid") {
     return (
       <div className="popular-grid" style={{
-        display: "flex",
+        display: "grid",
+        gridTemplateColumns: "repeat(3, 1fr)",
         flexWrap: "wrap",
-        gap: "2rem",
-        marginTop: "2rem",
-        alignItems: "stretch"
+        gap: "32px",
+        justifyContent: "center",
+        maxWidth: "1280px",
+        margin: "0 auto",                        // Center grid on page
+        minHeight: "600px",
+        padding: "32px 40px"
       }}>
         {sampleRecipes.map((recipe, i) => (
           <AdminRecipeCard

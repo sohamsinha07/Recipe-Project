@@ -4,7 +4,7 @@ import "../../styles/admin.css";
 export default function AdminHeader({ pendingCount = 12, approvedCount = 8 }) {
   return (
     <div className="admin-header-container">
-      <div className="admin-header-row">
+      <div className="admin-header-row-top">
         {/* Logo & name */}
         <div className="admin-header-left">
           <div className="admin-header-avatar">R</div>
