@@ -158,7 +158,7 @@ const RecipeDetailsPage = () => {
 
 		<div className='details-page'>
 			<div className='header'>
-				<Link to="/recipes">
+				<Link to="/recipe">
 					<button><FaArrowLeft /> Back to Recipes</button>
 				</Link>
 				<div className='header-right'>

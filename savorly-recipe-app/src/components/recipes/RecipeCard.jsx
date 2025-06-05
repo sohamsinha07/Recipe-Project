@@ -21,7 +21,7 @@ export default function RecipeCard({ recipe }) {
   if (recipe.source !== "firestore") return;
 
   try {
-    const res = await fetch(`http://localhost:3000/recipes/firestore/${recipe.id}/favorite`, {
+    const res = await fetch(`/recipe-details?id=${encodeURIComponent(id)}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,10 @@ export default function RecipeCard({ recipe }) {
 
 
   return (
-    <Link to={`/recipe/${recipe.source}/${recipe.id}`} style={{ textDecoration: "none" }}>
+    <Link
+      to={`/recipe/${recipe.source === "firestore" ? "user" : "edamam"}/${recipe.id}`}
+      style={{ textDecoration: "none" }}
+    >
         <Card
     sx={{
         background: "linear-gradient(to right, #ff5f6d, #ffc371)",
