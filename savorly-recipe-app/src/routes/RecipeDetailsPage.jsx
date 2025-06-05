@@ -69,7 +69,8 @@ const RecipeDetailsPage = () => {
 						throw new Error('Failed to fetch recipe');
 					}
 					const data = await response.json();
-					setRecipe(data.recipe);
+					setRecipe({ ...data.recipe, type: 'edamam' });
+					// setRecipe(data.recipe);
 					console.log(data.recipe);
 
 					// if it's user generated, fetch from firebase
@@ -82,7 +83,8 @@ const RecipeDetailsPage = () => {
 						setRecipe(docSnap.data());
 
 						const data = docSnap.data();
-						setRecipe(data);
+						// setRecipe(data);
+						setRecipe({ ...data, type: 'user' });
 						if (data.averageRating) {
 							setAverageRating(data.averageRating);
 						}
@@ -199,14 +201,25 @@ const RecipeDetailsPage = () => {
 					<p className='recipe-description'>{recipe.description}</p>
 				)}
 				<div className='recipe-meta'>
-					<span className='rating'>
+					{recipe.rating && (
+						<span className='rating'>
+							<Rating
+								name="read-only"
+								value={averageRating}
+								readOnly
+								precision={0.5}
+							/>
+						</span>
+					)
+					}
+					{/* <span className='rating'>
 						<Rating
 							name="read-only"
 							value={averageRating}
 							readOnly
 							precision={0.5}
 						/>
-					</span>
+					</span> */}
 					{recipe.author && (
 						<div className='meta-item'>
 							<HiUser />
@@ -237,7 +250,16 @@ const RecipeDetailsPage = () => {
 								{(recipe.ingredients || []).map((ingredient, index) => (
 									<li key={index}>
 										<input type="checkbox" id={`ingredient-${index}`} />
-										<label htmlFor={`ingredient-${index}`}>{ingredient.text}</label>
+										<label htmlFor={`ingredient-${index}`}>
+											{recipe.type === 'edamam' ? ingredient.text : ingredient}
+										</label>
+										{/* {recipe.type === 'edamam' && (
+											<label htmlFor={`ingredient-${index}`}>{ingredient.text}</label>
+										)}
+										{recipe.type === 'user' && (
+											<label htmlFor={`ingredient-${index}`}>{ingredient}</label>
+										)} */}
+										
 									</li>
 								))}
 							</ul>
