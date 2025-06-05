@@ -4,11 +4,7 @@ import { Link as RouterLink } from "react-router-dom";
 
 export default function KitchenHeader() {
   return (
-    <Stack
-      direction={{ xs: "column", sm: "row" }}
-      justifyContent="space-between"
-      spacing={2}
-    >
+    <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={2}>
       <div>
         <Typography variant="h4" fontWeight={700}>
           My Kitchen
@@ -22,9 +18,15 @@ export default function KitchenHeader() {
         component={RouterLink}
         to="/create_recipe"
         variant="contained"
-        color="error"
         startIcon={<AddIcon />}
-        sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
+        sx={{
+          alignSelf: {
+            xs: "flex-start",
+            sm: "center",
+            backgroundColor: "#fe5f55",
+            fontWeight: "bold",
+          },
+        }}
       >
         Create Recipe
       </Button>
