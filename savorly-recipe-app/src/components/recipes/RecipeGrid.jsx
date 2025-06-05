@@ -91,7 +91,10 @@ export default function RecipeGrid() {
             recipe={{
               ...recipe,
               source,
-              id: recipe.id || recipe._id || recipe.uri || index,
+              id:
+                source === "edamam"
+                  ? recipe.uri // full URI required to fetch from Edamam
+                  : recipe.id || recipe._id || index, // fallback for user recipes
               title: typeof recipe.title === "string" ? recipe.title : recipe.title?.value || "Untitled",
               description: typeof recipe.description === "string" ? recipe.description : recipe.description?.value || "No description",
               rating: typeof recipe.rating === "number" ? recipe.rating : recipe.rating?.value || 0,

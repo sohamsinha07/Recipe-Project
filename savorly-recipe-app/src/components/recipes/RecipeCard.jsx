@@ -44,7 +44,7 @@ export default function RecipeCard({ recipe }) {
 
   return (
     <Link
-      to={`/recipe/${recipe.source === "firestore" ? "user" : "edamam"}/${recipe.id}`}
+      to={`/recipe/${recipe.source === "firestore" ? "user" : "edamam"}/${encodeURIComponent(recipe.id)}`}
       style={{ textDecoration: "none" }}
     >
         <Card
