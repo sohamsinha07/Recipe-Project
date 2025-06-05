@@ -3,7 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import OpenAi from "openai";
 import cors from "cors";
-import db from "./firebase.js";
 
 dotenv.config(); // Load the .env file
 

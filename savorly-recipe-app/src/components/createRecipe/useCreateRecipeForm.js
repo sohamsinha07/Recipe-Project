@@ -32,7 +32,7 @@ const schema = yup.object({
     .min(1),
 });
 
-export default function useCreateRecipeForm(onSuccess) {
+export default function useCreateRecipeForm(onSuccess, user) {
   const navigate = useNavigate();
 
   const methods = useForm({
@@ -46,6 +46,7 @@ export default function useCreateRecipeForm(onSuccess) {
       servings: "",
       ingredients: [],
       instructions: [],
+      url: "",
     },
   });
 
@@ -61,6 +62,27 @@ export default function useCreateRecipeForm(onSuccess) {
           fd.append(k, v);
         }
       });
+
+      // 1) author: “First Last” or “Anonymous”
+      if (user && user.firstName && user.lastName) {
+        fd.append("author", `${user.firstName} ${user.lastName}`);
+      } else {
+        fd.append("author", "Anonymous");
+      }
+
+      // 2) createdBy: <UID>
+      if (user && user.uid) {
+        fd.append("createdBy", user.uid);
+      } else {
+        // In case something is off, we still send an empty string:
+        fd.append("createdBy", "");
+      }
+      // 3) source: always “user” for a user‐generated recipe
+      fd.append("source", "user");
+
+      // 4) status: initially “pending”
+      fd.append("status", "pending");
+      fd.append("url", values.url || "");
 
       await axios.post("/create_recipe", fd, {
         headers: { "Content-Type": "multipart/form-data" },
