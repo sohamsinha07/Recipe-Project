@@ -11,6 +11,7 @@ import RecipesPage from "./routes/RecipesPage";
 import CategoriesPage from "./routes/CategoriesPage";
 import MyKitchenPage from "./routes/MyKitchenPage";
 import RecipeDetailsPage from "./routes/RecipeDetailsPage";
+import CreateRecipePage from "./routes/CreateRecipePage";
 import AdminPage from "./routes/AdminPage";
 import AdminLayout from "./components/admin/AdminLayout";
 
@@ -29,6 +30,7 @@ export const router = createBrowserRouter([
       { path: "my_kitchen", element: <MyKitchenPage /> },
       { path: "profile", element: <ProfilePage /> },
       { path: "recipe/:type/:id", element: <RecipeDetailsPage /> },
+    { path: "create_recipe", element: <CreateRecipePage /> },
       { path: "admin", element: <AdminPage /> },
     ],
   },
