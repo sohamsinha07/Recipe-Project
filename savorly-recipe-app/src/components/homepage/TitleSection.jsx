@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Box, Typography, Button, Skeleton } from "@mui/material";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import AddIcon from "@mui/icons-material/Add";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "../../styles/homePage.css";
 import "swiper/css";
@@ -29,7 +29,9 @@ function shuffleArray(arr) {
 
 SwiperCore.use([Autoplay, EffectFade]);
 
-export default function TitleSection({ loading }) {
+export default function TitleSection({ loading, user, onRequireLogin }) {
+  const navigate = useNavigate();
+
   const slideUrls = useMemo(() => {
     const urls = Object.values(imageModules);
     return shuffleArray(urls);
@@ -126,8 +128,13 @@ export default function TitleSection({ loading }) {
             variant="contained"
             className="title-section-browse-button"
             startIcon={<AutoStoriesIcon className="title-section-browse-icon" />}
-            component={RouterLink}
-            to="/recipes"
+            onClick={() => {
+              if (user) {
+                navigate("/recipes");
+              } else {
+                onRequireLogin();
+              }
+            }}
           >
             Browse Recipes
           </Button>
@@ -136,8 +143,13 @@ export default function TitleSection({ loading }) {
             variant="outlined"
             className="title-section-create-button"
             startIcon={<AddIcon />}
-            component={RouterLink}
-            to="/create_recipe"
+            onClick={() => {
+              if (user) {
+                navigate("/create_recipe");
+              } else {
+                onRequireLogin();
+              }
+            }}
           >
             Create Recipe
           </Button>

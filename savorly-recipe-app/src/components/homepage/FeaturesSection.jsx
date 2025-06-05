@@ -4,11 +4,26 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "../../styles/homePage.css";
 
-export default function FeaturesSection({ loading }) {
+export default function FeaturesSection({ loading, user, onRequireLogin }) {
+  const navigate = useNavigate();
+
+  const handleClick = (path, loggedInRedirect = null) => {
+    if (user) {
+      // If user is already logged in, redirect to a different page
+      if (loggedInRedirect) {
+        navigate(loggedInRedirect);
+      } else {
+        navigate(path);
+      }
+    } else {
+      onRequireLogin();
+    }
+  };
+
   if (loading) {
     return (
       <Box className="features-section-container">
@@ -102,7 +117,11 @@ export default function FeaturesSection({ loading }) {
 
         <Grid container spacing={6} justifyContent="center">
           <Grid>
-            <Card className="feature-card">
+            <Card
+              className="feature-card"
+              onClick={() => handleClick("/register", "/my_kitchen")}
+              sx={{ cursor: "pointer" }}
+            >
               {/* Card Content */}
               <CardContent className="feature-card-content">
                 <Box className="feature-icon-box feature-icon-discover">
@@ -126,8 +145,7 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-explore"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
-                  component={RouterLink}
-                  to="/recipes"
+                  onClick={() => handleClick("/recipes")}
                 >
                   Explore
                 </Button>
@@ -136,7 +154,11 @@ export default function FeaturesSection({ loading }) {
           </Grid>
 
           <Grid>
-            <Card className="feature-card">
+            <Card
+              className="feature-card"
+              onClick={() => handleClick("/register", "/my_kitchen")}
+              sx={{ cursor: "pointer" }}
+            >
               <CardContent className="feature-card-content">
                 <Box className="feature-icon-box feature-icon-create">
                   <AddCircleOutlineIcon sx={{ fontSize: 26 }} />
@@ -154,8 +176,7 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-create"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
-                  component={RouterLink}
-                  to="/create_recipe"
+                  onClick={() => handleClick("/create_recipe")}
                 >
                   Start Creating
                 </Button>
@@ -164,7 +185,11 @@ export default function FeaturesSection({ loading }) {
           </Grid>
 
           <Grid>
-            <Card className="feature-card">
+            <Card
+              className="feature-card"
+              onClick={() => handleClick("/register", "/my_kitchen")}
+              sx={{ cursor: "pointer" }}
+            >
               <CardContent className="feature-card-content">
                 <Box className="feature-icon-box feature-icon-join">
                   <PeopleAltIcon sx={{ fontSize: 24 }} />
@@ -182,8 +207,7 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-join"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
-                  component={RouterLink}
-                  to="/register"
+                  onClick={() => handleClick("/register", "/my_kitchen")}
                 >
                   Join Now
                 </Button>
