@@ -30,6 +30,16 @@ const schema = yup.object({
       })
     )
     .min(1),
+  imageDataURL: yup
+    .string()
+    .required("Please upload an image for your recipe")
+    .test(
+      "is-data-url",
+      "Upload a valid JPEG or PNG",
+      (val) => typeof val === "string" && val.startsWith("data:image/")
+    ),
+
+  url: yup.string().url().nullable(),
 });
 
 export default function useCreateRecipeForm(onSuccess, user) {
@@ -46,6 +56,7 @@ export default function useCreateRecipeForm(onSuccess, user) {
       servings: "",
       ingredients: [],
       instructions: [],
+      imageDataURL: "",
       url: "",
     },
   });
@@ -53,41 +64,32 @@ export default function useCreateRecipeForm(onSuccess, user) {
   /* --------------------------- submit ---------------------------- */
   const onSubmit = async (values) => {
     try {
-      const fd = new FormData();
+      // Build a plain‐object payload (no FormData, because we’re just sending JSON)
+      const payload = {
+        title: values.title,
+        description: values.description,
+        totalTime: Number(values.totalTime),
+        calories: values.calories ? Number(values.calories) : null,
+        mealType: values.mealType,
+        servings: Number(values.servings),
+        ingredients: JSON.stringify(values.ingredients),
+        instructions: JSON.stringify(values.instructions),
 
-      Object.entries(values).forEach(([k, v]) => {
-        if (k === "ingredients" || k === "instructions") {
-          fd.append(k, JSON.stringify(v));
-        } else {
-          fd.append(k, v);
-        }
-      });
+        // THIS is the base64 string
+        image: values.imageDataURL,
 
-      // 1) author: “First Last” or “Anonymous”
-      if (user && user.firstName && user.lastName) {
-        fd.append("author", `${user.firstName} ${user.lastName}`);
-      } else {
-        fd.append("author", "Anonymous");
-      }
+        // author / createdBy / source / status / url
+        author:
+          user && user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : "Anonymous",
+        createdBy: user?.uid || "",
+        source: "user",
+        status: "pending",
+        url: values.url || "",
+      };
 
-      // 2) createdBy: <UID>
-      if (user && user.uid) {
-        fd.append("createdBy", user.uid);
-      } else {
-        // In case something is off, we still send an empty string:
-        fd.append("createdBy", "");
-      }
-      // 3) source: always “user” for a user‐generated recipe
-      fd.append("source", "user");
-
-      // 4) status: initially “pending”
-      fd.append("status", "pending");
-      fd.append("url", values.url || "");
-
-      await axios.post("/create_recipe", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
+      await axios.post("/create_recipe", payload);
       onSuccess?.();
     } catch (err) {
       console.error("save failed:", err.response?.data || err);

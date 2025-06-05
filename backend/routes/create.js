@@ -1,13 +1,11 @@
 import express from "express";
-import multer from "multer";
-import { v4 as uuid } from "uuid";
 import admin, { db } from "../firebase.js";
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", async (req, res) => {
   try {
+    // Destructure exactly what we expect in JSON:
     const {
       title,
       description,
@@ -17,52 +15,50 @@ router.post("/", upload.single("image"), async (req, res) => {
       servings,
       ingredients,
       instructions,
-      author = "Anonymous",
-      createdBy = "", // the user’s UID
-      source = "user",
-      status = "pending",
-      url = "",
+      image, // THIS is the Base64 string from the form
+      author,
+      createdBy,
+      source,
+      status,
+      url,
     } = req.body;
 
+    // Convert JSON‐wrapped arrays back into JS arrays:
     const recipeDoc = {
-      title: title,
-      description: description,
+      title,
+      description,
       totalTime: Number(totalTime),
       calories: calories ? Number(calories) : null,
-      mealType: mealType,
+      mealType,
       servings: Number(servings),
-
       ingredients: JSON.parse(ingredients),
       instructions: JSON.parse(instructions),
+      image,
+      author,
+      createdBy,
+      source, // “user”
+      status, // “pending”
+      url,
 
-      author: author,
-      createdBy: createdBy, // the UID string
-      source: source, // always "user"
-      status: status, // e.g. "pending"
-      url: url,
-
-      // System‐generated fields:
+      // Firestore‐generated fields
       createdAt: new Date(),
       averageRating: 0,
       favorited: false,
       ratings: [],
-
-      // For now, store a placeholder image string.
-      image: "",
     };
 
+    // Write the recipe to Firestore
     const newRecipeRef = await db.collection("recipes").add(recipeDoc);
     const newRecipeId = newRecipeRef.id;
 
+    // Push that ID into users/{createdBy}.draftRecipes
     if (createdBy) {
       const userDocRef = admin.firestore().doc(`users/${createdBy}`);
       await userDocRef.update({
         draftRecipes: admin.firestore.FieldValue.arrayUnion(newRecipeId),
       });
-      console.log(`✔︎ Added recipe ID ${newRecipeId} to users/${createdBy}.draftRecipes`);
     }
 
-    console.log("✔︎ recipe written:", title);
     return res.json({ ok: true, id: newRecipeId });
   } catch (err) {
     console.error("✖︎ create_recipe error:", err);

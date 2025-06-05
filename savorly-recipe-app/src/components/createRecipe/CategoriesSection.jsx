@@ -1,14 +1,11 @@
-import {
-  Paper,
-  Typography,
-  TextField,
-  MenuItem,
-  Stack,
-} from "@mui/material";
+import { Paper, Typography, TextField, MenuItem, Stack } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 export default function CategoriesSection() {
-  const { register, formState: { errors } } = useFormContext(); 
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
@@ -25,11 +22,10 @@ export default function CategoriesSection() {
           error={!!errors?.mealType}
           {...register("mealType", { required: true })}
         >
-          <MenuItem value="breakfast">Breakfast</MenuItem>
-          <MenuItem value="lunch">Lunch</MenuItem>
-          <MenuItem value="dinner">Dinner</MenuItem>
+          <MenuItem value="Breakfast">Breakfast</MenuItem>
+          <MenuItem value="Lunch">Lunch</MenuItem>
+          <MenuItem value="Linner">Dinner</MenuItem>
         </TextField>
-      
       </Stack>
     </Paper>
   );
