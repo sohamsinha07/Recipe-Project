@@ -86,12 +86,19 @@ export default function RecipeGrid() {
           gap={3}
         >
           {recipes.map((recipe, index) => (
-            <RecipeCard key={index}
-              recipe={{
-                ...recipe,
-                source, // pass current source (firestore or edamam)
-                id: recipe.id || recipe._id || recipe.uri || index, // fallback for edamam
-              }} />
+            <RecipeCard
+            key={index}
+            recipe={{
+              ...recipe,
+              source,
+              id: recipe.id || recipe._id || recipe.uri || index,
+              title: typeof recipe.title === "string" ? recipe.title : recipe.title?.value || "Untitled",
+              description: typeof recipe.description === "string" ? recipe.description : recipe.description?.value || "No description",
+              rating: typeof recipe.rating === "number" ? recipe.rating : recipe.rating?.value || 0,
+              time: typeof recipe.time === "string" ? recipe.time : recipe.time?.value || "N/A",
+            }}
+          />
+
           ))}
         </Box>
       )}

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import RecipeFilters from "../components/recipes/RecipeFilters";
+//import RecipeFilters from "../components/recipes/RecipeFilters";
 import RecipeGrid from "../components/recipes/RecipeGrid";
 import { Link as RouterLink } from "react-router-dom";
 
