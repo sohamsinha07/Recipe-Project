@@ -15,6 +15,7 @@ import edamamRouter from "./routes/edamam.js";
 import recipeDetailsRouter from "./routes/recipe-details.js";
 import recipeRoutes from "./routes/recipespage.js";
 import authRouter from "./routes/auth.js";
+import createRouter from "./routes/create.js";
 
 // use middleware to parse json request bodies
 app.use(express.json());
@@ -27,6 +28,7 @@ app.use("/edamam", edamamRouter);
 app.use("/recipe-details", recipeDetailsRouter);
 app.use("/recipes", recipeRoutes);
 app.use("/auth", authRouter);
+app.use("/create_recipe", createRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
