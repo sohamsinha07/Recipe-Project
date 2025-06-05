@@ -41,7 +41,6 @@ export default function RecipesPage() {
 
       {/* Recipe Section */}
       <Box px={{ xs: 2, md: 6 }} py={4}>
-        <RecipeFilters />
         <RecipeGrid />
       </Box>
     </Box>

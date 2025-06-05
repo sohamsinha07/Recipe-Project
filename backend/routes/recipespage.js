@@ -1,8 +1,20 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
 
 dotenv.config();
+
+const firebaseConfig = {
+  apiKey: process.env.VITE_FIREBASE_API_KEY,
+  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 const router = express.Router();
 
 const EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2";
@@ -18,12 +30,16 @@ function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
 
-router.get("/", async (req, res) => {
+router.get("/edamam", async (req, res) => {
   try {
-    const selectedTerms = shuffleArray(queryTerms).slice(0, 6); 
+    const searchQuery = req.query.search || "";
     const allResults = [];
 
-    for (const term of selectedTerms) {
+    const termsToSearch = searchQuery
+      ? [searchQuery] // only one search term
+      : shuffleArray(queryTerms).slice(0, 6); // fallback to random
+
+    for (const term of termsToSearch) {
       const response = await axios.get(EDAMAM_BASE_URL, {
         params: {
           type: "public",
@@ -48,14 +64,47 @@ router.get("/", async (req, res) => {
       allResults.push(...formatted);
     }
 
-    const uniqueShuffled = shuffleArray(allResults).slice(0, 20);
-    res.json(uniqueShuffled);
+    const finalResults = searchQuery
+      ? allResults // if searched, return all
+      : shuffleArray(allResults).slice(0, 20); // else limit
+
+    res.json(finalResults);
 
   } catch (error) {
-    console.error("❌ Edamam API error:", error.message);
-    console.error("🔍 Full error:", error.response?.data || error);
-    res.status(500).json({ error: "Failed to fetch diverse recipes" });
+    console.error("Edamam API error:", error.message);
+    res.status(500).json({ error: "Failed to fetch recipes" });
   }
 });
+
+router.get("/firestore", async (req, res) => {
+  try {
+    const searchTerm = req.query.search?.toLowerCase() || "";
+    const recipeRef = collection(db, "recipes");
+    const snapshot = await getDocs(recipeRef);
+
+    const recipes = snapshot.docs
+      .map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          title: data.title,
+          description: data.instructions?.[0] || "No description provided.",
+          rating: data.averageRating || 0,
+          time: `${data.totalTime || "?"} min`,
+          image: data.image || "",
+          favorited: data.favorited || false,
+        };
+      })
+      .filter(recipe =>
+        !searchTerm || recipe.title.toLowerCase().includes(searchTerm)
+      );
+
+    res.json(recipes);
+  } catch (error) {
+    console.error("Firestore fetch error:", error.message);
+    res.status(500).json({ error: "Failed to fetch user recipes" });
+  }
+});
+
 
 export default router;

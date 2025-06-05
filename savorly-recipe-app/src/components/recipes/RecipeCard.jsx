@@ -14,7 +14,7 @@ export default function RecipeCard({ recipe }) {
   console.log("Rendering recipe:", recipe);
 
   return (
-    <Link to={`/recipe/${encodeURIComponent(recipe.title)}`} style={{ textDecoration: "none" }}>
+    <Link to={`/recipe/${recipe.source}/${recipe.id}`} style={{ textDecoration: "none" }}>
         <Card
     sx={{
         background: "linear-gradient(to right, #ff5f6d, #ffc371)",
@@ -69,4 +69,4 @@ export default function RecipeCard({ recipe }) {
       </Card>
     </Link>
   );
-}
+} 
