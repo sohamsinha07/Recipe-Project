@@ -35,6 +35,10 @@
 	transform: translateY(-1px);
 }
 
+a:link {
+	text-decoration: none;
+}
+
 .header-right {
 	display: flex;
 	gap: 1rem;
@@ -69,6 +73,11 @@
 .recipe-title {
 	font-size: 2rem;
 	font-weight: bold;
+}
+
+.recipe-description {
+	margin-top: 1rem;
+	color: #666;
 }
 
 .recipe-meta {
@@ -131,6 +140,7 @@
 
 .instructions-list li {
 	display: flex;
+	flex-direction: row;
 	align-items: flex-start;
 	gap: 1rem;
 	padding: 1rem 0;
@@ -152,6 +162,7 @@
 	justify-content: center;
 	font-weight: bold;
 	font-size: 1rem;
+	flex-shrink: 0;
 }
 
 /* Right side of content */

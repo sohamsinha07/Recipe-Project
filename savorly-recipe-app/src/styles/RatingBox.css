@@ -1,0 +1,12 @@
+.rating-container {
+	margin-bottom: 1rem;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+}
+
+.rating-container h3 {
+  margin: 0;
+  font-size: 1rem;
+}

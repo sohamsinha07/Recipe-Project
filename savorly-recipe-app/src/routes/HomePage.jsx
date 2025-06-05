@@ -8,14 +8,20 @@ import PopularSection from "../components/homepage/PopularSection";
 import CategorySection from "../components/homepage/CategorySection";
 import Footer from "../components/homepage/Footer";
 
+let hasSeenHomeThisSession = false;
+
 export default function HomePage() {
-  const [loading, setLoading] = useState(true);
+  const initialLoading = !hasSeenHomeThisSession;
+  const [loading, setLoading] = useState(initialLoading);
 
   useEffect(() => {
-    // After 5 seconds, flip loading→false
-    const timer = setTimeout(() => setLoading(false), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (initialLoading) {
+      hasSeenHomeThisSession = true;
+
+      const timer = setTimeout(() => setLoading(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [initialLoading]);
 
   return (
     <Box>
