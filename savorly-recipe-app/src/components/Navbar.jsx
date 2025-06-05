@@ -23,6 +23,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 import LoginModal from "./LoginModal";
+import SavorlyLogo from "../assets/icon.png";
 
 export default function Navbar() {
   const location = useLocation();
@@ -97,42 +98,14 @@ export default function Navbar() {
       <AppBar position="static" color="transparent">
         <Toolbar sx={{ position: "relative", height: 64 }}>
           {/* Logo + Site Name */}
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box component={Link} to="/" sx={{ display: "flex", alignItems: "center" }}>
             {/* Logo */}
-            <Box
-              sx={{
-                backgroundColor: "#F25C54",
-                width: 32,
-                height: 32,
-                borderRadius: 4,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginRight: 1,
-              }}
-            >
-              <Typography
-                component={Link}
-                to="/"
-                variant="h6"
-                sx={{
-                  textDecoration: "none",
-                  fontWeight: "bold",
-                  fontSize: "1rem",
-                  color: "white",
-                  lineHeight: 1,
-                }}
-              >
-                S
-              </Typography>
-            </Box>
+            <Avatar src={SavorlyLogo} alt="Savorly Logo" sx={{ width: 37, height: 37, mr: 1.5 }} />
             <Typography
-              component={Link}
-              to="/"
               sx={{
                 textDecoration: "none",
                 fontWeight: 700,
-                fontSize: "1.125rem",
+                fontSize: "1.3rem",
                 color: "black",
                 "&:hover": { color: "#F25C54" },
               }}
