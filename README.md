@@ -16,7 +16,7 @@ Using a React frontend and Express backend, this web app shows a collection of b
     * Edit/delete created recipes
 * Create Recipe Page
     * Allows users to create new recipes
-* Admin Page: (only show when signed in to admin account)
+* Admin Page: (only shows when signed in to admin account)
     * Displays all user-submitted recipes for review
     * Allows admin to verify and publish recipes
 
