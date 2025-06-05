@@ -32,7 +32,8 @@ export default function HomePage() {
       <FeaturesSection loading={loading} />
       <NewSection loading={loading} />
       <PopularSection loading={loading} />
-      <CategorySection loading={loading} />
+      <Box sx={{ mb: 10 }} />
+      {/* <CategorySection loading={loading} /> */}
       <Footer loading={loading} />
     </Box>
   );

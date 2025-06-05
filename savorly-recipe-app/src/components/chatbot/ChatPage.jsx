@@ -55,13 +55,11 @@ export const ChatPage = () => {
 				<h2>Recipe Bot</h2>
 			</div>
 
+			<ResponseDisplay messages={messages} />
 			{loading && <div>Loading...</div>}
 
-			<ResponseDisplay messages={messages} />
-
 			<div className='input-container'>
-				<form onSubmit={handleSend} style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-
+				<form onSubmit={handleSend}>
 					<InputBox
 						value={inputValue}
 						onChange={(e) => setInputValue(e.target.value)}

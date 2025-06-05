@@ -4,27 +4,26 @@ import {
   TextField,
   IconButton,
   Button,
-  Stack
+  Stack,
 } from "@mui/material";
-import KeyboardArrowUpIcon   from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import CloseIcon             from "@mui/icons-material/Close";
-import AddIcon               from "@mui/icons-material/Add";
-import { useState }          from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import AddIcon from "@mui/icons-material/Add";
+import { useFieldArray, useFormContext } from "react-hook-form";
 
 export default function InstructionsSection() {
-  const [steps, setSteps] = useState([]);
+  const { control, register } = useFormContext();
+  const { fields, append, remove, swap } = useFieldArray({
+    control,
+    name: "instructions",
+  });
 
   const move = (idx, dir) => {
     const tgt = idx + dir;
-    if (tgt < 0 || tgt >= steps.length) return;
-    const reordered = [...steps];
-    [reordered[idx], reordered[tgt]] = [reordered[tgt], reordered[idx]];
-    setSteps(reordered);
+    if (tgt < 0 || tgt >= fields.length) return;
+    swap(idx, tgt);
   };
-
-  const update = (idx, val) =>
-    setSteps(steps.map((s, i) => (i === idx ? val : s)));
 
   return (
     <Paper variant="outlined" sx={{ p: 3 }}>
@@ -32,24 +31,19 @@ export default function InstructionsSection() {
         Instructions *
       </Typography>
 
-      {steps.length === 0 && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mb: 1 }}
-        >
+      {fields.length === 0 && (
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
           Click <strong>Add Step</strong> to begin writing instructions.
         </Typography>
       )}
 
-      {steps.map((s, i) => (
-        <Stack key={i} direction="row" spacing={1} mb={2}>
+      {fields.map((field, i) => (
+        <Stack key={field.id} direction="row" spacing={1} mb={2}>
           <TextField
             fullWidth
             multiline
-            placeholder={`Step ${i + 1}...`}
-            value={s}
-            onChange={e => update(i, e.target.value)}
+            placeholder={`Step ${i + 1}…`}
+            {...register(`instructions.${i}.value`)}
           />
           <Stack>
             <IconButton
@@ -62,14 +56,11 @@ export default function InstructionsSection() {
             <IconButton
               size="small"
               onClick={() => move(i, 1)}
-              disabled={i === steps.length - 1}
+              disabled={i === fields.length - 1}
             >
               <KeyboardArrowDownIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => setSteps(steps.filter((_, idx) => idx !== i))}
-            >
+            <IconButton size="small" onClick={() => remove(i)}>
               <CloseIcon fontSize="small" />
             </IconButton>
           </Stack>
@@ -79,7 +70,7 @@ export default function InstructionsSection() {
       <Button
         startIcon={<AddIcon />}
         size="small"
-        onClick={() => setSteps([...steps, ""])}
+        onClick={() => append({ value: "" })}
       >
         Add Step
       </Button>
