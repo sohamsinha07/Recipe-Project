@@ -1,8 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { AuthContext } from "../AuthContext";
+import SwiperCore from "swiper";
+import { Autoplay, EffectFade } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import components
 import FormHeader from "../components/registerPage/FormHeader";
@@ -12,9 +15,26 @@ import EmailField from "../components/registerPage/EmailField";
 import PasswordFields from "../components/registerPage/PasswordFields";
 import DateOfBirthField from "../components/registerPage/DateOfBirthField";
 import SubmitSection from "../components/registerPage/SubmitSection";
-import leftSideImage from "../assets/registerPage_images/dish_1.png";
+
+import SavorlyLogo from "../assets/icon.png";
+
+import "swiper/css";
+import "swiper/css/effect-fade";
+import "swiper/css/autoplay";
+
+// prettier-ignore
+const imageModules = import.meta.glob(
+  "/src/assets/registerPage_images/*.jpg",
+  { eager: true, query: "?url", import: "default" }
+);
+
+SwiperCore.use([Autoplay, EffectFade]);
 
 export default function RegisterPage() {
+  const imageUrls = useMemo(() => {
+    return Object.values(imageModules);
+  }, []);
+
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -178,7 +198,7 @@ export default function RegisterPage() {
       const response = await axios.post("/auth/register", payload);
       if (response.status === 201) {
         await login({ email: values.email, password: values.password });
-        navigate("/profile");
+        navigate("/my_kitchen");
       }
     } catch (err) {
       console.error("Registration error:", err);
@@ -191,40 +211,116 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
       {/* Left half: image */}
       <Box
         sx={{
           flex: 1,
-          backgroundImage: `url(${leftSideImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
+          height: "100vh",
+          position: "relative",
           display: { xs: "none", md: "block" },
+          backgroundColor: "#f0f0f0",
+          overflow: "hidden",
+          boxShadow: "2px 0 8px rgba(0, 0, 0, 0.5)",
         }}
-      />
+      >
+        <Box
+          onClick={() => navigate("/")}
+          sx={{
+            position: "absolute",
+            top: 16,
+            left: 16,
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            p: 2,
+            borderRadius: 1,
+            zIndex: 20,
+          }}
+        >
+          <Box
+            component="img"
+            src={SavorlyLogo}
+            alt="Savorly logo"
+            sx={{ width: 32, height: 32, mr: 1 }}
+          />
+          <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700 }}>
+            Savorly
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.45)",
+            zIndex: 10, // below logo/text but above slides
+          }}
+        />
+
+        <Swiper
+          effect="fade"
+          autoplay={{
+            delay: 4000, // change slide every 4 seconds
+            disableOnInteraction: false,
+          }}
+          speed={1000}
+          loop={true}
+          style={{ width: "100%", height: "100%" }}
+        >
+          {imageUrls.map((src, idx) => (
+            <SwiperSlide key={idx}>
+              <Box
+                component="img"
+                src={src}
+                alt={`slide-${idx}`}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </Box>
 
       {/* Right half: form */}
       <Box
         sx={{
-          flex: 1,
+          flex: 1.4,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#fafafa",
-          py: 4,
         }}
       >
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.06)",
+            zIndex: 5, // below logo/text but above slides
+          }}
+        />
         <Box
           component="form"
           onSubmit={handleSubmit}
           noValidate
           sx={{
             width: "100%",
-            maxWidth: 480,
+            maxWidth: 450,
             bgcolor: "#ffffff",
             borderRadius: 2,
             boxShadow: 3,
             overflow: "hidden",
+            zIndex: 10,
           }}
         >
           <FormHeader />
