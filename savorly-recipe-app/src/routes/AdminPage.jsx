@@ -105,9 +105,17 @@ const rejectRecipe = async (recipeId) => {
   fetchRecipes(); // Refresh after reject
 };
 
-const sortedRecipes = [...recipes].sort((a, b) =>
-    sort === "newest" ? a.submittedAgo - b.submittedAgo : b.submittedAgo - a.submittedAgo
-  );
+const sortedRecipes = [...recipes].sort((a, b) => {
+  const aTime = a.createdAt?.seconds ? a.createdAt.seconds : (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+  const bTime = b.createdAt?.seconds ? b.createdAt.seconds : (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+
+  if (sort === "newest") {
+    return bTime - aTime;
+  } else {
+    return aTime - bTime;
+  }
+});
+
 
   // useEffect(() => {
   //   axios.get("/api/admin/recipes?filter=" + filter)
