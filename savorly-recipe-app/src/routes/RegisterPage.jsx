@@ -4,7 +4,7 @@ import axios from "axios";
 import { Box, Typography } from "@mui/material";
 import { AuthContext } from "../AuthContext";
 import SwiperCore from "swiper";
-import { Autoplay, EffectFade } from "swiper/modules";
+import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 // Import components
@@ -21,14 +21,15 @@ import SavorlyLogo from "../assets/icon.png";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/autoplay";
+import "swiper/css/pagination";
+
+import "../styles/loginAndRegister.css";
 
 // prettier-ignore
 const imageModules = import.meta.glob(
   "/src/assets/registerPage_images/*.jpg",
   { eager: true, query: "?url", import: "default" }
 );
-
-SwiperCore.use([Autoplay, EffectFade]);
 
 export default function RegisterPage() {
   const imageUrls = useMemo(() => {
@@ -269,6 +270,12 @@ export default function RegisterPage() {
           }}
           speed={1000}
           loop={true}
+          modules={[Autoplay, EffectFade, Pagination]}
+          pagination={{
+            clickable: true,
+            bulletClass: "custom-swiper-bullet",
+            bulletActiveClass: "custom-swiper-bullet-active",
+          }}
           style={{ width: "100%", height: "100%" }}
         >
           {imageUrls.map((src, idx) => (
