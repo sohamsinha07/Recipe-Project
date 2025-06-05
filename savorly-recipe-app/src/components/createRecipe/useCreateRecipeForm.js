@@ -6,24 +6,30 @@ import * as yup from "yup";
 
 /* -------------------------- validation --------------------------- */
 const schema = yup.object({
-  title:        yup.string().required().max(120),
-  description:  yup.string().required().max(1000),
-  totalTime:    yup.number().required().positive().integer(),
-  calories:     yup.number().positive().integer().nullable(),
-  mealType:     yup.string().required(),
-  servings:     yup.number().required().positive().integer(),
-  ingredients:  yup.array().of(
-                  yup.object({
-                    qty:  yup.string(),
-                    unit: yup.string(),
-                    item: yup.string().required(),
-                  })
-                ).min(1),
-  instructions: yup.array().of(
-                  yup.object({
-                    value: yup.string().required(),
-                  })
-                ).min(1),
+  title: yup.string().required().max(120),
+  description: yup.string().required().max(1000),
+  totalTime: yup.number().required().positive().integer(),
+  calories: yup.number().positive().integer().nullable(),
+  mealType: yup.string().required(),
+  servings: yup.number().required().positive().integer(),
+  ingredients: yup
+    .array()
+    .of(
+      yup.object({
+        qty: yup.string(),
+        unit: yup.string(),
+        item: yup.string().required(),
+      })
+    )
+    .min(1),
+  instructions: yup
+    .array()
+    .of(
+      yup.object({
+        value: yup.string().required(),
+      })
+    )
+    .min(1),
 });
 
 export default function useCreateRecipeForm(onSuccess) {

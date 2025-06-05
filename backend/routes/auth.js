@@ -1,6 +1,6 @@
 import express from "express";
 import admin from "firebase-admin";
-import db from "../firebase.js";
+import { db } from "../firebase.js";
 
 const router = express.Router();
 const FIREBASE_API_KEY = process.env.VITE_FIREBASE_API_KEY;

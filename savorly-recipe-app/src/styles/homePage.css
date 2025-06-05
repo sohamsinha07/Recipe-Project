@@ -279,6 +279,11 @@
   justify-content: space-between;
   margin-top: 3rem !important;
 }
+.popular-meta-left {
+  display: flex;
+  align-items: center; /* vertically center star & text */
+  gap: 4px; /* small gap between icon & text */
+}
 .popular-meta-item {
   display: flex;
   align-items: center;
@@ -286,7 +291,19 @@
 }
 .popular-star-icon {
   font-size: 0.8rem !important;
-  margin-bottom: 3px;
+  transform: translateY(-2px);
+}
+.popular-clock-icon {
+  font-size: 0.8rem !important;
+  margin-right: 5px;
+  transform: translateY(2px);
+}
+.popular-meta-text {
+  color: #333;
+}
+
+.popular-meta-time {
+  color: #555;
 }
 
 .popular-badge {
