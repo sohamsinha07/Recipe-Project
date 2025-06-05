@@ -388,12 +388,14 @@ const Comments = ({ recipeId, currentUserId }) => {
 					))
 				)}
 			</div>
-			<Dialog open={confirmOpen} onClose={closeConfirm}>
+			<Dialog 
+				open={confirmOpen} 
+				onClose={closeConfirm}>
 				<DialogTitle>
-					Delete {deleteItem.type === 'comment' ? 'Comment' : 'Reply'}
+					Delete {deleteItem.type === 'comment' ? 'Comment' : 'Reply'}?
 				</DialogTitle>
 				<DialogContent>
-					Are you sure you want to delete this {deleteItem.type}?
+					Are you sure you want to delete this {deleteItem.type}? You can't undo this action.
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={closeConfirm}>Cancel</Button>
