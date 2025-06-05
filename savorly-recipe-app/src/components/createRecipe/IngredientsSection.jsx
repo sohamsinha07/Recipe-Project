@@ -1,11 +1,4 @@
-import {
-  Paper,
-  Typography,
-  Grid,
-  TextField,
-  IconButton,
-  Button,
-} from "@mui/material";
+import { Paper, Typography, Grid, TextField, IconButton, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -18,7 +11,15 @@ export default function IngredientsSection() {
   });
 
   return (
-    <Paper variant="outlined" sx={{ p: 3 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 3,
+        boxShadow: 5,
+        borderRadius: 2,
+        backgroundColor: "white",
+      }}
+    >
       <Typography fontWeight={600} mb={2}>
         Ingredients *
       </Typography>
@@ -32,18 +33,10 @@ export default function IngredientsSection() {
       {fields.map((field, i) => (
         <Grid container spacing={1} key={field.id} mb={1}>
           <Grid item xs={3} sm={2}>
-            <TextField
-              fullWidth
-              placeholder="2"
-              {...register(`ingredients.${i}.qty`)}
-            />
+            <TextField fullWidth placeholder="2" {...register(`ingredients.${i}.qty`)} />
           </Grid>
           <Grid item xs={3} sm={2}>
-            <TextField
-              fullWidth
-              placeholder="cups"
-              {...register(`ingredients.${i}.unit`)}
-            />
+            <TextField fullWidth placeholder="cups" {...register(`ingredients.${i}.unit`)} />
           </Grid>
           <Grid item xs={5} sm={7}>
             <TextField

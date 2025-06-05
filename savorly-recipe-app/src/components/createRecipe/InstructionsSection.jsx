@@ -1,11 +1,4 @@
-import {
-  Paper,
-  Typography,
-  TextField,
-  IconButton,
-  Button,
-  Stack,
-} from "@mui/material";
+import { Paper, Typography, TextField, IconButton, Button, Stack } from "@mui/material";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
@@ -26,7 +19,15 @@ export default function InstructionsSection() {
   };
 
   return (
-    <Paper variant="outlined" sx={{ p: 3 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 3,
+        boxShadow: 5,
+        borderRadius: 2,
+        backgroundColor: "white",
+      }}
+    >
       <Typography fontWeight={600} mb={2}>
         Instructions *
       </Typography>
@@ -46,18 +47,10 @@ export default function InstructionsSection() {
             {...register(`instructions.${i}.value`)}
           />
           <Stack>
-            <IconButton
-              size="small"
-              onClick={() => move(i, -1)}
-              disabled={i === 0}
-            >
+            <IconButton size="small" onClick={() => move(i, -1)} disabled={i === 0}>
               <KeyboardArrowUpIcon fontSize="small" />
             </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => move(i, 1)}
-              disabled={i === fields.length - 1}
-            >
+            <IconButton size="small" onClick={() => move(i, 1)} disabled={i === fields.length - 1}>
               <KeyboardArrowDownIcon fontSize="small" />
             </IconButton>
             <IconButton size="small" onClick={() => remove(i)}>
@@ -67,11 +60,7 @@ export default function InstructionsSection() {
         </Stack>
       ))}
 
-      <Button
-        startIcon={<AddIcon />}
-        size="small"
-        onClick={() => append({ value: "" })}
-      >
+      <Button startIcon={<AddIcon />} size="small" onClick={() => append({ value: "" })}>
         Add Step
       </Button>
     </Paper>

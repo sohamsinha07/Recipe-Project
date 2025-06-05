@@ -8,7 +8,15 @@ export default function CategoriesSection() {
   } = useFormContext();
 
   return (
-    <Paper variant="outlined" sx={{ p: 3 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 3,
+        boxShadow: 5,
+        borderRadius: 2,
+        backgroundColor: "white",
+      }}
+    >
       <Typography fontWeight={600} mb={2}>
         Categories &amp; Tags
       </Typography>

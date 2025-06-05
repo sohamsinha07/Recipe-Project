@@ -71,7 +71,15 @@ export default function ImageUploader() {
   };
 
   return (
-    <Paper variant="outlined" sx={{ p: 3 }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 3,
+        boxShadow: 5,
+        borderRadius: 2,
+        backgroundColor: "white",
+      }}
+    >
       <Typography fontWeight={600} mb={2}>
         Recipe Image
       </Typography>
