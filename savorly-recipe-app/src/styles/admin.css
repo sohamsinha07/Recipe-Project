@@ -161,6 +161,9 @@
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;   /* ensures bottom stays bottom */
+    min-height: 180px;               /* or as needed */
+    padding: 20px;
   }
   .admin-recipe-card-actions {
     display: flex;
