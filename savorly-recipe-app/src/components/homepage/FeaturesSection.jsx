@@ -126,7 +126,8 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-explore"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
-                  component={RouterLink} to="/recipes"
+                  component={RouterLink}
+                  to="/recipes"
                 >
                   Explore
                 </Button>
@@ -153,7 +154,8 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-create"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
-                  component={RouterLink} to="/create_recipe"
+                  component={RouterLink}
+                  to="/create_recipe"
                 >
                   Start Creating
                 </Button>
@@ -180,6 +182,8 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-join"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
+                  component={RouterLink}
+                  to="/register"
                 >
                   Join Now
                 </Button>

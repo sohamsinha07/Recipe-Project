@@ -185,8 +185,8 @@ export default function Navbar() {
                   <Avatar
                     sx={{
                       bgcolor: "#F25C54",
-                      width: 32,
-                      height: 32,
+                      width: 40,
+                      height: 40,
                       fontWeight: "bold",
                     }}
                   >
