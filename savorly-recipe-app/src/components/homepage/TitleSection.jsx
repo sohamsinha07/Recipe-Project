@@ -4,6 +4,8 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Box, Typography, Button, Skeleton } from "@mui/material";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import AddIcon from "@mui/icons-material/Add";
+import { Link as RouterLink } from "react-router-dom";
 
 import "../../styles/homePage.css";
 import "swiper/css";
@@ -124,11 +126,12 @@ export default function TitleSection({ loading }) {
             variant="contained"
             className="title-section-browse-button"
             startIcon={<AutoStoriesIcon className="title-section-browse-icon" />}
+            component={RouterLink} to="/recipes"
           >
             Browse Recipes
           </Button>
 
-          <Button variant="outlined" className="title-section-create-button">
+          <Button variant="outlined" className="title-section-create-button" startIcon={<AddIcon />} component={RouterLink} to="/create_recipe" >
             Create Recipe
           </Button>
         </Box>

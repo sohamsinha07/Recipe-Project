@@ -17,10 +17,11 @@ export default function CreateRecipePage() {
       {/* back nav */}
       <Button
         startIcon={<ArrowBackIcon />}
+        color="error"
         sx={{ mb: 3 }}
         onClick={() => navigate(-1)}
       >
-        Create New Recipe
+        Back
       </Button>
 
       <Grid container spacing={4}>

@@ -3,6 +3,7 @@ import { Box, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import RecipeFilters from "../components/recipes/RecipeFilters";
 import RecipeGrid from "../components/recipes/RecipeGrid";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function RecipesPage() {
   return (
@@ -25,6 +26,8 @@ export default function RecipesPage() {
           From quick weeknight dinners to special occasion treats
         </Typography>
         <Button
+          component={RouterLink}
+          to="/create_recipe"
           variant="contained"
           startIcon={<AddIcon />}
           sx={{
@@ -35,7 +38,7 @@ export default function RecipesPage() {
             ":hover": { backgroundColor: "#ffe6e6" },
           }}
         >
-          Add Recipe
+          Create Recipe
         </Button>
       </Box>
 
