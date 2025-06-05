@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
-import { getFirestore, collection, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
 dotenv.config();
@@ -29,6 +29,25 @@ const queryTerms = [
 function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
+
+router.patch("/firestore/:id/favorite", async (req, res) => {
+  const recipeId = req.params.id;
+  const { favorited } = req.body;
+
+  if (typeof favorited !== "boolean") {
+    return res.status(400).json({ error: "'favorited' must be a boolean" });
+  }
+
+  try {
+    const docRef = doc(db, "recipes", recipeId);
+    await updateDoc(docRef, { favorited });
+    res.json({ favorited });
+  } catch (err) {
+    console.error("❌ Failed to update favorite:", err);
+    res.status(500).json({ error: "Failed to update favorite" });
+  }
+});
+
 
 router.get("/edamam", async (req, res) => {
   try {

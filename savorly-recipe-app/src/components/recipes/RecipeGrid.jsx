@@ -56,8 +56,22 @@ export default function RecipeGrid() {
             label="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#FE5F55", 
+                },
+              },
+              "& label.Mui-focused": {
+                color: "#D6D1B1", 
+              },
+            }}
           />
-          <Button variant="contained" onClick={() => setSearchTerm(searchTerm)}>
+          <Button
+            variant="contained"
+            onClick={() => setSearchTerm(searchTerm)}
+            sx={{ backgroundColor: "#FE5F55", "&:hover": { backgroundColor: "#e14c44" } }}
+          >
             Go
           </Button>
         </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -8,10 +8,39 @@ import {
   Chip,
 } from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Link } from "react-router-dom";
 
 export default function RecipeCard({ recipe }) {
-  console.log("Rendering recipe:", recipe);
+  const [isFavorited, setIsFavorited] = useState(recipe.favorited || false);
+  //console.log("Rendering recipe:", recipe);
+
+  const handleFavoriteClick = async (e) => {
+  e.preventDefault();
+
+  if (recipe.source !== "firestore") return;
+
+  try {
+    const res = await fetch(`http://localhost:3000/recipes/firestore/${recipe.id}/favorite`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ favorited: !isFavorited }), // send the desired value
+    });
+
+    const data = await res.json();
+
+    if (res.ok && typeof data.favorited === "boolean") {
+      setIsFavorited(data.favorited);
+    } else {
+      throw new Error(data.error || "Unexpected response");
+    }
+  } catch (err) {
+    console.error("❌ Failed to toggle favorite:", err);
+  }
+};
+
 
   return (
     <Link to={`/recipe/${recipe.source}/${recipe.id}`} style={{ textDecoration: "none" }}>
@@ -43,8 +72,12 @@ export default function RecipeCard({ recipe }) {
             >
               {recipe.title}
             </Typography>
-            <IconButton size="small">
-              <FavoriteBorderIcon />
+            <IconButton size="small" onClick={handleFavoriteClick}>
+              {isFavorited ? (
+                <FavoriteIcon sx={{ color: "#ff1744" }} />
+              ) : (
+                <FavoriteBorderIcon sx={{ color: "white" }} />
+              )}
             </IconButton>
           </Box>
 
