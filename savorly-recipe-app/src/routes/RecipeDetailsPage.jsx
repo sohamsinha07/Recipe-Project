@@ -129,12 +129,10 @@ const RecipeDetailsPage = () => {
 				await updateDoc(userRef, {
 					savedRecipes: arrayRemove(id),
 				});
-				toast.success('Recipe removed from saved');
 			} else {
 				await updateDoc(userRef, {
 						savedRecipes: arrayUnion(id),
 					});
-				toast.success('Recipe saved!');
 			}
 			setIsSaved(!isSaved);
 		} catch (error) {
