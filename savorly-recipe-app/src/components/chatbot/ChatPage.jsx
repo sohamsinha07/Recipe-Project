@@ -55,6 +55,7 @@ export const ChatPage = () => {
 				<h2>Recipe Bot</h2>
 			</div>
 
+			{loading && <div>Loading...</div>}
 
 			<ResponseDisplay messages={messages} />
 
@@ -69,8 +70,6 @@ export const ChatPage = () => {
 					<button className='submit-btn' type='submit' disabled={loading}><LuSend size={30} /></button>
 				</form>
 			</div>
-
-			{loading && <div>Loading...</div>}
 
 		</div>
 	);

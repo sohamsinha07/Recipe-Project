@@ -16,6 +16,7 @@ import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
 import { AuthContext } from '../AuthContext';
+import RecipeDetailsSkeleton from '../components/recipe-details/RecipeDetailsSkeleton';
 
 const RecipeDetailsPage = () => {
 
@@ -49,8 +50,8 @@ const RecipeDetailsPage = () => {
 		const el = document.createElement('input');
 		el.value = window.location.href;
 		document.body.appendChild(el);
-		el.select(); document.execCommand('copy'); 
-		document.body.removeChild(el); 
+		el.select(); document.execCommand('copy');
+		document.body.removeChild(el);
 
 		setCopySuccess(true);
 		notifyCopy();
@@ -147,6 +148,12 @@ const RecipeDetailsPage = () => {
 		);
 	}
 
+	if (loading) {
+		return (
+			<RecipeDetailsSkeleton />
+		)
+	}
+
 	return (
 
 		<div className='details-page'>
@@ -156,8 +163,8 @@ const RecipeDetailsPage = () => {
 				</Link>
 				<div className='header-right'>
 					<button onClick={handleSaveRecipe}>
-						{isSaved? <FaHeart /> : <FaRegHeart/>}
-						{isSaved? 'Unsave Recipe' : 'Save Recipe'}
+						{isSaved ? <FaHeart /> : <FaRegHeart />}
+						{isSaved ? 'Unsave Recipe' : 'Save Recipe'}
 					</button>
 					<div>
 						<button
@@ -185,7 +192,7 @@ const RecipeDetailsPage = () => {
 
 				<h1 className='recipe-title'>{recipe.title}</h1>
 				<div className='recipe-author-desc'>
-					
+
 				</div>
 				{recipe.description && (
 					<p className='recipe-description'>{recipe.description}</p>
