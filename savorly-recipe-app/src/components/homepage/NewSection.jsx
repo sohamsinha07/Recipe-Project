@@ -8,7 +8,7 @@ import MarqueeTitle from "./MarqueeTitle";
 
 import "../../styles/homePage.css";
 
-export default function PopularSection({ loading }) {
+export default function NewSection({ loading }) {
   const mealTypeColors = {
     Breakfast: "#FFA726",
     Lunch: "#29B6F6",
@@ -21,16 +21,16 @@ export default function PopularSection({ loading }) {
   useEffect(() => {
     let isMounted = true;
 
-    // Only fetch once, on mount
+    // Fetch the 4 most recently‐added recipes
     axios
-      .get("/recipe-details/popular")
+      .get("/recipe-details/newest")
       .then((res) => {
         if (isMounted) {
           setRecipes(res.data.recipes);
         }
       })
       .catch((err) => {
-        console.error("Error fetching popular recipes:", err);
+        console.error("Error fetching newest recipes:", err);
       });
 
     return () => {
@@ -137,10 +137,10 @@ export default function PopularSection({ loading }) {
         <Box className="popular-header">
           <Box>
             <Typography variant="h4" className="popular-title">
-              Most Popular Recipes
+              Newest Recipes Published
             </Typography>
             <Typography variant="body2" className="popular-subtitle">
-              All time most loved recipes by our community (by rating)
+              The four most recent recipes added by our community
             </Typography>
           </Box>
 

@@ -244,6 +244,7 @@
   flex-direction: column;
   justify-content: flex-start;
   height: 100%;
+  width: 100%;
   overflow: hidden;
 }
 
@@ -265,6 +266,12 @@
   color: #777;
   margin-bottom: 8px !important;
   text-align: left;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .popular-meta {
