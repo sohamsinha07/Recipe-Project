@@ -1,105 +1,136 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import RecipeReviewTabs from "../components/admin/RecipeReviewTabs";
 import AdminRecipeGrid from "../components/admin/AdminRecipeGrid";
 import AdminHeader from "../components/admin/AdminHeader";
-import axios from "axios";
 import Footer from "../components/homepage/Footer";
 import "../styles/admin.css";
+import { updateDoc, doc, getDocs, collection, query, where } from "firebase/firestore";
+import { db } from "../firebase";
 
-const sampleRecipes = [
-  {
-    title: "Mediterranean Quinoa Bowl",
-    description: "Healthy and delicious bowl with fresh vegetables",
-    rating: 4.8,
-    time: "25 min",
-    author: "Sarah Kim",
-    submittedAgo: 1
-  },
-  {
-    title: "Spicy Thai Curry",
-    description: "Aromatic curry with coconut milk and vegetables",
-    rating: 4.6,
-    time: "35 min",
-    author: "Mike Chen",
-    submittedAgo: 3
-  },
-  {
-    title: "Classic Chocolate Cake",
-    description: "Rich and moist chocolate cake with ganache",
-    rating: 4.9,
-    time: "60 min",
-    author: "Emma Wilson",
-    submittedAgo: 8
-  },
-  {
-    title: "Fresh Garden Salad",
-    description: "Crisp vegetables with homemade vinaigrette",
-    rating: 4.4,
-    time: "30 min",
-    author: "Mary Waters",
-    submittedAgo: 5
-  },
-];
+// Helper
+function getTimeAgo(createdAt) {
+  const created = createdAt?.seconds
+    ? new Date(createdAt.seconds * 1000)
+    : new Date(createdAt);
+  const now = new Date();
+  const diffMs = now - created;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMins / 60);
 
+  if (diffMins < 1) return "Just now";
+  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+  return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+}
 
 export default function AdminPage() {
-  const [recipes, setRecipes] = useState(sampleRecipes);
-  const [filter, setFilter] = useState("all"); // all, pending, approved
+  const [recipes, setRecipes] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
+  const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("newest");
   const [view, setView] = useState("grid");
+  const [loading, setLoading] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    async function fetchAllRecipes() {
+      const snapshot = await getDocs(collection(db, "recipes"));
+      setAllRecipes(
+        snapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }))
+      );
+    }
+    fetchAllRecipes();
+  }, [reloadKey]);
+
+  // Compute counts (used in header/tabs)
+  const pendingCount = allRecipes.filter(r => r.status === "pending").length;
+  const approvedCount = allRecipes.filter(r => r.status === "published").length;
+  const counts = {
+    all: allRecipes.length,
+    pending: pendingCount,
+    approved: approvedCount,
+  };
+
+  // Fetch recipes
+  useEffect(() => {
+    async function fetchRecipes() {
+      setLoading(true);
+      let q;
+      if (filter === "all") {
+        q = collection(db, "recipes");
+      } else if (filter === "approved") {
+        q = query(collection(db, "recipes"), where("status", "==", "published"));
+      } else {
+        q = query(collection(db, "recipes"), where("status", "==", filter));
+      }
+      const snapshot = await getDocs(q);
+      setRecipes(snapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data(),
+        submittedAgo: getTimeAgo(docSnap.data().createdAt),
+      })));
+      setLoading(false);
+    }
+    fetchRecipes();
+  }, [filter, reloadKey]);
+
+  
   
 
+  // Sorting
   const sortedRecipes = [...recipes].sort((a, b) => {
+    const aTime = a.createdAt?.seconds
+      ? a.createdAt.seconds
+      : (a.createdAt ? new Date(a.createdAt).getTime() / 1000 : 0);
+    const bTime = b.createdAt?.seconds
+      ? b.createdAt.seconds
+      : (b.createdAt ? new Date(b.createdAt).getTime() / 1000 : 0);
+
     if (sort === "newest") {
-      return a.submittedAgo - b.submittedAgo; // less hours = newer
+      return bTime - aTime;
     } else {
-      return b.submittedAgo - a.submittedAgo;
+      return aTime - bTime;
     }
   });
 
-  // useEffect(() => {
-  //   axios.get("/api/admin/recipes?filter=" + filter)
-  //     .then(res => {
-  //       setRecipes(res.data && res.data.length > 0 ? res.data : sampleRecipes);
-  //     })
-  //     .catch(() => setRecipes(sampleRecipes)); // fallback to demo data on error
-  // }, [filter]);
+  // Approve/Reject
+  const rejectRecipe = async (recipe) => {
+    if (!recipe?.id) return;
+    setRecipes(prev => prev.filter(r => r.id !== recipe.id));
+    await updateDoc(doc(db, "recipes", recipe.id), { status: "rejected" });
+    setReloadKey(k => k + 1);
+  };
   
+  const approveRecipe = async (recipe) => {
+    if (!recipe?.id) return;
+    setRecipes(prev => prev.filter(r => r.id !== recipe.id));
+    await updateDoc(doc(db, "recipes", recipe.id), { status: "published" });
+    setReloadKey(k => k + 1);
+  };
 
-  // Handler stubs:
-  const handleApprove = (recipe) => {
-    // call your approve API, then refresh recipes
-  };
-  const handleReject = (recipe) => {
-    // call your reject API, then refresh recipes
-  };
-  const handleEdit = (recipe) => {
-    // navigate to edit page, open modal, etc
-  };
-  
+
   return (
     <div className="admin-page">
-         <div>
-         <AdminHeader pendingCount={12} approvedCount={8} />
-        
-         <RecipeReviewTabs
+      <AdminHeader pendingCount={pendingCount} approvedCount={approvedCount} />
+      <RecipeReviewTabs
         tab={filter}
         setTab={setFilter}
         sort={sort}
         setSort={setSort}
         view={view}
         setView={setView}
+        counts={counts}
       />
-      
-      <AdminRecipeGrid  view={view}
-      recipes={sortedRecipes}
-  onApprove={handleApprove}
-  onReject={handleReject}
-  onEdit={handleEdit}
-  
-/>
+      <AdminRecipeGrid
+        view={view}
+        recipes={sortedRecipes}
+        onApprove={approveRecipe}
+        onReject={rejectRecipe}
+        loading={loading}
+      />
       <Footer />
-      </div>
     </div>
   );
 }

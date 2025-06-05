@@ -1,5 +1,7 @@
 import React from "react";
 import AdminRecipeCard from "./AdminRecipeCard"; 
+import { Link } from "react-router-dom";
+
 
 export default function AdminRecipeGrid({
   recipes, view, onApprove, onReject, onEdit
@@ -7,6 +9,10 @@ export default function AdminRecipeGrid({
   if (!recipes.length) {
     return <div style={{ padding: 32 }}>No recipes found.</div>;
   }
+  const cardsPerRow = 3;
+  const placeholdersNeeded = recipes.length > 0
+  ? (cardsPerRow - (recipes.length % cardsPerRow)) % cardsPerRow
+  : 0;
 
   // Grid view
   if (view === "grid") {
@@ -24,13 +30,15 @@ export default function AdminRecipeGrid({
       }}>
         {recipes.map((recipe, i) => (
           <AdminRecipeCard
-            key={i}
+          key={recipe.id || i}
             recipe={recipe}
             onApprove={() => onApprove(recipe)}
             onReject={() => onReject(recipe)}
-            onEdit={() => onEdit(recipe)}
           />
         ))}
+        {Array.from({ length: placeholdersNeeded }).map((_, idx) => (
+      <div key={`ph-${idx}`} style={{ visibility: "hidden" }} />
+      ))}
       </div>
     );
   }
@@ -56,26 +64,62 @@ export default function AdminRecipeGrid({
             minHeight: 88
           }}>
           {/* Image */}
-          <div style={{
-            width: 64, height: 64,
-            borderRadius: 8,
-            background: 'linear-gradient(225deg, #FF6B6B 0%, #FFE66D 100%)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 600, color: 'white', marginRight: 18, fontSize: 15
-          }}>Img</div>
+          <div
+  style={{
+    width: 75,
+    height: 75,
+    borderRadius: 16,
+    overflow: "hidden",
+    background: "linear-gradient(225deg, #FF6B6B 0%, #FFE66D 100%)",
+    display: "flex",
+    marginRight: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  {recipe.image ? (
+    <img
+      src={recipe.image}
+      alt={recipe.title}
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  ) : (
+    <span
+      style={{
+        fontWeight: 600,
+        color: "#fff",
+        fontSize: 20,
+      }}
+    >
+      Img
+    </span>
+  )}
+</div>
           {/* Info */}
           <div style={{ flex: 3, minWidth: 0 }}>
-            <div style={{
-              fontWeight: 700, fontSize: 18, color: "#1A202C", fontFamily: "Inter, sans-serif",
-              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
-            }}>
-              <div className="list-title">
-                  {recipe.title}
-                </div>
-            </div>
+            <Link
+              to={`/recipe/user/${recipe.id}`}
+              style={{
+                fontWeight: 700,
+                fontSize: 18,
+                color: "#1A202C",
+                fontFamily: "Inter, sans-serif",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                textDecoration: "none",
+                transition: "color 0.18s",
+                display: "inline-block",
+              }}
+              onMouseOver={e => (e.target.style.color = "#3182ce")}
+              onMouseOut={e => (e.target.style.color = "#1A202C")}
+              className="list-title-link"
+            >
+    {recipe.title}
+  </Link>
             <div style={{
               color: "#718096", fontSize: 14, fontFamily: "Inter, sans-serif",
-              overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"
+              overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", marginRight: 35
             }}>
               {recipe.description}
             </div>
@@ -93,7 +137,7 @@ export default function AdminRecipeGrid({
               <rect x="7" y="4" width="1.5" height="4" rx="0.75" fill="#A0AEC0" />
               <rect x="7" y="7.5" width="3" height="1.2" rx="0.6" fill="#A0AEC0" />
             </svg>
-            {recipe.time}
+            {recipe.totalTime + " min"}
           </div>
           {/* Status */}
           <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6 }}>
@@ -113,7 +157,7 @@ export default function AdminRecipeGrid({
           <div style={{
             color: "#A0AEC0", fontSize: 13, flex: 1, textAlign: "right"
           }}>
-            {recipe.submittedAgo} hr{recipe.submittedAgo !== 1 ? "s" : ""} ago
+            {recipe.submittedAgo} {recipe.submittedAgo !== 1 } 
           </div>
           {/* Actions */}
           <div style={{ display: "flex", gap: 10, marginLeft: 18 }}>
