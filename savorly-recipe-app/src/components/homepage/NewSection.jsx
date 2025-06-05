@@ -5,6 +5,7 @@ import axios from "axios";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import StarIcon from "@mui/icons-material/Star";
 import MarqueeTitle from "./MarqueeTitle";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 
 import "../../styles/homePage.css";
 
@@ -194,11 +195,17 @@ export default function NewSection({ loading }) {
 
                     {/* Star + reviews and Time */}
                     <Box className="popular-meta">
-                      <StarIcon className="popular-star-icon" />
-                      <Typography variant="caption" className="popular-meta-item">
-                        {averageRating.toFixed(1)} ({numReviews})
+                      <Box className="popular-meta-left">
+                        <StarIcon className="popular-star-icon" />
+                        <Typography variant="caption" className="popular-meta-text">
+                          {averageRating.toFixed(1)} ({numReviews})
+                        </Typography>
+                      </Box>
+
+                      <Typography variant="caption" className="popular-meta-time">
+                        <ScheduleIcon className="popular-clock-icon" />
+                        {totalTime} min
                       </Typography>
-                      <Typography variant="caption">{totalTime}</Typography>
                     </Box>
                   </CardContent>
 
