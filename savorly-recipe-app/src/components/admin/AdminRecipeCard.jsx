@@ -31,7 +31,7 @@ export default function AdminRecipeCard({
 }) {
   return (
     <Link
-      to={`/recipes/${recipe.id}`}
+      to={`/recipe/user/${recipe.id}`}
       style={{
         textDecoration: "none",
         color: "inherit",

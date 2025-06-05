@@ -25,12 +25,14 @@ export default function AdminRecipeGrid({
         padding: "32px 40px"
       }}>
         {recipes.map((recipe, i) => (
+          <Link to={`/recipe/user/${recipe.id}`} style={{ textDecoration: "none", flex: 1 }}>
           <AdminRecipeCard
           key={recipe.id || i}
             recipe={recipe}
             onApprove={() => onApprove(recipe)}
             onReject={() => onReject(recipe)}
           />
+          </Link>
         ))}
       </div>
     );
@@ -91,7 +93,7 @@ export default function AdminRecipeGrid({
           {/* Info */}
           <div style={{ flex: 3, minWidth: 0 }}>
             <Link
-              to={`/recipes/${recipe.id}`}
+              to={`/recipe/user/${recipe.id}`}
               style={{
                 fontWeight: 700,
                 fontSize: 18,
