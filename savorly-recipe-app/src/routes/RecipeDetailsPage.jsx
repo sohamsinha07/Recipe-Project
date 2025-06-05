@@ -1,69 +1,63 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import ChatPage from '../components/chatbot/ChatPage'
+import React, { useState, useRef, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import ChatPage from "../components/chatbot/ChatPage";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
-import { FaClock } from 'react-icons/fa';
+import { FaClock } from "react-icons/fa";
 import { HiUsers } from "react-icons/hi";
-import { FaHeart } from 'react-icons/fa';
-import { HiUser } from 'react-icons/hi';
-import { ToastContainer, toast } from 'react-toastify';
-import '../styles/RecipeDetailsPage.css'
-import { db } from '../firebase';
-import { doc, getDoc, setDoc, deleteDoc, collection, addDoc, arrayRemove, updateDoc, arrayUnion } from 'firebase/firestore';
-import Comments from '../components/recipe-details/Comments';
+import { FaHeart } from "react-icons/fa";
+import { HiUser } from "react-icons/hi";
+import { ToastContainer, toast } from "react-toastify";
+import "../styles/RecipeDetailsPage.css";
+import { db } from "../firebase";
+import { doc, getDoc, arrayRemove, updateDoc, arrayUnion } from "firebase/firestore";
+import Comments from "../components/recipe-details/Comments";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Rating } from '@mui/material';
-import { AuthContext } from '../AuthContext';
-import RecipeDetailsSkeleton from '../components/recipe-details/RecipeDetailsSkeleton';
+import { Rating } from "@mui/material";
+import { AuthContext } from "../AuthContext";
+import RecipeDetailsSkeleton from "../components/recipe-details/RecipeDetailsSkeleton";
 
 const RecipeDetailsPage = () => {
+  const location = useLocation();
+  const { type, id } = useParams(); // type = edamam or user, id = recipe id
+  const navigate = useNavigate();
+  const [recipe, setRecipe] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const [copySuccess, setCopySuccess] = useState("");
+  const textAreaRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [averageRating, setAverageRating] = useState(0);
+  const { user } = useContext(AuthContext);
 
-	const location = useLocation();
-	const { type, id } = useParams(); // type = edamam or user, id = recipe id
-	const navigate = useNavigate()
-	const [recipe, setRecipe] = useState(null);
-	const [isSaved, setIsSaved] = useState(false);
-	const [copySuccess, setCopySuccess] = useState("");
-	const textAreaRef = useRef(null);
-	const [loading, setLoading] = useState(true);
-	const [averageRating, setAverageRating] = useState(0);
-	const { user } = useContext(AuthContext);
+  const notifyCopy = () =>
+    toast.success("Recipe link copied to clipboard", {
+      autoClose: 2000,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
 
-	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
-		autoClose: 2000,
-		closeOnClick: true,
-		pauseOnHover: false,
-		draggable: false,
-		progress: undefined,
-	});
+  async function copyToClip() {
+    const el = document.createElement("input");
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
 
-	// async function copyToClip() {
-	// 	const url = location.href;
-	// 	await navigator.clipboard.writeText(url);
-	// 	setCopySuccess("Copied");
-	// 	notifyCopy();
-	// }
-	async function copyToClip() {
+    setCopySuccess(true);
+    notifyCopy();
+  }
 
-		const el = document.createElement('input');
-		el.value = window.location.href;
-		document.body.appendChild(el);
-		el.select(); document.execCommand('copy');
-		document.body.removeChild(el);
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        setLoading(true);
 
-		setCopySuccess(true);
-		notifyCopy();
-	}
-
-	useEffect(() => {
-		const fetchRecipe = async () => {
-			try {
-				setLoading(true);
-
-				// if the recipe is from edamam, fetch via API (backend)
-				if (type === 'edamam') {
+        // if the recipe is from edamam, fetch via API (backend)
+        if (type === 'edamam') {
 					const response = await fetch(`/recipe-details?id=${encodeURIComponent(id.split('recipe_')[1])}`);
 					if (!response.ok) {
 						throw new Error('Failed to fetch recipe');
@@ -72,17 +66,14 @@ const RecipeDetailsPage = () => {
 					setRecipe({ ...data.recipe, type: 'edamam' });
 					// setRecipe(data.recipe);
 					console.log(data.recipe);
+          
+          // if it's user generated, fetch from firebase
+        } else if (type === "user") {
+          const docRef = doc(db, "recipes", id);
+          const docSnap = await getDoc(docRef);
 
-					// if it's user generated, fetch from firebase
-				} else if (type === 'user') {
-
-					const docRef = doc(db, 'recipes', id);
-					const docSnap = await getDoc(docRef);
-
-					if (docSnap.exists()) {
-						setRecipe(docSnap.data());
-
-						const data = docSnap.data();
+          
+	const data = docSnap.data();
 						// setRecipe(data);
 						setRecipe({ ...data, type: 'user' });
 						if (data.averageRating) {
@@ -97,89 +88,87 @@ const RecipeDetailsPage = () => {
 			} finally {
 				setLoading(false);
 			}
-		};
+    };
 
-		if (type && id) {
-			fetchRecipe();
-		}
-	}, [type, id]);
+    if (type && id) {
+      fetchRecipe();
+    }
+  }, [type, id]);
 
-	// check if the recipe is saved for this user
-	useEffect(() => {
-		const checkIfSaved = async () => {
-			if (user?.uid && id) {
-				const userRef = doc(db, 'users', user.uid);
-				const docSnap = await getDoc(userRef);
-				if (docSnap.exists()) {
-					const userData = docSnap.data();
-					setIsSaved(userData.savedRecipes?.includes(id));
-				}
-			}
-		}
-		checkIfSaved();
-	}, [user, id])
+  // check if the recipe is saved for this user
+  useEffect(() => {
+    const checkIfSaved = async () => {
+      if (user?.uid && id) {
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setIsSaved(userData.savedRecipes?.includes(id));
+        }
+      }
+    };
+    checkIfSaved();
+  }, [user, id]);
 
-	const handleSaveRecipe = async () => {
-		if (!user) {
-			toast.info('Please login to save recipes');
-			return;
-		}
-		try {
-			const userRef = doc(db, 'users', user.uid);
+  const handleSaveRecipe = async () => {
+    if (!user) {
+      toast.info("Please login to save recipes");
+      return;
+    }
+    try {
+      const userRef = doc(db, "users", user.uid);
 
-			if (isSaved) {
-				await updateDoc(userRef, {
-					savedRecipes: arrayRemove(id),
-				});
-			} else {
-				await updateDoc(userRef, {
-						savedRecipes: arrayUnion(id),
-					});
-			}
-			setIsSaved(!isSaved);
-		} catch (error) {
-			console.error('Error saving recipe:', error);
-		}
+      if (isSaved) {
+        await updateDoc(userRef, {
+          savedRecipes: arrayRemove(id),
+        });
+      } else {
+        await updateDoc(userRef, {
+          savedRecipes: arrayUnion(id),
+        });
+      }
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+    }
+  };
 
-	}
+  if (!recipe) {
+    return (
+      <div className="details-page">
+        <div className="error">Recipe not found</div>
+      </div>
+    );
+  }
 
-	if (!recipe) {
-		return (
-			<div className="details-page">
-				<div className="error">Recipe not found</div>
-			</div>
-		);
-	}
+  if (loading) {
+    return <RecipeDetailsSkeleton />;
+  }
 
-	if (loading) {
-		return (
-			<RecipeDetailsSkeleton />
-		)
-	}
-
-	return (
-
-		<div className='details-page'>
-			<div className='header'>
-				<Link to="/recipes">
-					<button><FaArrowLeft /> Back to Recipes</button>
-				</Link>
-				<div className='header-right'>
-					<button onClick={handleSaveRecipe}>
-						{isSaved ? <FaHeart /> : <FaRegHeart />}
-						{isSaved ? 'Unsave Recipe' : 'Save Recipe'}
-					</button>
-					<div>
-						<button
-							onClick={function (event) {
-								copyToClip()
-							}}
-						><FiShare2 /> Share
-						</button>
-						<ToastContainer />
-					</div>
-				</div>
-
+  return (
+    <div className="details-page">
+      <div className="header">
+        <Link to="/recipes">
+          <button>
+            <FaArrowLeft /> Back to Recipes
+          </button>
+        </Link>
+        <div className="header-right">
+          <button onClick={handleSaveRecipe}>
+            {isSaved ? <FaHeart /> : <FaRegHeart />}
+            {isSaved ? "Unsave Recipe" : "Save Recipe"}
+          </button>
+          <div>
+            <button
+              onClick={function (event) {
+                copyToClip();
+              }}
+            >
+              <FiShare2 /> Share
+            </button>
+            <ToastContainer />
+          </div>
+        </div>
 			</div>
 			<div className='recipe-content'>
 				<div className='recipe-img-container'>
@@ -308,4 +297,4 @@ const RecipeDetailsPage = () => {
 	)
 }
 
-export default RecipeDetailsPage
+export default RecipeDetailsPage;

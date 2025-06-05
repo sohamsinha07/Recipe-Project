@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -10,99 +10,120 @@ import {
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { toast } from "react-toastify";
+
+
 
 export default function RecipeCard({ recipe }) {
-  const [isFavorited, setIsFavorited] = useState(recipe.favorited || false);
-  console.log("Rendering recipe:", recipe);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+  const auth = getAuth();
+  const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    console.log(" Firebase user loaded:", firebaseUser);
+    setUser(firebaseUser);
+  });
+
+  return () => unsubscribe();
+}, []);
+
 
   const handleFavoriteClick = async (e) => {
-  e.preventDefault();
+    e.preventDefault(); // don't follow <Link>
 
-  if (recipe.source !== "firestore") return;
-
-  try {
-    const res = await fetch(`/recipe-details?id=${encodeURIComponent(id)}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ favorited: !isFavorited }), // send the desired value
-    });
-
-    const data = await res.json();
-
-    if (res.ok && typeof data.favorited === "boolean") {
-      setIsFavorited(data.favorited);
-    } else {
-      throw new Error(data.error || "Unexpected response");
+    if (!user) {
+      alert("Please log in to save recipes.");
+      return;
     }
-  } catch (err) {
-    console.error("❌ Failed to toggle favorite:", err);
-  }
-};
+
+    const userId = user.uid;
+    try {
+      const res = await fetch(`http://localhost:3000/recipes/save/${recipe.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: user.uid }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setIsFavorited(data.isSaved);
+      } else {
+        throw new Error(data.error || "Failed to toggle save");
+      }
+    } catch (err) {
+      console.error("❌ Save error:", err);
+    }
+  };
 
 
   return (
     <Link
-      to={`/recipe/${recipe.source === "firestore" ? "user" : "edamam"}/${encodeURIComponent(recipe.id)}`}
-      style={{ textDecoration: "none" }}
-    >
-        <Card
+  to={`/recipe/${recipe.source === "firestore" ? "user" : "edamam"}/${encodeURIComponent(recipe.id)}`}
+  style={{ textDecoration: "none" }}
+>
+  <Card
     sx={{
-        background: "linear-gradient(to right, #ff5f6d, #ffc371)",
-        height: 200,
-        width: 300,
+      background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      height: 200,
+      width: 300,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      borderRadius: 3,
+      p: 2,
+      color: "white",
+      overflow: "hidden",
+    }}
+  >
+    <CardContent
+      sx={{
+        p: 0,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        borderRadius: 3,
-        p: 2,
-        color: "white",  
-        overflow: "hidden",
-    }}
+        height: "100%",
+      }}
     >
-
-        <CardContent sx={{ p: 0, height: "100%" }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-            <Typography
-              fontWeight="bold"
-              variant="subtitle1"
-              sx={{
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {recipe.title}
-            </Typography>
-            <IconButton size="small" onClick={handleFavoriteClick}>
-              {isFavorited ? (
-                <FavoriteIcon sx={{ color: "#ff1744" }} />
-              ) : (
-                <FavoriteBorderIcon sx={{ color: "white" }} />
-              )}
-            </IconButton>
-          </Box>
-
+      <Box mb={1}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography
-            variant="body2"
+            fontWeight="bold"
+            variant="subtitle1"
             sx={{
               overflow: "hidden",
-              display: "-webkit-box",
-              WebkitLineClamp: 3,
-              WebkitBoxOrient: "vertical",
-              mb: 2,
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
             }}
           >
-            {recipe.description}
+            {recipe.title}
           </Typography>
+        </Box>
 
-          <Box display="flex" justifyContent="space-between" fontSize="0.875rem">
-            <Chip label={`⭐ ${recipe.rating}`} size="small" />
-            <Chip label={recipe.time} size="small" />
-          </Box>
-        </CardContent>
-      </Card>
-    </Link>
+        <Typography
+          variant="body2"
+          sx={{
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {recipe.description}
+        </Typography>
+      </Box>
+
+      <Box display="flex" justifyContent="space-between" mt="auto">
+        <Chip label={`⭐ ${recipe.rating > 0 ? recipe.rating : "N/A"}`} size="small" />
+        <Chip label={recipe.time} size="small" />
+      </Box>
+    </CardContent>
+  </Card>
+</Link>
+
   );
 } 

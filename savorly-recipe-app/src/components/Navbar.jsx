@@ -93,6 +93,14 @@ export default function Navbar() {
     },
   };
 
+  const handleNavClick = (path) => {
+    if (user) {
+      navigate(path);
+    } else {
+      setLoginOpen(true);
+    }
+  };
+
   return (
     <>
       <AppBar position="static" color="transparent">
@@ -125,8 +133,7 @@ export default function Navbar() {
             }}
           >
             <Button
-              component={NavLink}
-              to="/recipes"
+              onClick={() => handleNavClick("/recipes")}
               sx={{
                 color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
                 ...navLinkStyles,
@@ -145,8 +152,7 @@ export default function Navbar() {
               Community
             </Button> */}
             <Button
-              component={NavLink}
-              to="/my_kitchen"
+              onClick={() => handleNavClick("/my_kitchen")}
               sx={{
                 color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
                 ...navLinkStyles,
@@ -185,8 +191,8 @@ export default function Navbar() {
                   <Avatar
                     sx={{
                       bgcolor: "#F25C54",
-                      width: 32,
-                      height: 32,
+                      width: 40,
+                      height: 40,
                       fontWeight: "bold",
                     }}
                   >
