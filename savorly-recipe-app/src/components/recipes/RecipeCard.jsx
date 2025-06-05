@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 
 export default function RecipeCard({ recipe }) {
   const [isFavorited, setIsFavorited] = useState(recipe.favorited || false);
-  //console.log("Rendering recipe:", recipe);
+  console.log("Rendering recipe:", recipe);
 
   const handleFavoriteClick = async (e) => {
   e.preventDefault();

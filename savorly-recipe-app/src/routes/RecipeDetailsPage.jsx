@@ -64,12 +64,13 @@ const RecipeDetailsPage = () => {
 
 				// if the recipe is from edamam, fetch via API (backend)
 				if (type === 'edamam') {
-					const response = await fetch(`/recipe-details?id=${encodeURIComponent(id)}`);
+					const response = await fetch(`/recipe-details?id=${encodeURIComponent(id.split('recipe_')[1])}`);
 					if (!response.ok) {
 						throw new Error('Failed to fetch recipe');
 					}
 					const data = await response.json();
-					setRecipe(data.hits[0]?.recipe || data.recipe);
+					setRecipe(data.recipe);
+					console.log(data.recipe);
 
 					// if it's user generated, fetch from firebase
 				} else if (type === 'user') {
@@ -91,7 +92,6 @@ const RecipeDetailsPage = () => {
 				}
 			} catch (error) {
 				console.error('Error loading recipe:', error);
-				setError(error.message);
 			} finally {
 				setLoading(false);
 			}
@@ -230,14 +230,14 @@ const RecipeDetailsPage = () => {
 				<div className='recipe-steps'>
 					{/* left side */}
 					<div className='ingredients-instructions'>
-
+					{/* ingredient.text should be conditional on edamam vs. firebase */}
 						<div className='ingredients-section'>
 							<h2>Ingredients</h2>
 							<ul className='ingredients-list'>
 								{(recipe.ingredients || []).map((ingredient, index) => (
 									<li key={index}>
 										<input type="checkbox" id={`ingredient-${index}`} />
-										<label htmlFor={`ingredient-${index}`}>{ingredient}</label>
+										<label htmlFor={`ingredient-${index}`}>{ingredient.text}</label>
 									</li>
 								))}
 							</ul>
