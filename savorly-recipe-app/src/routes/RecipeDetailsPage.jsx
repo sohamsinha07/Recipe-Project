@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import ChatPage from '../components/chatbot/ChatPage'
 import { FaArrowLeft } from "react-icons/fa";
@@ -6,14 +6,17 @@ import { FaRegHeart } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 import { FaClock } from 'react-icons/fa';
 import { HiUsers } from "react-icons/hi";
+import { FaHeart } from 'react-icons/fa';
+import { HiUser } from 'react-icons/hi';
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
 import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
-import Comments from '../components/Comments';
+import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
-import RatingBox from '../components/RatingBox';
+import { AuthContext } from '../AuthContext';
+import RecipeDetailsSkeleton from '../components/recipe-details/RecipeDetailsSkeleton';
 
 const RecipeDetailsPage = () => {
 
@@ -26,6 +29,7 @@ const RecipeDetailsPage = () => {
 	const textAreaRef = useRef(null);
 	const [loading, setLoading] = useState(true);
 	const [averageRating, setAverageRating] = useState(0);
+	const { user } = useContext(AuthContext);
 
 	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
 		autoClose: 2000,
@@ -35,9 +39,22 @@ const RecipeDetailsPage = () => {
 		progress: undefined,
 	});
 
+	// async function copyToClip() {
+	// 	const url = location.href;
+	// 	await navigator.clipboard.writeText(url);
+	// 	setCopySuccess("Copied");
+	// 	notifyCopy();
+	// }
 	async function copyToClip() {
-		await navigator.clipboard.writeText(location.href);
-		setCopySuccess("Copied");
+
+		const el = document.createElement('input');
+		el.value = window.location.href;
+		document.body.appendChild(el);
+		el.select(); document.execCommand('copy');
+		document.body.removeChild(el);
+
+		setCopySuccess(true);
+		notifyCopy();
 	}
 
 	useEffect(() => {
@@ -85,12 +102,56 @@ const RecipeDetailsPage = () => {
 		}
 	}, [type, id]);
 
+	// check if the recipe is saved for this user
+	useEffect(() => {
+		const checkIfSaved = async () => {
+			if (user?.uid && id) {
+				const savedRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+				const docSnap = await getDoc(savedRef);
+				setIsSaved(docSnap.exists());
+			}
+		}
+		checkIfSaved();
+	}, [user, id])
+
+	const handleSaveRecipe = async () => {
+		if (!user) {
+			toast.info('Please login to save recipes');
+			return;
+		}
+		try {
+			const userRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+
+			if (isSaved) {
+				await deleteDoc(userRef);
+				toast.success('Recipe removed from saved');
+			} else {
+				await setDoc(userRef, {
+					recipeId: id,
+					// savedAt: new Date(),
+					// recipeType: type,
+				});
+				toast.success('Recipe saved!');
+			}
+			setIsSaved(!isSaved);
+		} catch (error) {
+			console.error('Error saving recipe:', error);
+		}
+
+	}
+
 	if (!recipe) {
 		return (
 			<div className="details-page">
 				<div className="error">Recipe not found</div>
 			</div>
 		);
+	}
+
+	if (loading) {
+		return (
+			<RecipeDetailsSkeleton />
+		)
 	}
 
 	return (
@@ -101,12 +162,14 @@ const RecipeDetailsPage = () => {
 					<button><FaArrowLeft /> Back to Recipes</button>
 				</Link>
 				<div className='header-right'>
-					<button><FaRegHeart /> Save Recipe</button>
+					<button onClick={handleSaveRecipe}>
+						{isSaved ? <FaHeart /> : <FaRegHeart />}
+						{isSaved ? 'Unsave Recipe' : 'Save Recipe'}
+					</button>
 					<div>
 						<button
 							onClick={function (event) {
 								copyToClip()
-								notifyCopy()
 							}}
 						><FiShare2 /> Share
 						</button>
@@ -128,8 +191,11 @@ const RecipeDetailsPage = () => {
 				</div>
 
 				<h1 className='recipe-title'>{recipe.title}</h1>
+				<div className='recipe-author-desc'>
+
+				</div>
 				{recipe.description && (
-					<p className='recipe-description'>Description</p>
+					<p className='recipe-description'>{recipe.description}</p>
 				)}
 				<div className='recipe-meta'>
 					<span className='rating'>
@@ -140,6 +206,12 @@ const RecipeDetailsPage = () => {
 							precision={0.5}
 						/>
 					</span>
+					{recipe.author && (
+						<div className='meta-item'>
+							<HiUser />
+							<span>By: {recipe.author}</span>
+						</div>
+					)}
 					{recipe.totalTime && (
 						<div className='meta-item'>
 							<FaClock />
@@ -204,11 +276,9 @@ const RecipeDetailsPage = () => {
 			</div>
 			<div className='comment-section'>
 				<Comments
-					commentsRecipeId={`${type}-${id}`}
 					recipeId={id}
-					// recipeId={id}
-					currentUserId={'bmEllYa1L8YLdeKOxE8r'}
-					// currentUserId={currentUser?.uid || null}
+					// currentUserId={'bmEllYa1L8YLdeKOxE8r'}
+					currentUserId={user?.uid || null}
 				/>
 			</div>
 		</div>

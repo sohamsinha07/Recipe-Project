@@ -1,6 +1,7 @@
 import { Box, Typography, Grid, Card, CardContent, Button, Skeleton } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import StarIcon from "@mui/icons-material/Star";
+import { Link as RouterLink } from "react-router-dom";
 
 import "../../styles/homePage.css";
 
@@ -148,7 +149,7 @@ export default function PopularSection({ loading }) {
             </Typography>
           </Box>
 
-          <Button size="small" className="popular-viewall-button" endIcon={<ArrowForwardIosIcon />}>
+          <Button size="small" className="popular-viewall-button" component={RouterLink} to="/recipes" endIcon={<ArrowForwardIosIcon />}>
             View All
           </Button>
         </Box>
