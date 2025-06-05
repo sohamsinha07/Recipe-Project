@@ -51,8 +51,8 @@ function ProviderButton({ title, logo, onClick }) {
 }
 
 const circleStyle = {
-  width: 40,
-  height: 40,
+  width: 48,
+  height: 48,
   backgroundColor: "rgba(0, 0, 0, 0.12)",
-  "& svg": { fontSize: 24 },
+  "&:hover": { backgroundColor: "rgba(0,0,0,0.15)" },
 };

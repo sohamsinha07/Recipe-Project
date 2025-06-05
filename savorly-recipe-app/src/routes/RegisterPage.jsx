@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { AuthContext } from "../AuthContext";
 
 // Import components
@@ -12,6 +12,8 @@ import EmailField from "../components/registerPage/EmailField";
 import PasswordFields from "../components/registerPage/PasswordFields";
 import DateOfBirthField from "../components/registerPage/DateOfBirthField";
 import SubmitSection from "../components/registerPage/SubmitSection";
+
+import SavorlyLogo from "../assets/icon.png";
 import leftSideImage from "../assets/registerPage_images/dish_1.png";
 
 export default function RegisterPage() {
@@ -191,17 +193,43 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", overflow: "hidden" }}>
       {/* Left half: image */}
       <Box
         sx={{
           flex: 1,
+          position: "relative",
           backgroundImage: `url(${leftSideImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center top",
           display: { xs: "none", md: "block" },
+          overflow: "hidden",
         }}
-      />
+      >
+        <Box
+          onClick={() => navigate("/")}
+          sx={{
+            position: "absolute",
+            top: 16,
+            left: 16,
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            p: 1,
+            borderRadius: 1,
+          }}
+        >
+          <Box
+            component="img"
+            src={SavorlyLogo}
+            alt="Savorly logo"
+            sx={{ width: 32, height: 32, mr: 1 }}
+          />
+          <Typography variant="h6" sx={{ color: "#fff", fontWeight: 700 }}>
+            Savorly
+          </Typography>
+        </Box>
+      </Box>
 
       {/* Right half: form */}
       <Box
@@ -211,7 +239,6 @@ export default function RegisterPage() {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#fafafa",
-          py: 4,
         }}
       >
         <Box

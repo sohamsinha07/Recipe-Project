@@ -1,6 +1,8 @@
 import { Box, Button, Divider, Typography } from "@mui/material";
 import RegisterProviders from "./RegisterProviders";
 
+import "../../styles/loginAndRegister.css";
+
 export default function SubmitSection({ onSubmitError }) {
   return (
     <>
@@ -31,21 +33,12 @@ export default function SubmitSection({ onSubmitError }) {
         </Button>
       </Box>
       {/* divider + providers */}
-      <Box mt={3} textAlign="center">
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, mt: 2 }}>
         <Divider sx={{ flexGrow: 1 }} />
-        <Typography
-          sx={{
-            mt: -1.2,
-            px: 1.5,
-            display: "inline-block",
-            backgroundColor: "#fff",
-            color: "#777",
-            fontWeight: 500,
-            fontSize: "0.75rem",
-          }}
-        >
-          or register with
-        </Typography>
+
+        <Typography className="register-divider-text">or register with</Typography>
+
+        <Divider sx={{ flexGrow: 1 }} />
       </Box>
       <RegisterProviders /> {/* round provider buttons */}
     </>
