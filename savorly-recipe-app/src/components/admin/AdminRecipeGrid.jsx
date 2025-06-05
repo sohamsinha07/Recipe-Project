@@ -1,5 +1,7 @@
 import React from "react";
 import AdminRecipeCard from "./AdminRecipeCard"; 
+import { Link } from "react-router-dom";
+
 
 export default function AdminRecipeGrid({
   recipes, view, onApprove, onReject, onEdit
@@ -24,11 +26,10 @@ export default function AdminRecipeGrid({
       }}>
         {recipes.map((recipe, i) => (
           <AdminRecipeCard
-            key={i}
+          key={recipe.id || i}
             recipe={recipe}
             onApprove={() => onApprove(recipe)}
             onReject={() => onReject(recipe)}
-            onEdit={() => onEdit(recipe)}
           />
         ))}
       </div>
@@ -89,14 +90,26 @@ export default function AdminRecipeGrid({
 </div>
           {/* Info */}
           <div style={{ flex: 3, minWidth: 0 }}>
-            <div style={{
-              fontWeight: 700, fontSize: 18, color: "#1A202C", fontFamily: "Inter, sans-serif",
-              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"
-            }}>
-              <div className="list-title">
-                  {recipe.title}
-                </div>
-            </div>
+            <Link
+              to={`/recipes/${recipe.id}`}
+              style={{
+                fontWeight: 700,
+                fontSize: 18,
+                color: "#1A202C",
+                fontFamily: "Inter, sans-serif",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                textDecoration: "none",
+                transition: "color 0.18s",
+                display: "inline-block",
+              }}
+              onMouseOver={e => (e.target.style.color = "#3182ce")}
+              onMouseOut={e => (e.target.style.color = "#1A202C")}
+              className="list-title-link"
+            >
+    {recipe.title}
+  </Link>
             <div style={{
               color: "#718096", fontSize: 14, fontFamily: "Inter, sans-serif",
               overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", marginRight: 35

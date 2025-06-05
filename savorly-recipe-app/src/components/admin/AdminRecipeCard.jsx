@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
 
 function getTimeAgo(createdAt) {
   const created = createdAt?.seconds
@@ -28,6 +30,16 @@ export default function AdminRecipeCard({
   onReject,
 }) {
   return (
+    <Link
+      to={`/recipes/${recipe.id}`}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+        display: "block",
+        height: "100%",
+        width: "100%",
+      }}
+    >
     <div
       style={{
         width: 400,
@@ -133,21 +145,24 @@ export default function AdminRecipeCard({
               fontWeight: 700,
               lineHeight: "28px",
               marginBottom: 5,
-            }}
-          >
+              transition: "color 0.18s",
+          }}
+          onMouseOver={e => (e.target.style.color = "#3182ce")}
+          onMouseOut={e => (e.target.style.color = "#1A202C")}
+        >
             {recipe.title}
           </div>
           {/* Description - clamp to 2 lines */}
           <div
             style={{
               color: "#718096",
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: "Inter, sans-serif",
               fontWeight: 400,
               marginBottom: 12,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
+              // display: "-webkit-box",
+              // WebkitLineClamp: 2,
+              // WebkitBoxOrient: "vertical",
               overflow: "hidden",
               textOverflow: "ellipsis",
               minHeight: "42px", // keeps box height consistent
@@ -191,7 +206,7 @@ export default function AdminRecipeCard({
           {/* Buttons */}
           <div style={{ display: "flex", gap: 14 }}>
             <button
-              onClick={onReject}
+              onClick={() => onReject(recipe)}
               style={{
                 height: 36,
                 padding: "0 18px",
@@ -203,12 +218,15 @@ export default function AdminRecipeCard({
                 fontWeight: 500,
                 fontSize: 15,
                 cursor: "pointer",
+                transition: "background 0.2s, color 0.2s"
               }}
+              onMouseOver={e => e.target.style.background = "#FFF0F0"}
+              onMouseOut={e => e.target.style.background = "#fff"}
             >
               Reject
             </button>
             <button
-              onClick={onApprove}
+              onClick={() => onApprove(recipe)}
               style={{
                 height: 36,
                 padding: "0 18px",
@@ -220,7 +238,10 @@ export default function AdminRecipeCard({
                 fontWeight: 500,
                 fontSize: 15,
                 cursor: "pointer",
+                transition: "background 0.2s",
               }}
+              onMouseOver={e => e.target.style.background = "#25603b"}
+              onMouseOut={e => e.target.style.background = "#38A169"}
             >
               Approve &amp; Publish
             </button>
@@ -228,5 +249,6 @@ export default function AdminRecipeCard({
         </div>
       </div>
     </div>
+    </Link>
   );
 }

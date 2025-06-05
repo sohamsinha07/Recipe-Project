@@ -5,11 +5,14 @@ export default function RecipeReviewTabs({
   setView = () => {},
   tab = "pending",
   setTab,
-  counts = { all: 20, pending: 12, approved: 8 },
+  counts = { all: recipes.length,
+    pending: recipes.filter(r => r.status === "pending").length,
+    approved: recipes.filter(r => r.status === "approved").length },
   sort = "newest",
   setSort
 }) {
   return (
+    
     <div style={{
       alignSelf: "stretch",
       padding: 24,
