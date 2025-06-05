@@ -1,13 +1,94 @@
-import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button, Skeleton } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Link as RouterLink } from "react-router-dom";
 
 import "../../styles/homePage.css";
 
-export default function FeaturesSection() {
+export default function FeaturesSection({ loading }) {
+  if (loading) {
+    return (
+      <Box className="features-section-container">
+        <Box className="section-wrapper">
+          <Skeleton
+            variant="text"
+            animation="wave"
+            width={480}
+            height={40}
+            sx={{ mx: "auto", mb: 1 }}
+          />
+
+          <Skeleton
+            variant="text"
+            animation="wave"
+            width={500}
+            height={24}
+            sx={{ mx: "auto", mb: 3 }}
+          />
+
+          <Grid container spacing={8} justifyContent="center">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Box className="feature-card">
+                  <Box className="feature-card-content">
+                    <Box className="feature-icon-box">
+                      <Skeleton
+                        variant="rectangular"
+                        animation="wave"
+                        width={48}
+                        height={48}
+                        sx={{ borderRadius: 1 }}
+                      />
+                    </Box>
+
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={160}
+                      height={28}
+                      sx={{ mb: 1 }}
+                    />
+
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={300}
+                      height={16}
+                      sx={{ mb: 0.5 }}
+                    />
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={260}
+                      height={16}
+                      sx={{ mb: 2 }}
+                    />
+                  </Box>
+
+                  <Box
+                    className="feature-button-container"
+                    sx={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      width={120}
+                      height={40}
+                      sx={{ borderRadius: 2 }}
+                    />
+                  </Box>
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box className="features-section-container">
       <Box className="section-wrapper">
@@ -45,6 +126,7 @@ export default function FeaturesSection() {
                   size="large"
                   className="feature-button-common feature-button-explore"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
+                  component={RouterLink} to="/recipes"
                 >
                   Explore
                 </Button>
@@ -71,6 +153,7 @@ export default function FeaturesSection() {
                   size="large"
                   className="feature-button-common feature-button-create"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
+                  component={RouterLink} to="/create_recipe"
                 >
                   Start Creating
                 </Button>

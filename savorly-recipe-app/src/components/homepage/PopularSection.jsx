@@ -1,10 +1,11 @@
-import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
+import { Box, Typography, Grid, Card, CardContent, Button, Skeleton } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import StarIcon from "@mui/icons-material/Star";
+import { Link as RouterLink } from "react-router-dom";
 
 import "../../styles/homePage.css";
 
-export default function PopularSection() {
+export default function PopularSection({ loading }) {
   // Mock data
   const cardsData = [
     {
@@ -53,6 +54,86 @@ export default function PopularSection() {
     },
   ];
 
+  if (loading) {
+    return (
+      <Box className="popular-section-container">
+        <Box className="section-wrapper">
+          <Box className="popular-header">
+            <Box>
+              <Skeleton variant="text" animation="wave" width={300} height={80} sx={{ mb: -1 }} />
+              <Skeleton variant="text" animation="wave" width={250} height={20} sx={{ mb: 5 }} />
+            </Box>
+
+            <Skeleton
+              variant="rectangular"
+              animation="wave"
+              width={80}
+              height={32}
+              sx={{ borderRadius: 1 }}
+            />
+          </Box>
+
+          <Grid container spacing={3} className="popular-grid" sx={{ pb: 5 }}>
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <Grid item xs={12} sm={6} md={3} key={idx}>
+                <Card className="popular-card">
+                  <Box className="popular-card-media">
+                    <Skeleton
+                      sx={{ backgroundColor: "#d3d3d3" }}
+                      variant="rectangular"
+                      animation="wave"
+                      width="100%"
+                      height="100%"
+                    />
+                  </Box>
+
+                  <CardContent>
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={160}
+                      height={28}
+                      sx={{ mb: 1 }}
+                    />
+
+                    <Skeleton
+                      variant="text"
+                      animation="wave"
+                      width={200}
+                      height={16}
+                      sx={{ mb: 1 }}
+                    />
+
+                    <Box className="popular-meta">
+                      <Skeleton variant="text" animation="wave" width={80} height={16} />
+                      <Skeleton variant="text" animation="wave" width={40} height={16} />
+                    </Box>
+                  </CardContent>
+
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      left: 8,
+                    }}
+                  >
+                    <Skeleton
+                      variant="rectangular"
+                      animation="wave"
+                      width={60}
+                      height={20}
+                      sx={{ borderRadius: 1 }}
+                    />
+                  </Box>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box className="popular-section-container">
       {/* Wrapper for centering + responsive padding */}
@@ -68,7 +149,7 @@ export default function PopularSection() {
             </Typography>
           </Box>
 
-          <Button size="small" className="popular-viewall-button" endIcon={<ArrowForwardIosIcon />}>
+          <Button size="small" className="popular-viewall-button" component={RouterLink} to="/recipes" endIcon={<ArrowForwardIosIcon />}>
             View All
           </Button>
         </Box>

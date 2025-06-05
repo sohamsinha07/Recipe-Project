@@ -1,7 +1,20 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Skeleton } from "@mui/material";
 import "../../styles/homePage.css";
 
-export default function StatsSection() {
+export default function StatsSection({ loading }) {
+  if (loading) {
+    return (
+      <Box className="stats-section-container">
+        {Array.from({ length: 4 }).map((_, idx) => (
+          <Box key={idx} className="stats-item">
+            <Skeleton variant="text" animation="wave" width={90} height={50} sx={{ mx: "auto" }} />
+            <Skeleton variant="text" animation="wave" width={60} height={25} sx={{ mx: "auto" }} />
+          </Box>
+        ))}
+      </Box>
+    );
+  }
+
   return (
     <Box className="stats-section-container">
       {/* Recipes Stat */}

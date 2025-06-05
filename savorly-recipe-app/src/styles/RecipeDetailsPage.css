@@ -35,6 +35,10 @@
 	transform: translateY(-1px);
 }
 
+a:link {
+	text-decoration: none;
+}
+
 .header-right {
 	display: flex;
 	gap: 1rem;
@@ -58,6 +62,7 @@
 	margin-bottom: 3rem;
 }
 
+/*image should fit over placeholder/container*/
 .recipe-img {
 	width: 100%;
 	height: 300px;
@@ -70,11 +75,17 @@
 	font-weight: bold;
 }
 
+.recipe-description {
+	margin-top: 1rem;
+	color: #666;
+}
+
 .recipe-meta {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 1rem;
+	margin-top: 2rem;
 }
 
 .meta-item {
@@ -129,6 +140,7 @@
 
 .instructions-list li {
 	display: flex;
+	flex-direction: row;
 	align-items: flex-start;
 	gap: 1rem;
 	padding: 1rem 0;
@@ -150,6 +162,7 @@
 	justify-content: center;
 	font-weight: bold;
 	font-size: 1rem;
+	flex-shrink: 0;
 }
 
 /* Right side of content */
@@ -158,4 +171,5 @@
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
+	margin-top: 2rem;
 }
