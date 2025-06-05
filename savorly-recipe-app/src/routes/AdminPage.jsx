@@ -24,15 +24,34 @@ function getTimeAgo(createdAt) {
 
 export default function AdminPage() {
   const [recipes, setRecipes] = useState([]);
+  const [allRecipes, setAllRecipes] = useState([]);
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("newest");
   const [view, setView] = useState("grid");
   const [loading, setLoading] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
+  useEffect(() => {
+    async function fetchAllRecipes() {
+      const snapshot = await getDocs(collection(db, "recipes"));
+      setAllRecipes(
+        snapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }))
+      );
+    }
+    fetchAllRecipes();
+  }, [reloadKey]);
+
   // Compute counts (used in header/tabs)
-  const pendingCount = recipes.filter(r => r.status === "pending").length;
-  const approvedCount = recipes.filter(r => r.status === "approved" || r.status === "published").length;
+  const pendingCount = allRecipes.filter(r => r.status === "pending").length;
+  const approvedCount = allRecipes.filter(r => r.status === "published").length;
+  const counts = {
+    all: allRecipes.length,
+    pending: pendingCount,
+    approved: approvedCount,
+  };
 
   // Fetch recipes
   useEffect(() => {
@@ -41,6 +60,8 @@ export default function AdminPage() {
       let q;
       if (filter === "all") {
         q = collection(db, "recipes");
+      } else if (filter === "approved") {
+        q = query(collection(db, "recipes"), where("status", "==", "published"));
       } else {
         q = query(collection(db, "recipes"), where("status", "==", filter));
       }
@@ -54,6 +75,9 @@ export default function AdminPage() {
     }
     fetchRecipes();
   }, [filter, reloadKey]);
+
+  
+  
 
   // Sorting
   const sortedRecipes = [...recipes].sort((a, b) => {
@@ -85,14 +109,7 @@ export default function AdminPage() {
     await updateDoc(doc(db, "recipes", recipe.id), { status: "published" });
     setReloadKey(k => k + 1);
   };
-  
 
-  // For RecipeReviewTabs
-  const counts = {
-    all: recipes.length,
-    pending: pendingCount,
-    approved: approvedCount,
-  };
 
   return (
     <div className="admin-page">

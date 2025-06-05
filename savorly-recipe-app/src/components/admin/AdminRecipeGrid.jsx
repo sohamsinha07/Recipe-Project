@@ -9,6 +9,10 @@ export default function AdminRecipeGrid({
   if (!recipes.length) {
     return <div style={{ padding: 32 }}>No recipes found.</div>;
   }
+  const cardsPerRow = 3;
+  const placeholdersNeeded = recipes.length > 0
+  ? (cardsPerRow - (recipes.length % cardsPerRow)) % cardsPerRow
+  : 0;
 
   // Grid view
   if (view === "grid") {
@@ -32,6 +36,9 @@ export default function AdminRecipeGrid({
             onReject={() => onReject(recipe)}
           />
         ))}
+        {Array.from({ length: placeholdersNeeded }).map((_, idx) => (
+      <div key={`ph-${idx}`} style={{ visibility: "hidden" }} />
+      ))}
       </div>
     );
   }
