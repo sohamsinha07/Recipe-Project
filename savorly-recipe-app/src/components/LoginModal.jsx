@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import GoogleLogo from "../assets/google.png";
+import GoogleLogo from "../assets/providerLogos/google.png";
 
 import "../styles/loginAndRegister.css";
 
@@ -36,7 +36,7 @@ export default function LoginModal({ open, onClose }) {
       await login({ email, password });
       setErrorMsg("");
       onClose();
-      navigate("/profile");
+      navigate("/my_kitchen");
     } catch (err) {
       const msg = err.response?.data?.error || "Login failed";
       setErrorMsg(msg);

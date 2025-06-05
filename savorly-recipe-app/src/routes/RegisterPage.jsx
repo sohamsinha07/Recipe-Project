@@ -178,7 +178,7 @@ export default function RegisterPage() {
       const response = await axios.post("/auth/register", payload);
       if (response.status === 201) {
         await login({ email: values.email, password: values.password });
-        navigate("/profile");
+        navigate("/my_kitchen");
       }
     } catch (err) {
       console.error("Registration error:", err);

@@ -6,7 +6,6 @@ import { AuthProvider } from "./AuthContext";
 import App from "./App";
 import HomePage from "./routes/HomePage";
 import RegisterPage from "./routes/RegisterPage";
-import ProfilePage from "./routes/ProfilePage";
 import RecipesPage from "./routes/RecipesPage";
 import CategoriesPage from "./routes/CategoriesPage";
 import MyKitchenPage from "./routes/MyKitchenPage";
@@ -27,7 +26,6 @@ export const router = createBrowserRouter([
       { path: "recipes", element: <RecipesPage /> },
       { path: "categories", element: <CategoriesPage /> },
       { path: "my_kitchen", element: <MyKitchenPage /> },
-      { path: "profile", element: <ProfilePage /> },
       { path: "recipe/:type/:id", element: <RecipeDetailsPage /> },
       { path: "admin", element: <AdminPage /> },
     ],

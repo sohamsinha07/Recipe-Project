@@ -236,6 +236,7 @@
   align-items: stretch;
 }
 .popular-card {
+  /* background: linear-gradient(90deg, #ff8bc3 0%, #ff8b8b 100%) !important; */
   position: relative !important;
   border-radius: 8px !important;
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14),
@@ -256,7 +257,6 @@
   color: white;
   font-weight: 700;
   font-size: 1rem;
-  background: linear-gradient(135deg, #ff8474, #ff5b5b); /* adjust per card */
 }
 .popular-card-title {
   font-weight: 700 !important;
