@@ -85,7 +85,9 @@ router.get("/edamam", async (req, res) => {
       });
 
       const hits = response.data.hits || [];
+	  console.log(hits);
       const formatted = hits.map((hit) => ({
+		uri: hit.recipe.uri,
         title: hit.recipe.label,
         description: hit.recipe.ingredientLines.slice(0, 2).join(", "),
         rating: (Math.random() * 1 + 4).toFixed(1),
