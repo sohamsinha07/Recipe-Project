@@ -40,7 +40,7 @@ export default function PasswordFields({
           InputProps={{
             endAdornment: (
               <IconButton onClick={toggleShowPwd} edge="end" size="small">
-                {showPwd ? <VisibilityOff /> : <Visibility />}
+                {showPwd ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
               </IconButton>
             ),
           }}
@@ -91,7 +91,7 @@ export default function PasswordFields({
           InputProps={{
             endAdornment: (
               <IconButton onClick={toggleShowConfirm} edge="end" size="small">
-                {showConfirm ? <VisibilityOff /> : <Visibility />}
+                {showConfirm ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
               </IconButton>
             ),
           }}

@@ -126,12 +126,19 @@ export default function TitleSection({ loading }) {
             variant="contained"
             className="title-section-browse-button"
             startIcon={<AutoStoriesIcon className="title-section-browse-icon" />}
-            component={RouterLink} to="/recipes"
+            component={RouterLink}
+            to="/recipes"
           >
             Browse Recipes
           </Button>
 
-          <Button variant="outlined" className="title-section-create-button" startIcon={<AddIcon />} component={RouterLink} to="/create_recipe" >
+          <Button
+            variant="outlined"
+            className="title-section-create-button"
+            startIcon={<AddIcon />}
+            component={RouterLink}
+            to="/create_recipe"
+          >
             Create Recipe
           </Button>
         </Box>
