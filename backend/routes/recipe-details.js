@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import db from "../firebase.js"; // your Firestore Admin SDK instance
+import { db } from "../firebase.js";
 import admin from "firebase-admin";
 
 const router = express.Router();

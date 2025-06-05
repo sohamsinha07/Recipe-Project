@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Card, CardContent, Button, Skeleton, Stack } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import axios from "axios";
 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -174,7 +175,12 @@ export default function NewSection({ loading }) {
                   maxWidth: "25%",
                 }}
               >
-                <Card className="popular-card">
+                <Card
+                  className="popular-card"
+                  component={RouterLink}
+                  to={`/recipe/user/${id}`}
+                  sx={{ textDecoration: "none" }}
+                >
                   <Box
                     className="popular-card-media"
                     sx={{

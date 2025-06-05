@@ -181,7 +181,12 @@ export default function PopularSection({ loading }) {
                   maxWidth: "25%",
                 }}
               >
-                <Card className="popular-card">
+                <Card
+                  className="popular-card"
+                  component={RouterLink}
+                  to={`/recipe/user/${id}`}
+                  sx={{ textDecoration: "none" }}
+                >
                   <Box
                     className="popular-card-media"
                     sx={{
