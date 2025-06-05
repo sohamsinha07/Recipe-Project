@@ -41,10 +41,8 @@ const Comments = ({ recipeId, currentUserId }) => {
 		try {
 			if (deleteItem.type === 'comment') {
 				await deleteDoc(doc(db, 'comments', deleteItem.id));
-				toast.success('Comment deleted successfully!');
 			} else if (deleteItem.type === 'reply') {
 				await deleteDoc(doc(db, 'replies', deleteItem.id));
-				toast.success('Reply deleted successfully!');
 			}
 			closeConfirm();
 		} catch (error) {
@@ -174,37 +172,6 @@ const Comments = ({ recipeId, currentUserId }) => {
 			toast.error('Failed to reply to comment');
 		}
 	}
-
-	// // delete comment
-	// const handleDeleteComment = async (commentId) => {
-	// 	if (!currentUserId) return;
-	// 	setConfirmOpen(false);
-
-	// 	try {
-	// 		await deleteDoc(doc(db, 'comments', commentId));
-	// 		toast.success('Comment deleted successfully!');
-	// 	} catch (error) {
-	// 		console.error('Error deleting comment:', error);
-	// 		toast.error('Failed to delete comment');
-	// 	}
-
-	// };
-
-	// // delete reply
-	// const handleDeleteReply = async (commentId, replyId) => {
-	// 	if (!currentUserId) return;
-	// 	setConfirmOpen(false);
-
-	// 	// if (window.confirm('Are you sure you want to delete this reply?')) {
-	// 	try {
-	// 		await deleteDoc(doc(db, 'replies', replyId));
-	// 		toast.success('Reply deleted successfully!');
-	// 	} catch (error) {
-	// 		console.error('Error deleting reply:', error);
-	// 		toast.error('Failed to delete reply');
-	// 	}
-	// 	// }
-	// };
 
 	// Handling likes on comments
 	const handleLikeComment = async (commentId, currentLikes, likedBy = []) => {
