@@ -55,12 +55,11 @@ export const ChatPage = () => {
 				<h2>Recipe Bot</h2>
 			</div>
 
-
 			<ResponseDisplay messages={messages} />
+			{loading && <div>Loading...</div>}
 
 			<div className='input-container'>
-				<form onSubmit={handleSend} style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-
+				<form onSubmit={handleSend}>
 					<InputBox
 						value={inputValue}
 						onChange={(e) => setInputValue(e.target.value)}
@@ -69,8 +68,6 @@ export const ChatPage = () => {
 					<button className='submit-btn' type='submit' disabled={loading}><LuSend size={30} /></button>
 				</form>
 			</div>
-
-			{loading && <div>Loading...</div>}
 
 		</div>
 	);

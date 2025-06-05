@@ -11,11 +11,12 @@ import { HiUser } from 'react-icons/hi';
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
-import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, collection, addDoc, arrayRemove, updateDoc, arrayUnion } from 'firebase/firestore';
 import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
 import { AuthContext } from '../AuthContext';
+import RecipeDetailsSkeleton from '../components/recipe-details/RecipeDetailsSkeleton';
 
 const RecipeDetailsPage = () => {
 
@@ -28,7 +29,7 @@ const RecipeDetailsPage = () => {
 	const textAreaRef = useRef(null);
 	const [loading, setLoading] = useState(true);
 	const [averageRating, setAverageRating] = useState(0);
-	const { user, login, logout } = useContext(AuthContext);
+	const { user } = useContext(AuthContext);
 
 	const notifyCopy = () => toast.success('Recipe link copied to clipboard', {
 		autoClose: 2000,
@@ -38,9 +39,21 @@ const RecipeDetailsPage = () => {
 		progress: undefined,
 	});
 
+	// async function copyToClip() {
+	// 	const url = location.href;
+	// 	await navigator.clipboard.writeText(url);
+	// 	setCopySuccess("Copied");
+	// 	notifyCopy();
+	// }
 	async function copyToClip() {
-		await navigator.clipboard.writeText(location.href);
-		setCopySuccess("Copied");
+
+		const el = document.createElement('input');
+		el.value = window.location.href;
+		document.body.appendChild(el);
+		el.select(); document.execCommand('copy');
+		document.body.removeChild(el);
+
+		setCopySuccess(true);
 		notifyCopy();
 	}
 
@@ -93,9 +106,12 @@ const RecipeDetailsPage = () => {
 	useEffect(() => {
 		const checkIfSaved = async () => {
 			if (user?.uid && id) {
-				const savedRef = doc(db, 'users', user.uid, 'savedRecipes', id);
-				const docSnap = await getDoc(savedRef);
-				setIsSaved(docSnap.exists());
+				const userRef = doc(db, 'users', user.uid);
+				const docSnap = await getDoc(userRef);
+				if (docSnap.exists()) {
+					const userData = docSnap.data();
+					setIsSaved(userData.savedRecipes?.includes(id));
+				}
 			}
 		}
 		checkIfSaved();
@@ -107,17 +123,17 @@ const RecipeDetailsPage = () => {
 			return;
 		}
 		try {
-			const userRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+			const userRef = doc(db, 'users', user.uid);
 
 			if (isSaved) {
-				await deleteDoc(userRef);
+				await updateDoc(userRef, {
+					savedRecipes: arrayRemove(id),
+				});
 				toast.success('Recipe removed from saved');
 			} else {
-				await setDoc(userRef, {
-					recipeId: id,
-					// savedAt: new Date(),
-					// recipeType: type,
-				});
+				await updateDoc(userRef, {
+						savedRecipes: arrayUnion(id),
+					});
 				toast.success('Recipe saved!');
 			}
 			setIsSaved(!isSaved);
@@ -135,6 +151,12 @@ const RecipeDetailsPage = () => {
 		);
 	}
 
+	if (loading) {
+		return (
+			<RecipeDetailsSkeleton />
+		)
+	}
+
 	return (
 
 		<div className='details-page'>
@@ -144,8 +166,8 @@ const RecipeDetailsPage = () => {
 				</Link>
 				<div className='header-right'>
 					<button onClick={handleSaveRecipe}>
-						{isSaved? <FaHeart /> : <FaRegHeart/>}
-						{isSaved? 'Unsave Recipe' : 'Save Recipe'}
+						{isSaved ? <FaHeart /> : <FaRegHeart />}
+						{isSaved ? 'Unsave Recipe' : 'Save Recipe'}
 					</button>
 					<div>
 						<button
@@ -173,7 +195,7 @@ const RecipeDetailsPage = () => {
 
 				<h1 className='recipe-title'>{recipe.title}</h1>
 				<div className='recipe-author-desc'>
-					
+
 				</div>
 				{recipe.description && (
 					<p className='recipe-description'>{recipe.description}</p>

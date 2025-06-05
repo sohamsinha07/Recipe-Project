@@ -10,6 +10,10 @@ export default defineConfig({
         target: "http://localhost:3000", // backend
         changeOrigin: true,
       },
+      "/recipe-details": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
       "/create_recipe": {
         target: "http://localhost:3000",
         changeOrigin: true,
