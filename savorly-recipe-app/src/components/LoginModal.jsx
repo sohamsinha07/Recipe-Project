@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { auth } from "../firebase";
+import axios from "axios";
 import {
   Dialog,
   DialogTitle,
@@ -14,10 +15,14 @@ import {
   Tooltip,
   Box,
   Button,
+  Stack,
 } from "@mui/material";
+import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import GoogleLogo from "../assets/google.png";
+import GoogleLogo from "../assets/providerLogos/google.png";
+import GithubLogo from "../assets/providerLogos/github.png";
 
 import "../styles/loginAndRegister.css";
 
@@ -26,20 +31,38 @@ export default function LoginModal({ open, onClose }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const navigate = useNavigate();
-
   const [showPwd, setShowPwd] = useState(false);
   const toggleShow = () => setShowPwd((prev) => !prev);
+
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       await login({ email, password });
       setErrorMsg("");
       onClose();
-      navigate("/profile");
+      navigate("/my_kitchen");
     } catch (err) {
       const msg = err.response?.data?.error || "Login failed";
       setErrorMsg(msg);
+    }
+  };
+
+  const handleProviderLogin = async (provider) => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      // Ensure Firestore profile exists
+      await axios.post("/auth/provider", { idToken });
+
+      await login({ firebaseUser: user });
+      onClose();
+      navigate("/my_kitchen");
+    } catch (err) {
+      console.error("OAuth sign-in failed:", err);
+      setErrorMsg("Provider login failed");
     }
   };
 
@@ -122,21 +145,35 @@ export default function LoginModal({ open, onClose }) {
 
           <Divider sx={{ flexGrow: 1 }} />
         </Box>
-        <Button
-          fullWidth
-          variant="outlined"
-          startIcon={
-            <Box
-              component="img"
-              src={GoogleLogo}
-              alt="Google logo"
-              sx={{ width: 20, height: 20 }}
-            />
-          }
-          className="login-google-button"
-        >
-          Continue with Google
-        </Button>
+        <Stack direction="row" spacing={2} justifyContent="center" mb={3}>
+          <Tooltip title="Google">
+            <IconButton
+              onClick={() => handleProviderLogin(new GoogleAuthProvider())}
+              sx={circleStyle}
+            >
+              <Box
+                component="img"
+                src={GoogleLogo}
+                alt="Google logo"
+                sx={{ width: 24, height: 24 }}
+              />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="GitHub">
+            <IconButton
+              onClick={() => handleProviderLogin(new GithubAuthProvider())}
+              sx={circleStyle}
+            >
+              <Box
+                component="img"
+                src={GithubLogo}
+                alt="GitHub logo"
+                sx={{ width: 24, height: 24 }}
+              />
+            </IconButton>
+          </Tooltip>
+        </Stack>
 
         {/* Don't have an account? prompt */}
         <Box sx={{ display: "flex", alignItems: "center", mt: 3, mb: 3 }}>
@@ -164,3 +201,10 @@ export default function LoginModal({ open, onClose }) {
     </Dialog>
   );
 }
+
+const circleStyle = {
+  width: 48,
+  height: 48,
+  backgroundColor: "rgba(0,0,0,0.12)",
+  "&:hover": { backgroundColor: "rgba(0,0,0,0.15)" },
+};

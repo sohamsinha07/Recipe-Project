@@ -36,6 +36,12 @@
 	justify-content: row;
 }
 
+.input-container form {
+	display: flex;
+	gap: 1rem;
+	width: 100%;
+}
+
 .submit-btn {
 	color: black;
 }

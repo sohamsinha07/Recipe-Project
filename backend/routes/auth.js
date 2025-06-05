@@ -1,6 +1,6 @@
 import express from "express";
 import admin from "firebase-admin";
-import db from "../firebase.js";
+import { db } from "../firebase.js";
 
 const router = express.Router();
 const FIREBASE_API_KEY = process.env.VITE_FIREBASE_API_KEY;
@@ -145,6 +145,49 @@ router.get("/check-username", async (req, res) => {
   } catch (error) {
     console.error("Error checking username:", error);
     return res.status(500).json({ message: "Internal server error." });
+  }
+});
+
+router.post("/provider", async (req, res) => {
+  const { idToken } = req.body;
+  if (!idToken) {
+    return res.status(400).json({ message: "Missing idToken." });
+  }
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    const uid = decoded.uid;
+    const email = decoded.email || "";
+    const displayName = decoded.name || "";
+
+    // Check if Firestore already has a profile doc for this UID
+    const userRef = db.collection("users").doc(uid);
+    const snap = await userRef.get();
+
+    if (!snap.exists) {
+      // Parse first/last from displayName
+      const [firstName = "", ...rest] = displayName.split(" ");
+      const lastName = rest.join(" ");
+
+      await userRef.set({
+        firstName,
+        lastName,
+        username: email.split("@")[0],
+        email,
+        dateOfBirth: "", // unknown—user can edit later
+        createdAt: formattedDateString(),
+        savedRecipes: [],
+        publishedRecipes: [],
+        draftRecipes: [],
+        isAdmin: false,
+        pageVisits: 0,
+      });
+    }
+
+    return res.json({ uid });
+  } catch (err) {
+    console.error("Provider auth verify failed:", err);
+    return res.status(401).json({ message: "Invalid ID token." });
   }
 });
 

@@ -14,14 +14,19 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // Call this to log in (when the user submits Login form)
-  const login = async ({ email, password }) => {
+  const login = async ({ email, password, firebaseUser }) => {
     try {
-      // Hit backend /auth/login
-      const res = await axios.post("/auth/login", {
-        email,
-        password,
-      });
-      const { idToken, uid } = res.data;
+      let uid, idToken;
+
+      // Already have a Google firebase account or classic email/password
+      if (firebaseUser) {
+        uid = firebaseUser.uid;
+        idToken = await firebaseUser.getIdToken(true);
+      } else {
+        const res = await axios.post("/auth/login", { email, password });
+        idToken = res.data.idToken;
+        uid = res.data.uid;
+      }
 
       localStorage.setItem("idToken", idToken);
       localStorage.setItem("uid", uid);

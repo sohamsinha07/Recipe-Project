@@ -11,7 +11,7 @@ import { HiUser } from 'react-icons/hi';
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/RecipeDetailsPage.css'
 import { db } from '../firebase';
-import { doc, getDoc, setDoc, deleteDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc, collection, addDoc, arrayRemove, updateDoc, arrayUnion } from 'firebase/firestore';
 import Comments from '../components/recipe-details/Comments';
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Rating } from '@mui/material';
@@ -106,9 +106,12 @@ const RecipeDetailsPage = () => {
 	useEffect(() => {
 		const checkIfSaved = async () => {
 			if (user?.uid && id) {
-				const savedRef = doc(db, 'users', user.uid, 'savedRecipes', id);
-				const docSnap = await getDoc(savedRef);
-				setIsSaved(docSnap.exists());
+				const userRef = doc(db, 'users', user.uid);
+				const docSnap = await getDoc(userRef);
+				if (docSnap.exists()) {
+					const userData = docSnap.data();
+					setIsSaved(userData.savedRecipes?.includes(id));
+				}
 			}
 		}
 		checkIfSaved();
@@ -120,18 +123,16 @@ const RecipeDetailsPage = () => {
 			return;
 		}
 		try {
-			const userRef = doc(db, 'users', user.uid, 'savedRecipes', id);
+			const userRef = doc(db, 'users', user.uid);
 
 			if (isSaved) {
-				await deleteDoc(userRef);
-				toast.success('Recipe removed from saved');
-			} else {
-				await setDoc(userRef, {
-					recipeId: id,
-					// savedAt: new Date(),
-					// recipeType: type,
+				await updateDoc(userRef, {
+					savedRecipes: arrayRemove(id),
 				});
-				toast.success('Recipe saved!');
+			} else {
+				await updateDoc(userRef, {
+						savedRecipes: arrayUnion(id),
+					});
 			}
 			setIsSaved(!isSaved);
 		} catch (error) {
