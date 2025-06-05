@@ -4,6 +4,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { Link as RouterLink } from "react-router-dom";
 
 import "../../styles/homePage.css";
 
@@ -125,6 +126,7 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-explore"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
+                  component={RouterLink} to="/recipes"
                 >
                   Explore
                 </Button>
@@ -151,6 +153,7 @@ export default function FeaturesSection({ loading }) {
                   size="large"
                   className="feature-button-common feature-button-create"
                   endIcon={<ArrowForwardIosIcon className="feature-icon-small" />}
+                  component={RouterLink} to="/create_recipe"
                 >
                   Start Creating
                 </Button>

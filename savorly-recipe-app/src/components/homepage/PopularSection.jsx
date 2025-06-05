@@ -4,7 +4,11 @@ import axios from "axios";
 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import StarIcon from "@mui/icons-material/Star";
+<<<<<<< HEAD
 import MarqueeTitle from "./MarqueeTitle";
+=======
+import { Link as RouterLink } from "react-router-dom";
+>>>>>>> main
 
 import "../../styles/homePage.css";
 
@@ -144,7 +148,7 @@ export default function PopularSection({ loading }) {
             </Typography>
           </Box>
 
-          <Button size="small" className="popular-viewall-button" endIcon={<ArrowForwardIosIcon />}>
+          <Button size="small" className="popular-viewall-button" component={RouterLink} to="/recipes" endIcon={<ArrowForwardIosIcon />}>
             View All
           </Button>
         </Box>

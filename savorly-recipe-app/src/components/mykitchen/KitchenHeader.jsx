@@ -1,5 +1,6 @@
 import { Stack, Typography, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { Link as RouterLink } from "react-router-dom";
 
 export default function KitchenHeader() {
   return (
@@ -18,6 +19,8 @@ export default function KitchenHeader() {
       </div>
 
       <Button
+        component={RouterLink}
+        to="/create_recipe"
         variant="contained"
         color="error"
         startIcon={<AddIcon />}
