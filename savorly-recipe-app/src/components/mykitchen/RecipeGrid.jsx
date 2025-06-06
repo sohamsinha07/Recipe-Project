@@ -2,14 +2,7 @@ import React from "react";
 import { Grid, Stack, Box } from "@mui/material";
 import RecipeCard from "./RecipeCard";
 
-export default function RecipeGrid({
-  recipes = [],
-  view,
-  onView,
-  onDelete,
-  onEdit,
-  onRemove,
-}) {
+export default function RecipeGrid({ recipes = [], view, onView, onDelete, onEdit, onRemove }) {
   if (view === "list") {
     return (
       <Stack spacing={2}>
@@ -29,18 +22,14 @@ export default function RecipeGrid({
   }
 
   return (
-    <Grid container spacing={3}>
+    <Box
+      display="grid"
+      gridTemplateColumns="repeat(auto-fill, minmax(280px, 1fr))"
+      gap={3}
+      gridAutoRows="340px"
+    >
       {recipes.map((r) => (
-        <Grid 
-          key={r.id} 
-          item 
-          xs={12} 
-          sm={6} 
-          md={4}
-          sx={{
-            display: "flex",
-          }}
-        >
+        <Box key={r.id} sx={{ display: "flex" }}>
           <RecipeCard
             data={r}
             view="grid"
@@ -48,9 +37,10 @@ export default function RecipeGrid({
             onDelete={onDelete}
             onEdit={onEdit}
             onRemove={onRemove}
+            sx={{ height: "100%" }}
           />
-        </Grid>
+        </Box>
       ))}
-    </Grid>
+    </Box>
   );
 }

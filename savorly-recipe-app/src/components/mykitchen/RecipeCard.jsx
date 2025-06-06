@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Badge,
   Card,
   CardContent,
   CardMedia,
@@ -9,31 +10,24 @@ import {
   Stack,
   IconButton,
 } from "@mui/material";
+import StatusBadge from "./StatusBadge";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function RecipeCard({
-  data,
-  view,
-  onView,
-  onDelete,
-  onEdit,
-  onRemove,
-}) {
+export default function RecipeCard({ data, view, onView, onDelete, onEdit, onRemove }) {
   const isList = view === "list";
-  const gradientBackground =
-    data.gradient || "linear-gradient(to right, #ddd, #eee)";
+  const gradientBackground = data.gradient || "linear-gradient(to right, #ddd, #eee)";
 
   return (
     <Card
       onClick={() => onView && onView(data.id)}
       sx={{
-        position: "relative",             // ← make card a positioned container
+        position: "relative",
         display: "flex",
         flexDirection: isList ? "row" : "column",
-        height: isList ? 200 : "auto",
+        height: isList ? 200 : "100%",
         width: isList ? "100%" : 300,
         maxWidth: "100%",
         boxShadow: 1,
@@ -159,14 +153,13 @@ export default function RecipeCard({
           justifyContent="space-between"
           alignItems="center"
           spacing={2}
-          sx={{
-            mt: 1,
-            flexShrink: 0,
-          }}
+          sx={{ mt: "auto", pb: 0.5 }}
         >
+          {/* STATUS BADGE – shows Pending / Approved / Rejected */}
+          {data.status ? <StatusBadge status={data.status} /> : <Box />}
+
           {/* Left: views icon + count */}
-          <Stack direction="row" spacing={0.5} alignItems="center">
-          </Stack>
+          <Stack direction="row" spacing={0.5} alignItems="center"></Stack>
 
           {/* Right: edit + delete */}
           <Stack direction="row" spacing={1}>
