@@ -171,7 +171,9 @@ export default function EditRecipePage() {
     // eslint-disable-next-line
   }, [id]);
 
-  const onSubmit = async (values) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const values = methods.getValues();
     console.log(values);
     try {
       const payload = {
@@ -236,7 +238,7 @@ export default function EditRecipePage() {
         >
           Back
         </Button>
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit}>
           <Stack spacing={4} alignItems="center">
             <Box width="90%">
               <ImageUploader />
