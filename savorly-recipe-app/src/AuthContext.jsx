@@ -2,6 +2,8 @@ import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
+import { useContext } from "react";
+
 
 export const AuthContext = createContext({
   user: null,
@@ -104,4 +106,8 @@ export function AuthProvider({ children }) {
       {loading ? null : children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  return useContext(AuthContext);
 }
