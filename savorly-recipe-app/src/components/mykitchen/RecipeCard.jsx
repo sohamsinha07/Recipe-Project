@@ -14,14 +14,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function RecipeCard({
-  data,
-  view,
-  onView,
-  onDelete,
-  onEdit,
-  onRemove,
-}) {
+export default function RecipeCard({ data, view, onView, onDelete, onEdit, onRemove }) {
   const isList = view === "list";
   const gradientBackground = data.gradient || "linear-gradient(to right, #ddd, #eee)";
 
@@ -179,7 +172,7 @@ export default function RecipeCard({
                 size="small"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onDelete(data.id);
+                  onDelete && onDelete(data.id, data.title);
                 }}
               >
                 <DeleteIcon fontSize="small" />
