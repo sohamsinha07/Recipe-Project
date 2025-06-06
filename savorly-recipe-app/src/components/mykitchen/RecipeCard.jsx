@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -9,6 +8,7 @@ import {
   Stack,
   IconButton,
 } from "@mui/material";
+import StatusBadge from "./StatusBadge";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -124,6 +124,13 @@ export default function RecipeCard({ data, view, onView, onDelete, onEdit, onRem
           >
             {data.description}
           </Typography>
+        )}
+
+        {/* STATUS BADGE – shows Pending / Approved / Rejected */}
+        {data.status && (
+          <Box sx={{ mt: 0.5 }}>
+            <StatusBadge status={data.status} />
+          </Box>
         )}
 
         <Box sx={{ flexGrow: 1 }} />

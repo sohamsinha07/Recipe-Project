@@ -3,7 +3,14 @@ import { Stack, FormControl, Select, MenuItem, IconButton } from "@mui/material"
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewListIcon from "@mui/icons-material/ViewList";
 
-export default function KitchenControls({ viewMode, onViewChange, sortBy, onSortChange, categoryFilter, onCategoryChange }) {
+export default function KitchenControls({
+  viewMode,
+  onViewChange,
+  sortBy,
+  onSortChange,
+  categoryFilter,
+  onCategoryChange,
+}) {
   return (
     <Stack
       mt={3}
@@ -22,7 +29,6 @@ export default function KitchenControls({ viewMode, onViewChange, sortBy, onSort
             <MenuItem value="likes">Most Liked</MenuItem>
           </Select>
         </FormControl>
-        
       </Stack>
 
       {/* Right: Grid/List toggle */}
