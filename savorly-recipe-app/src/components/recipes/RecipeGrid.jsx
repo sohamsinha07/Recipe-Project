@@ -16,7 +16,9 @@ export default function RecipeGrid() {
   const [source, setSource] = useState("firestore");
   const [searchTerm, setSearchTerm] = useState("");
 
+
     const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'; 
+
 
   useEffect(() => {
     console.log(source);

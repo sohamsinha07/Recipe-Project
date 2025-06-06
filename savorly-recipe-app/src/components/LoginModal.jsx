@@ -127,7 +127,7 @@ export default function LoginModal({ open, onClose }) {
 
         {/* Forgot password? link aligned to right */}
         <Box sx={{ textAlign: "right", mb: 2 }}>
-          <Button component={Link} to="/forgot-password" className="login-forgot">
+          <Button component={Link} to="/forgot-password" className="login-forgot" onClick={onClose}>
             Forgot your password?
           </Button>
         </Box>

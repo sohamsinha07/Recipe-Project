@@ -1,24 +1,26 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Grid, Button, Snackbar, Alert } from "@mui/material";
+import { Container, Grid, Button, Snackbar, Alert, Box, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FormProvider } from "react-hook-form";
+import { AuthContext } from "../AuthContext";
 
 import useCreateRecipeForm from "../components/createRecipe/useCreateRecipeForm";
-import BasicInfoSection    from "../components/createRecipe/BasicInfoSection";
-import ImageUploader       from "../components/createRecipe/ImageUploader";
-import CategoriesSection   from "../components/createRecipe/CategoriesSection";
-import IngredientsSection  from "../components/createRecipe/IngredientsSection";
+import BasicInfoSection from "../components/createRecipe/BasicInfoSection";
+import ImageUploader from "../components/createRecipe/ImageUploader";
+import CategoriesSection from "../components/createRecipe/CategoriesSection";
+import IngredientsSection from "../components/createRecipe/IngredientsSection";
 import InstructionsSection from "../components/createRecipe/InstructionsSection";
 
 export default function CreateRecipePage() {
   const navigate = useNavigate();
   const [toastOpen, setToastOpen] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const methods = useCreateRecipeForm(() => {
     setToastOpen(true);
     setTimeout(() => navigate("/my_kitchen"), 1500);
-  });
+  }, user);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,35 +33,56 @@ export default function CreateRecipePage() {
   return (
     <FormProvider {...methods}>
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Button startIcon={<ArrowBackIcon />} color="error" sx={{ mb: 3 }}
-                onClick={() => navigate(-1)}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          color="error"
+          sx={{ mb: 3, ml: -10 }}
+          onClick={() => navigate(-1)}
+        >
           Back
         </Button>
 
+        {/* Main form */}
         <form encType="multipart/form-data" onSubmit={handleSubmit}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={8} display="flex" flexDirection="column" gap={4}>
+          <Stack spacing={4} alignItems="center">
+            {/* Full-width sections */}
+            <Box width="90%">
+              <ImageUploader />
+            </Box>
+            <Box width="90%">
               <BasicInfoSection />
-              <ImageUploader />         {/* ← keep this in */}
+            </Box>
+            <Box width="90%">
               <IngredientsSection />
+            </Box>
+            <Box width="90%">
               <InstructionsSection />
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} md={4} display="flex" flexDirection="column" gap={4}>
+            {/* Narrower category section */}
+            <Box width="90%" maxWidth={400}>
               <CategoriesSection />
-            </Grid>
-          </Grid>
+            </Box>
 
-          <Button type="submit" variant="contained" color="error" sx={{ mt: 4 }}
-                  disabled={methods.formState.isSubmitting}>
-            {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
-          </Button>
+            {/* Centered Save button */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="error"
+              disabled={methods.formState.isSubmitting}
+              sx={{ alignSelf: "center", mt: 2 }}
+            >
+              {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
+            </Button>
+          </Stack>
         </form>
 
-        <Snackbar open={toastOpen}
-                  anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                  autoHideDuration={1500}
-                  onClose={() => setToastOpen(false)}>
+        <Snackbar
+          open={toastOpen}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          autoHideDuration={1500}
+          onClose={() => setToastOpen(false)}
+        >
           <Alert severity="success" sx={{ width: "100%" }}>
             Recipe saved! Redirecting to My Kitchen…
           </Alert>

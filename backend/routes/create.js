@@ -1,13 +1,11 @@
 import express from "express";
-import multer  from "multer";
-import { v4 as uuid } from "uuid";
-import { db }  from "../firebase.js";
+import admin, { db } from "../firebase.js";
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", async (req, res) => {
   try {
+    // Destructure exactly what we expect in JSON:
     const {
       title,
       description,
@@ -17,28 +15,51 @@ router.post("/", upload.single("image"), async (req, res) => {
       servings,
       ingredients,
       instructions,
-      author = "Anonymous",
+      image, // THIS is the Base64 string from the form
+      author,
+      createdBy,
+      source,
+      status,
+      url,
     } = req.body;
 
-    const doc = {
+    // Convert JSON‐wrapped arrays back into JS arrays:
+    const recipeDoc = {
       title,
       description,
       totalTime: Number(totalTime),
-      calories:  calories ? Number(calories) : null,
+      calories: calories ? Number(calories) : null,
       mealType,
-      servings:  Number(servings),
+      servings: Number(servings),
       ingredients: JSON.parse(ingredients),
       instructions: JSON.parse(instructions),
+      image,
       author,
+      createdBy,
+      source, // “user”
+      status, // “pending”
+      url,
+
+      // Firestore‐generated fields
       createdAt: new Date(),
       averageRating: 0,
       favorited: false,
-      status: "unpublished",
+      ratings: [],
     };
 
-    await db.collection("recipes").add(doc);
-    console.log("✔︎ recipe written:", title);
-    res.json({ ok: true });
+    // Write the recipe to Firestore
+    const newRecipeRef = await db.collection("recipes").add(recipeDoc);
+    const newRecipeId = newRecipeRef.id;
+
+    // Push that ID into users/{createdBy}.draftRecipes
+    if (createdBy) {
+      const userDocRef = admin.firestore().doc(`users/${createdBy}`);
+      await userDocRef.update({
+        draftRecipes: admin.firestore.FieldValue.arrayUnion(newRecipeId),
+      });
+    }
+
+    return res.json({ ok: true, id: newRecipeId });
   } catch (err) {
     console.error("✖︎ create_recipe error:", err);
     res.status(500).json({ message: "Internal server error" });

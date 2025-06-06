@@ -24,6 +24,15 @@ export default defineConfig({
         target: baseURL,
         changeOrigin: true,
       },
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+      "/my_kitchen/recipes": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false
+      },
     },
   },
 });

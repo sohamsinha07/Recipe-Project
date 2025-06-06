@@ -1,7 +1,17 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
-import { getFirestore, collection, doc, arrayUnion, arrayRemove, updateDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  doc,
+  arrayUnion,
+  arrayRemove,
+  updateDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
 dotenv.config();
@@ -20,10 +30,26 @@ const router = express.Router();
 const EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2";
 
 const queryTerms = [
-  "chicken", "pasta", "salad", "curry", "fish", "soup",
-  "tofu", "beef", "eggs", "shrimp", "cheese", "lentils",
-  "stew", "sandwich", "broccoli", "mushroom", "bacon",
-  "quinoa", "wrap", "cauliflower"
+  "chicken",
+  "pasta",
+  "salad",
+  "curry",
+  "fish",
+  "soup",
+  "tofu",
+  "beef",
+  "eggs",
+  "shrimp",
+  "cheese",
+  "lentils",
+  "stew",
+  "sandwich",
+  "broccoli",
+  "mushroom",
+  "bacon",
+  "quinoa",
+  "wrap",
+  "cauliflower",
 ];
 
 function shuffleArray(arr) {
@@ -48,9 +74,7 @@ router.patch("/save/:id", async (req, res) => {
     const alreadySaved = userData.savedRecipes?.includes(recipeId);
 
     await updateDoc(userRef, {
-      savedRecipes: alreadySaved
-        ? arrayRemove(recipeId)
-        : arrayUnion(recipeId),
+      savedRecipes: alreadySaved ? arrayRemove(recipeId) : arrayUnion(recipeId),
     });
 
     res.json({ success: true, isSaved: !alreadySaved });
@@ -59,7 +83,6 @@ router.patch("/save/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to save recipe" });
   }
 });
-
 
 router.get("/edamam", async (req, res) => {
   try {
@@ -85,7 +108,9 @@ router.get("/edamam", async (req, res) => {
       });
 
       const hits = response.data.hits || [];
+      console.log(hits);
       const formatted = hits.map((hit) => ({
+        uri: hit.recipe.uri,
         title: hit.recipe.label,
         description: hit.recipe.ingredientLines.slice(0, 2).join(", "),
         rating: (Math.random() * 1 + 4).toFixed(1),
@@ -100,7 +125,6 @@ router.get("/edamam", async (req, res) => {
       : shuffleArray(allResults).slice(0, 20); // else limit
 
     res.json(finalResults);
-
   } catch (error) {
     console.error("Edamam API error:", error.message);
     res.status(500).json({ error: "Failed to fetch recipes" });
@@ -111,10 +135,12 @@ router.get("/firestore", async (req, res) => {
   try {
     const searchTerm = req.query.search?.toLowerCase() || "";
     const recipeRef = collection(db, "recipes");
-    const snapshot = await getDocs(recipeRef);
+    const q = query(recipeRef, where("status", "==", "published"));
+
+    const snapshot = await getDocs(q);
 
     const recipes = snapshot.docs
-      .map(doc => {
+      .map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -126,9 +152,7 @@ router.get("/firestore", async (req, res) => {
           favorited: data.favorited || false,
         };
       })
-      .filter(recipe =>
-        !searchTerm || recipe.title.toLowerCase().includes(searchTerm)
-      );
+      .filter((recipe) => !searchTerm || recipe.title.toLowerCase().includes(searchTerm));
 
     res.json(recipes);
   } catch (error) {
@@ -136,6 +160,5 @@ router.get("/firestore", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch user recipes" });
   }
 });
-
 
 export default router;

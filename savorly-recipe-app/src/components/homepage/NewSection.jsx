@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Card, CardContent, Button, Skeleton, Stack } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -10,7 +10,17 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 
 import "../../styles/homePage.css";
 
-export default function NewSection({ loading }) {
+export default function NewSection({ loading, user, onRequireLogin }) {
+  const navigate = useNavigate();
+
+  const handleClick = (path) => {
+    if (user) {
+      navigate(path);
+    } else {
+      onRequireLogin();
+    }
+  };
+
   const mealTypeColors = {
     Breakfast: "#FFA726",
     Lunch: "#29B6F6",
@@ -146,7 +156,12 @@ export default function NewSection({ loading }) {
             </Typography>
           </Box>
 
-          <Button size="small" className="popular-viewall-button" endIcon={<ArrowForwardIosIcon />}>
+          <Button
+            size="small"
+            className="popular-viewall-button"
+            endIcon={<ArrowForwardIosIcon />}
+            onClick={() => handleClick("/recipes")}
+          >
             View All
           </Button>
         </Box>
@@ -178,9 +193,8 @@ export default function NewSection({ loading }) {
               >
                 <Card
                   className="popular-card"
-                  component={RouterLink}
-                  to={`/recipe/user/${id}`}
-                  sx={{ textDecoration: "none" }}
+                  onClick={() => handleClick(`/recipe/user/${id}`)}
+                  sx={{ textDecoration: "none", cursor: "pointer" }}
                 >
                   <Box
                     className="popular-card-media"
@@ -204,7 +218,9 @@ export default function NewSection({ loading }) {
                       <Box className="popular-meta-left">
                         <StarIcon className="popular-star-icon" />
                         <Typography variant="caption" className="popular-meta-text">
-                          {averageRating.toFixed(1)} ({numReviews})
+                          {numReviews > 0 && averageRating > 0
+                            ? `${averageRating.toFixed(1)} (${numReviews})`
+                            : "N/A"}
                         </Typography>
                       </Box>
 

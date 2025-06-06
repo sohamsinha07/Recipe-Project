@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Box, Typography, Card, CardContent, Button, Skeleton, Stack } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -10,7 +10,17 @@ import ScheduleIcon from "@mui/icons-material/Schedule";
 
 import "../../styles/homePage.css";
 
-export default function PopularSection({ loading }) {
+export default function PopularSection({ loading, user, onRequireLogin }) {
+  const navigate = useNavigate();
+
+  const handleClick = (path) => {
+    if (user) {
+      navigate(path);
+    } else {
+      onRequireLogin();
+    }
+  };
+
   const mealTypeColors = {
     Breakfast: "#FFA726",
     Lunch: "#29B6F6",
@@ -149,8 +159,7 @@ export default function PopularSection({ loading }) {
           <Button
             size="small"
             className="popular-viewall-button"
-            component={RouterLink}
-            to="/recipes"
+            onClick={() => handleClick("/recipes")}
             endIcon={<ArrowForwardIosIcon />}
           >
             View All
@@ -184,9 +193,8 @@ export default function PopularSection({ loading }) {
               >
                 <Card
                   className="popular-card"
-                  component={RouterLink}
-                  to={`/recipe/user/${id}`}
-                  sx={{ textDecoration: "none" }}
+                  onClick={() => handleClick(`/recipe/user/${id}`)}
+                  sx={{ textDecoration: "none", cursor: "pointer" }}
                 >
                   <Box
                     className="popular-card-media"
@@ -210,7 +218,9 @@ export default function PopularSection({ loading }) {
                       <Box className="popular-meta-left">
                         <StarIcon className="popular-star-icon" />
                         <Typography variant="caption" className="popular-meta-text">
-                          {averageRating.toFixed(1)} ({numReviews})
+                          {numReviews > 0 && averageRating > 0
+                            ? `${averageRating.toFixed(1)} (${numReviews})`
+                            : "N/A"}
                         </Typography>
                       </Box>
 

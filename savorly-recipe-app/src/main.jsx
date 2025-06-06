@@ -13,6 +13,8 @@ import RecipeDetailsPage from "./routes/RecipeDetailsPage";
 import CreateRecipePage from "./routes/CreateRecipePage";
 import AdminPage from "./routes/AdminPage";
 import AdminLayout from "./components/admin/AdminLayout";
+import EditRecipePage from "./routes/EditRecipePage";
+import ForgotPassword from "./routes/ForgotPassword";
 
 import "./styles/global.css";
 
@@ -24,12 +26,14 @@ export const router = createBrowserRouter([
       // When someone visits "/", load HomePage
       { index: true, element: <HomePage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
       { path: "recipes", element: <RecipesPage /> },
       { path: "categories", element: <CategoriesPage /> },
       { path: "my_kitchen", element: <MyKitchenPage /> },
       { path: "recipe/:type/:id", element: <RecipeDetailsPage /> },
-    { path: "create_recipe", element: <CreateRecipePage /> },
+      { path: "create_recipe", element: <CreateRecipePage /> },
       { path: "admin", element: <AdminPage /> },
+      { path: "edit/:id", element: <EditRecipePage /> },
     ],
   },
 

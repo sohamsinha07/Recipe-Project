@@ -96,7 +96,7 @@ export default function RegisterPage() {
         console.error("Error checking username availability:", err);
         setUsernameStatus("idle");
       }
-    }, 3000);
+    }, 2000);
   };
 
   const handleEmailBlurAsync = async () => {
@@ -140,7 +140,7 @@ export default function RegisterPage() {
         console.error("Error checking email availability:", err);
         setEmailStatus("idle");
       }
-    }, 3000);
+    }, 2000);
   };
 
   const handleChange = (field) => (e) => {
