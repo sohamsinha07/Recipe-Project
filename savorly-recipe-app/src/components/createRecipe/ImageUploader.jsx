@@ -89,7 +89,7 @@ export default function ImageUploader() {
           sx={{
             position: "relative",
             width: "100%",
-            height: 180,
+            height: 300,
             borderRadius: 2,
             overflow: "hidden",
             "& img": { width: "100%", height: "100%", objectFit: "cover" },
@@ -125,7 +125,7 @@ export default function ImageUploader() {
           onDrop={handleDrop}
           onClick={() => document.getElementById("img-input").click()}
           sx={{
-            height: 180,
+            height: 300,
             border: "2px dashed",
             borderColor: dragging ? "error.main" : "divider",
             borderRadius: 2,

@@ -45,8 +45,8 @@ export default function CreateRecipePage() {
         <form encType="multipart/form-data" onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             <Grid item xs={12} md={8} display="flex" flexDirection="column" gap={4}>
+              <ImageUploader />
               <BasicInfoSection />
-              <ImageUploader /> {/* ← keep this in */}
               <IngredientsSection />
               <InstructionsSection />
             </Grid>
