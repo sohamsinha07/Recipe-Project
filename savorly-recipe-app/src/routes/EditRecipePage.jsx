@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, Button, Snackbar, Alert, Typography, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,14 +6,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
-import { useContext } from "react";
-
 import BasicInfoSection from "../components/createRecipe/BasicInfoSection";
 import ImageUploader from "../components/createRecipe/ImageUploader";
 import CategoriesSection from "../components/createRecipe/CategoriesSection";
 import IngredientsSection from "../components/createRecipe/IngredientsSection";
 import InstructionsSection from "../components/createRecipe/InstructionsSection";
-
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -52,6 +49,58 @@ const schema = yup.object({
     ),
   url: yup.string().url().nullable(),
 });
+
+function parseIngredientString(str) {
+  if (!str || typeof str !== "string") return { qty: "", unit: "", item: "" };
+  const parts = str.trim().split(" ");
+  if (parts.length < 2) return { qty: "", unit: "", item: str };
+  const qty = parts[0];
+  const unit = parts[1];
+  const item = parts.slice(2).join(" ") || unit;
+  return { qty, unit: item === unit ? "" : unit, item };
+}
+
+function parseIngredients(raw) {
+  if (Array.isArray(raw)) {
+    if (typeof raw[0] === "string") {
+      return raw.map(parseIngredientString);
+    }
+    if (typeof raw[0] === "object") {
+      return raw;
+    }
+    return [];
+  }
+  if (typeof raw === "string") {
+    try {
+      const arr = JSON.parse(raw);
+      return parseIngredients(arr);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+function parseInstructions(raw) {
+  if (Array.isArray(raw)) {
+    if (typeof raw[0] === "string") {
+      return raw.map((step) => ({ value: step }));
+    }
+    if (typeof raw[0] === "object") {
+      return raw;
+    }
+    return [];
+  }
+  if (typeof raw === "string") {
+    try {
+      const arr = JSON.parse(raw);
+      return parseInstructions(arr);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
 
 export default function EditRecipePage() {
   const { id } = useParams();
@@ -95,28 +144,8 @@ export default function EditRecipePage() {
           return;
         }
         const data = docSnap.data();
-
-        let ingrArray = [];
-        if (Array.isArray(data.ingredients)) {
-          ingrArray = data.ingredients;
-        } else if (typeof data.ingredients === "string") {
-          try {
-            ingrArray = JSON.parse(data.ingredients);
-          } catch {
-            ingrArray = [];
-          }
-        }
-
-        let instrArray = [];
-        if (Array.isArray(data.instructions)) {
-          instrArray = data.instructions;
-        } else if (typeof data.instructions === "string") {
-          try {
-            instrArray = JSON.parse(data.instructions);
-          } catch {
-            instrArray = [];
-          }
-        }
+        const ingrArray = parseIngredients(data.ingredients);
+        const instrArray = parseInstructions(data.instructions);
 
         methods.reset({
           title: data.title || "",
@@ -139,14 +168,13 @@ export default function EditRecipePage() {
     }
 
     fetchRecipe();
-  }, [id, methods]);
+    // eslint-disable-next-line
+  }, [id]);
 
-  const onSubmit = async (values) => {
-    if (!id) {
-      alert("No recipe ID to update");
-      return;
-    }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const values = methods.getValues();
+    console.log(values);
     try {
       const payload = {
         title: values.title,
@@ -155,23 +183,26 @@ export default function EditRecipePage() {
         calories: values.calories ? Number(values.calories) : null,
         mealType: values.mealType,
         servings: Number(values.servings),
-        ingredients: Array.isArray(values.ingredients) ? values.ingredients : [],
-        instructions: Array.isArray(values.instructions) ? values.instructions : [],
+        ingredients: values.ingredients.map(obj => 
+          typeof obj === "string" ? obj : [obj.qty, obj.unit, obj.item].filter(Boolean).join(" ")
+        ),
+        instructions: values.instructions.map(obj =>
+          typeof obj === "string" ? obj : obj.value
+        ),
         image: values.imageDataURL,
         url: values.url || "",
       };
-
-      const docRef = doc(db, "recipes", id);
-      await updateDoc(docRef, payload);
+      console.log("Will update recipe:", id, payload);
+      await updateDoc(doc(db, "recipes", id), payload);
 
       setToastOpen(true);
       setTimeout(() => {
         setToastOpen(false);
-        navigate("/my_kitchen");
+        navigate("/admin");
       }, 1000);
     } catch (err) {
       console.error("Error updating recipe:", err);
-      alert("Failed to save changes.  Please try again.");
+      alert("Failed to save changes. Please try again.");
     }
   };
 
@@ -181,8 +212,8 @@ export default function EditRecipePage() {
         <Typography color="error" variant="h6">
           {initialLoadError}
         </Typography>
-        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/my_kitchen")}>
-          Back to My Kitchen
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/admin")}>
+          Back to Admin
         </Button>
       </Container>
     );
@@ -207,10 +238,8 @@ export default function EditRecipePage() {
         >
           Back
         </Button>
-
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit}>
           <Stack spacing={4} alignItems="center">
-            {/* Full-width sections */}
             <Box width="90%">
               <ImageUploader />
             </Box>
@@ -223,13 +252,9 @@ export default function EditRecipePage() {
             <Box width="90%">
               <InstructionsSection />
             </Box>
-
-            {/* Narrower category section */}
             <Box width="90%" maxWidth={400}>
               <CategoriesSection />
             </Box>
-
-            {/* Centered Save button */}
             <Button
               type="submit"
               variant="contained"
@@ -237,11 +262,10 @@ export default function EditRecipePage() {
               disabled={methods.formState.isSubmitting}
               sx={{ alignSelf: "center", mt: 2 }}
             >
-              {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
+              {methods.formState.isSubmitting ? "Saving…" : "Save Changes"}
             </Button>
           </Stack>
         </form>
-
         <Snackbar
           open={toastOpen}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
@@ -249,7 +273,7 @@ export default function EditRecipePage() {
           onClose={() => setToastOpen(false)}
         >
           <Alert severity="success" sx={{ width: "100%" }}>
-            Recipe updated! Returning to My Kitchen…
+            Recipe updated! Returning to Admin Page
           </Alert>
         </Snackbar>
       </Container>

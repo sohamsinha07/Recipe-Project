@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
+
 
 function getTimeAgo(createdAt) {
   const created = createdAt?.seconds ? new Date(createdAt.seconds * 1000) : new Date(createdAt);
@@ -7,17 +8,22 @@ function getTimeAgo(createdAt) {
   const diffMs = now - created;
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
 
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
-  return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 }
 
 export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit }) {
+  const navigate = useNavigate();
   // Published or Approved card
   if (recipe.status === "published" || recipe.status === "approved") {
     return (
       <div
+      className="admin-recipe-card"
         style={{
           width: "100%",
           minHeight: 440,
@@ -31,7 +37,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           display: "-webkit-box",
           WebkitLineClamp: 2,
           WebkitBoxOrient: "vertical",
-          overflow: "hidden",
+          overflow: "hidden",          
         }}
       >
         {/* Recipe image */}
@@ -125,7 +131,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#1A202C",
-              fontSize: 24,
+              fontSize: 22,
               fontFamily: "Inter, sans-serif",
               fontWeight: 700,
               lineHeight: "28px",
@@ -150,13 +156,14 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#718096",
-              fontSize: 14,
+              fontSize: 13,
               fontFamily: "Inter, sans-serif",
               fontWeight: 400,
               marginBottom: 12,
               overflow: "hidden",
               textOverflow: "ellipsis",
               minHeight: "42px",
+              maxHeight: "42px"
             }}
           >
             {recipe.description}
@@ -202,7 +209,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           {/* Buttons */}
           <div style={{ display: "flex", gap: 14 }}>
             <button
-              onClick={() => onEdit?.(recipe)}
+              onClick={() => navigate(`/edit/${recipe.id}`)}
               style={{
                 height: 36,
                 padding: "0 18px",
@@ -250,6 +257,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
   if (recipe.status === "rejected") {
     return (
       <div
+      className="admin-recipe-card"
         style={{
           width: "100%",
           minHeight: 440,
@@ -344,7 +352,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#1A202C",
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: 700,
               lineHeight: "28px",
               marginBottom: 5,
@@ -364,7 +372,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#718096",
-              fontSize: 14,
+              fontSize: 13,
               marginBottom: 12,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -414,7 +422,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
 
           <div style={{ display: "flex", gap: 14 }}>
             <button
-              onClick={() => onEdit?.(recipe)} // send back to review
+               onClick={() => navigate(`/edit_recipe/${recipe.id}`)}// send back to review
               style={{
                 height: 36,
                 padding: "0 18px",
@@ -437,6 +445,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
   // Pending review card
   return (
     <div
+    className="admin-recipe-card"
       style={{
         width: "100%",
         minHeight: 440,
@@ -538,7 +547,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
         <div
           style={{
             color: "#1A202C",
-            fontSize: 24,
+            fontSize: 22,
             fontFamily: "Inter, sans-serif",
             fontWeight: 700,
             lineHeight: "28px",
@@ -563,7 +572,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
         <div
           style={{
             color: "#718096",
-            fontSize: 14,
+            fontSize: 13,
             fontFamily: "Inter, sans-serif",
             fontWeight: 400,
             marginBottom: 12,
