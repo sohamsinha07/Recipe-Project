@@ -32,7 +32,7 @@ export default function CategoriesSection() {
         >
           <MenuItem value="Breakfast">Breakfast</MenuItem>
           <MenuItem value="Lunch">Lunch</MenuItem>
-          <MenuItem value="Linner">Dinner</MenuItem>
+          <MenuItem value="Dinner">Dinner</MenuItem>
         </TextField>
       </Stack>
     </Paper>
