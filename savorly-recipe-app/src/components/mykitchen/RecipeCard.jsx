@@ -34,7 +34,7 @@ export default function RecipeCard({
         cursor: "pointer",
         borderRadius: 2,
       }}
-      onClick={() => onView(data.id)}
+      onClick={() => onView && onView(data.id)}
     >
       {/* ─────── IMAGE / HEADER AREA ─────── */}
       <CardMedia
@@ -143,12 +143,12 @@ export default function RecipeCard({
           spacing={2}
           sx={{ mt: 1 }}
         >
-          {/* Left: views */}
+          {/* Left: */}
           <Stack direction="row" spacing={0.5} alignItems="center">
             <Typography variant="caption">{data.views}</Typography>
           </Stack>
 
-          {/* Right: action buttons */}
+          {/* Right: Edit / Delete / Remove icons */}
           <Stack direction="row" spacing={1}>
             {onRemove && (
               <IconButton
@@ -161,6 +161,7 @@ export default function RecipeCard({
                 <FavoriteIcon sx={{ color: "error.main" }} fontSize="small" />
               </IconButton>
             )}
+
             {onEdit && (
               <IconButton
                 size="small"
@@ -172,6 +173,7 @@ export default function RecipeCard({
                 <EditIcon fontSize="small" />
               </IconButton>
             )}
+
             {onDelete && (
               <IconButton
                 size="small"
