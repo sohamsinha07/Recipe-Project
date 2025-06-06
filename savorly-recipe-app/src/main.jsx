@@ -14,6 +14,7 @@ import CreateRecipePage from "./routes/CreateRecipePage";
 import AdminPage from "./routes/AdminPage";
 import AdminLayout from "./components/admin/AdminLayout";
 import EditRecipePage from "./routes/EditRecipePage";
+import ForgotPassword from "./routes/ForgotPassword";
 
 import "./styles/global.css";
 
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
       // When someone visits "/", load HomePage
       { index: true, element: <HomePage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
       { path: "recipes", element: <RecipesPage /> },
       { path: "categories", element: <CategoriesPage /> },
       { path: "my_kitchen", element: <MyKitchenPage /> },
