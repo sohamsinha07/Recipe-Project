@@ -38,7 +38,7 @@ router.patch("/recipes/:id/publish", async (req, res) => {
     if (createdBy) {
       const notifRef = db.collection("users").doc(createdBy).collection("notifications");
       await notifRef.add({
-        message: `Your recipe for “${title}” was approved.`,
+        message: `Your recipe for "${title}" was approved.`,
         createdAt: Timestamp.now(),
         read: false,
       });
@@ -66,7 +66,7 @@ router.patch("/recipes/:id/reject", async (req, res) => {
     if (createdBy) {
       const notifRef = db.collection("users").doc(createdBy).collection("notifications");
       await notifRef.add({
-        message: `Your recipe for “${title}” was rejected.`,
+        message: `Your recipe for "${title}" was rejected.`,
         createdAt: Timestamp.now(),
         read: false,
       });

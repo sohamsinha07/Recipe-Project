@@ -23,18 +23,24 @@ export default function RecipeCard({
   onRemove,
 }) {
   const isList = view === "list";
-  const gradientBackground = data.gradient || "linear-gradient(to right, #ddd, #eee)";
+  const gradientBackground =
+    data.gradient || "linear-gradient(to right, #ddd, #eee)";
 
   return (
     <Card
+      onClick={() => onView && onView(data.id)}
       sx={{
-        display: isList ? "flex" : "block",
+        position: "relative",             // ← make card a positioned container
+        display: "flex",
+        flexDirection: isList ? "row" : "column",
         height: isList ? 200 : "auto",
+        width: isList ? "100%" : 300,
+        maxWidth: "100%",
         boxShadow: 1,
         cursor: "pointer",
         borderRadius: 2,
+        overflow: "hidden",
       }}
-      onClick={() => onView && onView(data.id)}
     >
       {/* ─────── IMAGE / HEADER AREA ─────── */}
       <CardMedia
@@ -43,6 +49,7 @@ export default function RecipeCard({
           height: isList ? "100%" : 140,
           position: "relative",
           backgroundColor: "#f0f0f0",
+          flexShrink: 0,
         }}
       >
         {data.image ? (
@@ -97,7 +104,8 @@ export default function RecipeCard({
           display: "flex",
           flexDirection: "column",
           gap: 1,
-          pb: "16px !important",
+          p: 2,
+          overflow: "hidden",
         }}
       >
         {/* TITLE */}
@@ -106,8 +114,17 @@ export default function RecipeCard({
           fontWeight={600}
           sx={{
             overflow: "hidden",
-            whiteSpace: "nowrap",
             textOverflow: "ellipsis",
+            ...(view === "grid"
+              ? {
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  lineHeight: 1.3,
+                }
+              : {
+                  whiteSpace: "nowrap",
+                }),
           }}
         >
           {data.title}
@@ -118,50 +135,41 @@ export default function RecipeCard({
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={
-              view === "grid"
+            sx={{
+              overflow: "hidden",
+              ...(view === "grid"
                 ? {
-                    overflow: "hidden",
                     display: "-webkit-box",
                     WebkitLineClamp: 3,
                     WebkitBoxOrient: "vertical",
+                    lineHeight: 1.4,
                   }
-                : {}
-            }
+                : {}),
+            }}
           >
             {data.description}
           </Typography>
         )}
 
-        <Box sx={{ flexGrow: 1 }} />
+        {isList && <Box sx={{ flexGrow: 1 }} />}
 
-        {/* FOOTER ICONS */}
+        {/* FOOTER ICONS (views + edit/delete) */}
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
           spacing={2}
-          sx={{ mt: 1 }}
+          sx={{
+            mt: 1,
+            flexShrink: 0,
+          }}
         >
-          {/* Left: */}
+          {/* Left: views icon + count */}
           <Stack direction="row" spacing={0.5} alignItems="center">
-            <Typography variant="caption">{data.views}</Typography>
           </Stack>
 
-          {/* Right: Edit / Delete / Remove icons */}
+          {/* Right: edit + delete */}
           <Stack direction="row" spacing={1}>
-            {onRemove && (
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onRemove(data.id);
-                }}
-              >
-                <FavoriteIcon sx={{ color: "error.main" }} fontSize="small" />
-              </IconButton>
-            )}
-
             {onEdit && (
               <IconButton
                 size="small"
@@ -173,7 +181,6 @@ export default function RecipeCard({
                 <EditIcon fontSize="small" />
               </IconButton>
             )}
-
             {onDelete && (
               <IconButton
                 size="small"
@@ -188,6 +195,25 @@ export default function RecipeCard({
           </Stack>
         </Stack>
       </CardContent>
+
+      {onRemove && (
+        <IconButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(data.id);
+          }}
+          sx={{
+            position: "absolute",
+            bottom: 8,
+            right: 8,
+            bgcolor: "rgba(255,255,255,0.8)",
+            "&:hover": { bgcolor: "rgba(255,255,255,1)" },
+          }}
+          size="small"
+        >
+          <FavoriteIcon sx={{ color: "error.main" }} fontSize="small" />
+        </IconButton>
+      )}
     </Card>
   );
 }

@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
-  Stack,
   Button,
   Box,
   Tabs,
   Tab,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ViewListIcon from "@mui/icons-material/ViewList";
@@ -40,6 +43,18 @@ export default function MyKitchenPage() {
   const [createdRecipesLocal, setCreatedRecipesLocal] = useState([]);
   const [savedRecipesLocal, setSavedRecipesLocal] = useState([]);
 
+  const [confirm, setConfirm] = useState({
+    open: false,
+    id: null,
+    title: "",
+  });
+
+  const askDelete = (id, title) => {
+    setConfirm({ open: true, id, title });
+  };
+
+  const cancelDelete = () => setConfirm({ open: false, id: null, title: "" });
+
   useEffect(() => {
     setCreatedRecipesLocal(myRecipes);
   }, [myRecipes]);
@@ -50,8 +65,16 @@ export default function MyKitchenPage() {
 
   const handleDeleteCreated = async (recipeId) => {
     try {
-      // 1) Send DELETE to your backend
+      // Send DELETE to your backend
       await axios.delete(`/my_kitchen/recipes/${encodeURIComponent(recipeId)}`);
+
+      // Remove it from the local user.draftRecipes array
+      if (currentUser?.uid) {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, {
+          draftRecipes: arrayRemove(recipeId),
+        });
+      }
       setCreatedRecipesLocal((prev) => prev.filter((r) => r.id !== recipeId));
     } catch (err) {
       console.error("❌ Failed to delete recipe:", err);
@@ -90,8 +113,7 @@ export default function MyKitchenPage() {
     );
   }
 
-  const displayedRecipes =
-    activeTab === "my" ? createdRecipesLocal : savedRecipesLocal;
+  const displayedRecipes = activeTab === "my" ? createdRecipesLocal : savedRecipesLocal;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -122,10 +144,33 @@ export default function MyKitchenPage() {
         recipes={displayedRecipes}
         view={viewMode}
         onView={handleViewRecipe}
-        onDelete={activeTab === "my" ? handleDeleteCreated : undefined}
+        onDelete={
+          activeTab === "my" ? askDelete : undefined // open dialog, don’t delete yet
+        }
         onEdit={activeTab === "my" ? handleEditCreated : undefined}
         onRemove={activeTab === "saved" ? handleRemoveSaved : undefined}
       />
+
+      {/* Delete-confirmation dialog */}
+      <Dialog open={confirm.open} onClose={cancelDelete}>
+        <DialogTitle>Delete recipe?</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete&nbsp;
+          <strong>{confirm.title}</strong>&nbsp;from your kitchen?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete}>Cancel</Button>
+          <Button
+            color="error"
+            onClick={() => {
+              handleDeleteCreated(confirm.id);
+              cancelDelete();
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

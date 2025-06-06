@@ -96,15 +96,6 @@ export default function AdminHeader({ pendingCount, approvedCount }) {
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
           >
-            <MenuItem
-              onClick={() => {
-                handleMenuClose();
-                navigate("/profile");
-              }}
-            >
-              Profile
-            </MenuItem>
-
             <MenuItem onClick={handleLogoutClick} sx={{ "&:hover": { color: "#F25C54" } }}>
               Logout
             </MenuItem>

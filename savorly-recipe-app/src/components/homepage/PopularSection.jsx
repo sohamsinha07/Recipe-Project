@@ -218,7 +218,9 @@ export default function PopularSection({ loading, user, onRequireLogin }) {
                       <Box className="popular-meta-left">
                         <StarIcon className="popular-star-icon" />
                         <Typography variant="caption" className="popular-meta-text">
-                          {averageRating.toFixed(1)} ({numReviews})
+                          {numReviews > 0 && averageRating > 0
+                            ? `${averageRating.toFixed(1)} (${numReviews})`
+                            : "N/A"}
                         </Typography>
                       </Box>
 
