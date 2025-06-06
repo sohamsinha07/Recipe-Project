@@ -1,21 +1,27 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from 'vite'
 import react from "@vitejs/plugin-react";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const baseURL = process.env.VITE_BASE_URL || 'http://localhost:3000';
 
 // https://vite.dev/config/
 export default defineConfig({
+  //const env = loadEnv(mode, process.cwd(), ''),
   plugins: [react()],
   server: {
     proxy: {
       "/auth": {
-        target: "http://localhost:3000", // backend
+        target: baseURL, // backend
         changeOrigin: true,
       },
       "/recipe-details": {
-        target: "http://localhost:3000",
+        target: baseURL,
         changeOrigin: true,
       },
       "/create_recipe": {
-        target: "http://localhost:3000",
+        target: baseURL,
         changeOrigin: true,
       },
       "/api": {

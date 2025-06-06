@@ -16,18 +16,19 @@ export default function RecipeGrid() {
   const [source, setSource] = useState("firestore");
   const [searchTerm, setSearchTerm] = useState("");
 
-//   console.log(recipes);
+
+    const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'; 
+
 
   useEffect(() => {
     console.log(source);
     async function fetchRecipes() {
       setLoading(true);
       try {
-        //const url = `http://localhost:3000/recipes/edamam?search=${encodeURIComponent(searchTerm)}`
         const url =
            source === "edamam"
-             ? `http://localhost:3000/recipes/edamam?search=${encodeURIComponent(searchTerm)}`
-             : `http://localhost:3000/recipes/firestore?search=${encodeURIComponent(searchTerm)}`;
+             ? `${baseURL}/recipes/edamam?search=${encodeURIComponent(searchTerm)}`
+             : `${baseURL}/recipes/firestore?search=${encodeURIComponent(searchTerm)}`;
         const res = await fetch(url);
         const data = await res.json();
         setRecipes(data);

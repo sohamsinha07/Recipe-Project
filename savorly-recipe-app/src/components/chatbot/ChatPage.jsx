@@ -7,6 +7,8 @@ import { RiRobot2Line } from "react-icons/ri";
 
 export const ChatPage = () => {
 
+	const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'; 
+
 	const [messages, setMessages] = useState([]); // holds message history
 	const [inputValue, setInputValue] = useState(''); // controlled input
 	const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ export const ChatPage = () => {
 		setLoading(true);
 
 		try {
-			const response = await fetch('http://localhost:3000/chat/send-message', {
+			const response = await fetch(`${baseURL}/chat/send-message`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ model: "gpt-3.5-turbo", messages: updatedMessages }),

@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 
 
 export default function RecipeCard({ recipe }) {
+  const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000'; 
   const [isFavorited, setIsFavorited] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -41,7 +42,7 @@ export default function RecipeCard({ recipe }) {
 
     const userId = user.uid;
     try {
-      const res = await fetch(`http://localhost:3000/recipes/save/${recipe.id}`, {
+      const res = await fetch(`${baseURL}/recipes/save/${recipe.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
