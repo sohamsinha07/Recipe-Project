@@ -8,6 +8,7 @@ import { FaClock } from "react-icons/fa";
 import { HiUsers } from "react-icons/hi";
 import { FaHeart } from "react-icons/fa";
 import { HiUser } from "react-icons/hi";
+import { PiHamburgerFill } from "react-icons/pi";
 import { ToastContainer, toast } from "react-toastify";
 import "../styles/RecipeDetailsPage.css";
 import { db } from "../firebase";
@@ -217,6 +218,13 @@ const RecipeDetailsPage = () => {
               <span>{recipe.yield} servings</span>
             </div>
 		  )}
+		  {recipe.calories && (
+			<div className="meta-item">
+              <PiHamburgerFill />
+              <span>{recipe.calories} calories</span>
+            </div>
+		  )
+		  }
         </div>
 
         <div className="recipe-steps">
