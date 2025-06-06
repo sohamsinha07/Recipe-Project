@@ -44,8 +44,7 @@ export default function InstructionsSection() {
             fullWidth
             multiline
             placeholder={`Step ${i + 1}…`}
-            {...register(`instructions.${i}.value`)}
-            defaultValue={field.value || ""}
+            {...register(`instructions.${i}`)}
           />
           <Stack>
             <IconButton size="small" onClick={() => move(i, -1)} disabled={i === 0}>
