@@ -44,7 +44,7 @@ export default function InstructionsSection() {
             fullWidth
             multiline
             placeholder={`Step ${i + 1}…`}
-            {...register(`instructions.${i}.value`)}
+            {...register(`instructions.${i}`)}
           />
           <Stack>
             <IconButton size="small" onClick={() => move(i, -1)} disabled={i === 0}>
@@ -60,7 +60,7 @@ export default function InstructionsSection() {
         </Stack>
       ))}
 
-      <Button startIcon={<AddIcon />} size="small" onClick={() => append({ value: "" })}>
+      <Button startIcon={<AddIcon />} size="small" onClick={() => append("")}>
         Add Step
       </Button>
     </Paper>
