@@ -371,14 +371,6 @@ export default function Navbar() {
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                 >
-                  <MenuItem
-                    onClick={() => {
-                      handleMenuClose();
-                      navigate("/profile");
-                    }}
-                  >
-                    Profile
-                  </MenuItem>
                   <MenuItem onClick={openConfirm} sx={{ "&:hover": { color: "#F25C54" } }}>
                     Logout
                   </MenuItem>
