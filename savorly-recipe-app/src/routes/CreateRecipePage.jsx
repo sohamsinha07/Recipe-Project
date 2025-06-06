@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Grid, Button, Snackbar, Alert } from "@mui/material";
+import { Container, Grid, Button, Snackbar, Alert, Box, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FormProvider } from "react-hook-form";
 import { AuthContext } from "../AuthContext";
@@ -36,35 +36,45 @@ export default function CreateRecipePage() {
         <Button
           startIcon={<ArrowBackIcon />}
           color="error"
-          sx={{ mb: 3 }}
+          sx={{ mb: 3, ml: -10 }}
           onClick={() => navigate(-1)}
         >
           Back
         </Button>
 
+        {/* Main form */}
         <form encType="multipart/form-data" onSubmit={handleSubmit}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={8} display="flex" flexDirection="column" gap={4}>
+          <Stack spacing={4} alignItems="center">
+            {/* Full-width sections */}
+            <Box width="90%">
               <ImageUploader />
+            </Box>
+            <Box width="90%">
               <BasicInfoSection />
+            </Box>
+            <Box width="90%">
               <IngredientsSection />
+            </Box>
+            <Box width="90%">
               <InstructionsSection />
-            </Grid>
+            </Box>
 
-            <Grid item xs={12} md={4} display="flex" flexDirection="column" gap={4}>
+            {/* Narrower category section */}
+            <Box width="90%" maxWidth={400}>
               <CategoriesSection />
-            </Grid>
-          </Grid>
+            </Box>
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="error"
-            sx={{ mt: 4 }}
-            disabled={methods.formState.isSubmitting}
-          >
-            {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
-          </Button>
+            {/* Centered Save button */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="error"
+              disabled={methods.formState.isSubmitting}
+              sx={{ alignSelf: "center", mt: 2 }}
+            >
+              {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
+            </Button>
+          </Stack>
         </form>
 
         <Snackbar

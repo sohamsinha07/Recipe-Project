@@ -1,4 +1,4 @@
-import { Paper, Typography, TextField, Grid } from "@mui/material";
+import { Paper, Typography, TextField, Grid, Stack } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 export default function BasicInfoSection() {
@@ -21,72 +21,63 @@ export default function BasicInfoSection() {
         Basic Information
       </Typography>
 
-      <Grid container spacing={2}>
-        {/* ---------- Title ---------- */}
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Recipe Title *"
-            error={!!errors.title}
-            helperText={errors.title?.message}
-            {...register("title", { required: "Title is required" })}
-          />
-        </Grid>
+      {/* ---------- Title ---------- */}
+      <TextField
+        label="Recipe Title *"
+        error={!!errors.title}
+        helperText={errors.title?.message}
+        {...register("title", { required: "Title is required" })}
+        sx={{ mb: 2, width: 572 }}
+      />
 
-        {/* ---------- Description ---------- */}
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            multiline
-            rows={3}
-            label="Description *"
-            error={!!errors.description}
-            helperText={errors.description?.message}
-            {...register("description", { required: "Description is required" })}
-          />
-        </Grid>
+      {/* ---------- Description ---------- */}
+      <TextField
+        fullWidth
+        multiline
+        rows={3}
+        label="Description *"
+        error={!!errors.description}
+        helperText={errors.description?.message}
+        {...register("description", { required: "Description is required" })}
+        sx={{ mb: 2 }}
+      />
 
-        {/* ---------- Times & Servings ---------- */}
-        <Grid item xs={4}>
-          <TextField
-            fullWidth
-            type="number"
-            label="Total Time (min) *"
-            error={!!errors.totalTime}
-            helperText={errors.totalTime?.message}
-            {...register("totalTime", {
-              required: "Total time is required",
-              valueAsNumber: true,
-              min: { value: 1, message: "Must be ≥ 1" },
-            })}
-          />
-        </Grid>
-
-        <Grid item xs={4}>
-          <TextField
-            fullWidth
-            type="number"
-            label="Servings *"
-            error={!!errors.servings}
-            helperText={errors.servings?.message}
-            {...register("servings", {
-              required: "Servings required",
-              valueAsNumber: true,
-              min: { value: 1, message: "Must be ≥ 1" },
-            })}
-          />
-        </Grid>
+      {/* ---------- Times, Calories, Servings ---------- */}
+      <Stack direction="row" spacing={2} flexWrap="wrap">
+        <TextField
+          type="number"
+          label="Total Time (min) *"
+          error={!!errors.totalTime}
+          helperText={errors.totalTime?.message}
+          {...register("totalTime", {
+            required: "Total time is required",
+            valueAsNumber: true,
+            min: { value: 1, message: "Must be ≥ 1" },
+          })}
+          sx={{ width: { xs: "100%", sm: 180 } }}
+        />
 
         {/* ---------- Calories ---------- */}
-        <Grid item xs={4}>
-          <TextField
-            fullWidth
-            type="number"
-            label="Calories"
-            {...register("calories", { valueAsNumber: true })}
-          />
-        </Grid>
-      </Grid>
+        <TextField
+          type="number"
+          label="Calories"
+          {...register("calories", { valueAsNumber: true })}
+          sx={{ width: { xs: "100%", sm: 180 } }}
+        />
+
+        <TextField
+          type="number"
+          label="Servings *"
+          error={!!errors.servings}
+          helperText={errors.servings?.message}
+          {...register("servings", {
+            required: "Servings required",
+            valueAsNumber: true,
+            min: { value: 1, message: "Must be ≥ 1" },
+          })}
+          sx={{ width: { xs: "100%", sm: 180 } }}
+        />
+      </Stack>
     </Paper>
   );
 }

@@ -1,4 +1,4 @@
-import { Paper, Typography, TextField, MenuItem, Stack } from "@mui/material";
+import { Paper, Typography, TextField, MenuItem, Stack, Menu } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 
 export default function CategoriesSection() {
@@ -33,6 +33,7 @@ export default function CategoriesSection() {
           <MenuItem value="Breakfast">Breakfast</MenuItem>
           <MenuItem value="Lunch">Lunch</MenuItem>
           <MenuItem value="Dinner">Dinner</MenuItem>
+          <MenuItem value="Dessert">Dessert</MenuItem>
         </TextField>
       </Stack>
     </Paper>
