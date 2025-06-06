@@ -221,7 +221,7 @@ const RecipeDetailsPage = () => {
 		  {recipe.calories && (
 			<div className="meta-item">
               <PiHamburgerFill />
-              <span>{recipe.calories} calories</span>
+              <span>{Math.round(recipe.calories)} calories</span>
             </div>
 		  )
 		  }
