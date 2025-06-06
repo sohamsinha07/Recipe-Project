@@ -51,7 +51,9 @@ export default function AdminHeader({ pendingCount, approvedCount }) {
                 style={{ width: 48, height: 48, borderRadius: 8 }}
               />
             </IconButton>
-            <span className="admin-header-title">Savorly Admin</span>
+            <span className="admin-header-title">Savorly Admin </span>
+            
+            
           </div>
           <div className="admin-header-dash-title">Recipe Review Dashboard</div>
           <div className="admin-header-dash-desc">
@@ -80,6 +82,7 @@ export default function AdminHeader({ pendingCount, approvedCount }) {
                 height: 40,
                 bgcolor: "#F25C54",
                 fontWeight: 600,
+                "&:hover": { color: "#F25C54" }
               }}
             >
               {user?.firstName?.[0]?.toUpperCase() || "U"}

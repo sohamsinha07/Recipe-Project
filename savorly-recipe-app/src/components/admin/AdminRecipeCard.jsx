@@ -23,6 +23,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
   if (recipe.status === "published" || recipe.status === "approved") {
     return (
       <div
+      className="admin-recipe-card"
         style={{
           width: "100%",
           minHeight: 440,
@@ -36,7 +37,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           display: "-webkit-box",
           WebkitLineClamp: 2,
           WebkitBoxOrient: "vertical",
-          overflow: "hidden",
+          overflow: "hidden",          
         }}
       >
         {/* Recipe image */}
@@ -162,6 +163,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
               overflow: "hidden",
               textOverflow: "ellipsis",
               minHeight: "42px",
+              maxHeight: "42px"
             }}
           >
             {recipe.description}
@@ -255,6 +257,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
   if (recipe.status === "rejected") {
     return (
       <div
+      className="admin-recipe-card"
         style={{
           width: "100%",
           minHeight: 440,
@@ -442,6 +445,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
   // Pending review card
   return (
     <div
+    className="admin-recipe-card"
       style={{
         width: "100%",
         minHeight: 440,

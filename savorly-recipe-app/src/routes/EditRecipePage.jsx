@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Container, Box, Button, Snackbar, Alert, Typography, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -6,7 +6,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
-import { useContext } from "react";
 
 import BasicInfoSection from "../components/createRecipe/BasicInfoSection";
 import ImageUploader from "../components/createRecipe/ImageUploader";
@@ -53,6 +52,19 @@ const schema = yup.object({
   url: yup.string().url().nullable(),
 });
 
+function parseArrayOrString(val) {
+  if (Array.isArray(val)) return val;
+  if (typeof val === "string") {
+    try {
+      const arr = JSON.parse(val);
+      return Array.isArray(arr) ? arr : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 export default function EditRecipePage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -96,27 +108,8 @@ export default function EditRecipePage() {
         }
         const data = docSnap.data();
 
-        let ingrArray = [];
-        if (Array.isArray(data.ingredients)) {
-          ingrArray = data.ingredients;
-        } else if (typeof data.ingredients === "string") {
-          try {
-            ingrArray = JSON.parse(data.ingredients);
-          } catch {
-            ingrArray = [];
-          }
-        }
-
-        let instrArray = [];
-        if (Array.isArray(data.instructions)) {
-          instrArray = data.instructions;
-        } else if (typeof data.instructions === "string") {
-          try {
-            instrArray = JSON.parse(data.instructions);
-          } catch {
-            instrArray = [];
-          }
-        }
+        const ingrArray = parseArrayOrString(data.ingredients);
+        const instrArray = parseArrayOrString(data.instructions);
 
         methods.reset({
           title: data.title || "",
@@ -139,7 +132,9 @@ export default function EditRecipePage() {
     }
 
     fetchRecipe();
-  }, [id, methods]);
+    // Don't include methods in deps, or RHF will warn and re-trigger endlessly.
+    // eslint-disable-next-line
+  }, [id]);
 
   const onSubmit = async (values) => {
     if (!id) {
@@ -181,8 +176,8 @@ export default function EditRecipePage() {
         <Typography color="error" variant="h6">
           {initialLoadError}
         </Typography>
-        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/my_kitchen")}>
-          Back to My Kitchen
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/admin")}>
+          Back to Admin
         </Button>
       </Container>
     );
@@ -210,7 +205,6 @@ export default function EditRecipePage() {
 
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stack spacing={4} alignItems="center">
-            {/* Full-width sections */}
             <Box width="90%">
               <ImageUploader />
             </Box>
@@ -223,13 +217,9 @@ export default function EditRecipePage() {
             <Box width="90%">
               <InstructionsSection />
             </Box>
-
-            {/* Narrower category section */}
             <Box width="90%" maxWidth={400}>
               <CategoriesSection />
             </Box>
-
-            {/* Centered Save button */}
             <Button
               type="submit"
               variant="contained"
