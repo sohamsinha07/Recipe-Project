@@ -9,8 +9,7 @@ import {
   Stack,
   IconButton,
 } from "@mui/material";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";            // <-- import filled heart
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,38 +36,61 @@ export default function RecipeCard({
       }}
       onClick={() => onView(data.id)}
     >
-      {/* IMAGE / HEADER AREA */}
+      {/* ─────── IMAGE / HEADER AREA ─────── */}
       <CardMedia
         sx={{
           width: isList ? 240 : "100%",
           height: isList ? "100%" : 140,
-          background: gradientBackground,
           position: "relative",
+          backgroundColor: "#f0f0f0",
         }}
       >
-        <Chip
-          label={data.status || "Draft"}
-          size="small"
-          color={data.status === "Published" ? "success" : "default"}
-          sx={{ position: "absolute", top: 12, left: 12 }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "text.disabled",
-            fontSize: 14,
-            fontWeight: 500,
-          }}
-        >
-          Recipe Image
-        </Box>
+        {data.image ? (
+          <Box
+            component="img"
+            src={data.image}
+            alt={data.title}
+            sx={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              height: "100%",
+              background: gradientBackground,
+              position: "relative",
+            }}
+          >
+            <Chip
+              label={data.status || "Draft"}
+              size="small"
+              color={data.status === "Published" ? "success" : "default"}
+              sx={{ position: "absolute", top: 12, left: 12 }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "text.disabled",
+                fontSize: 14,
+                fontWeight: 500,
+              }}
+            >
+              Recipe Image
+            </Box>
+          </Box>
+        )}
       </CardMedia>
 
-      {/* CONTENT AREA */}
+      {/* ─────── CONTENT AREA ─────── */}
       <CardContent
         sx={{
           flex: 1,
@@ -91,7 +113,7 @@ export default function RecipeCard({
           {data.title}
         </Typography>
 
-        {/* DESCRIPTION (clamped to 3 lines in grid) */}
+        {/* DESCRIPTION */}
         {data.description && (
           <Typography
             variant="body2"
@@ -121,8 +143,9 @@ export default function RecipeCard({
           spacing={2}
           sx={{ mt: 1 }}
         >
-          {/* Left: views + likes */}
-          <Stack >
+          {/* Left: views */}
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <Typography variant="caption">{data.views}</Typography>
           </Stack>
 
           {/* Right: action buttons */}
@@ -135,7 +158,6 @@ export default function RecipeCard({
                   onRemove(data.id);
                 }}
               >
-                {/* Show a filled heart (red) in saved‐tab mode */}
                 <FavoriteIcon sx={{ color: "error.main" }} fontSize="small" />
               </IconButton>
             )}
