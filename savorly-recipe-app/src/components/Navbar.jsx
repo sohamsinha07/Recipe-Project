@@ -62,19 +62,6 @@ export default function Navbar() {
   const toggleSelect = (id) =>
     setSelected((sel) => (sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]));
 
-  const handleBulkDelete = async () => {
-    try {
-      await axios.delete(`/api/notifications/${user.uid}`, {
-        data: { ids: selected },
-      });
-      // filter them out locally so UI is instant
-      setNotifications((nots) => nots.filter((n) => !selected.includes(n.id)));
-      setSelected([]);
-    } catch (e) {
-      console.error("Bulk delete failed:", e);
-    }
-  };
-
   useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > 300) {
