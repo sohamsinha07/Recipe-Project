@@ -119,7 +119,7 @@ export default function FeaturesSection({ loading, user, onRequireLogin }) {
           <Grid>
             <Card
               className="feature-card"
-              onClick={() => handleClick("/register", "/my_kitchen")}
+              onClick={() => handleClick("/register", "/recipes")}
               sx={{ cursor: "pointer" }}
             >
               {/* Card Content */}
@@ -156,7 +156,7 @@ export default function FeaturesSection({ loading, user, onRequireLogin }) {
           <Grid>
             <Card
               className="feature-card"
-              onClick={() => handleClick("/register", "/my_kitchen")}
+              onClick={() => handleClick("/register", "/create_recipe")}
               sx={{ cursor: "pointer" }}
             >
               <CardContent className="feature-card-content">

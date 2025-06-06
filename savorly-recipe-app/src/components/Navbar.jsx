@@ -447,40 +447,45 @@ export default function Navbar() {
         PaperProps={{
           sx: {
             // 5 items tall then scroll
-            maxHeight: 5 * 64, // 64 px ≈ one MenuItem
+            maxHeight: 5 * 64,
             width: 320,
             overflowY: "auto",
           },
         }}
       >
-        {notifications.length > 0 && (
-          <>
-            <MenuItem
-              onClick={askDeleteAll}
-              sx={{ bgcolor: "#fff5f5", "&:hover": { bgcolor: "#fee2e2" } }}
-            >
-              Delete all
-            </MenuItem>
-            <Divider />
-          </>
-        )}
-        {hasSelection && (
-          <>
-            <MenuItem
-              onClick={() => {
-                setToDeleteNotif([...selected]); // store the array of IDs
-                setDeleteDialogOpen(true); // open confirmation
-              }}
-              sx={{ bgcolor: "#fef2f2", "&:hover": { bgcolor: "#fee2e2" } }}
-            >
-              <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-              Delete selected
-            </MenuItem>
-            <Divider />
-          </>
-        )}
+        {/* Delete-all action */}
+        {notifications.length > 0 && [
+          <MenuItem
+            key="delete-all"
+            onClick={askDeleteAll}
+            sx={{ bgcolor: "#fff5f5", "&:hover": { bgcolor: "#fee2e2" } }}
+          >
+            Delete all
+          </MenuItem>,
+          <Divider key="da-divider" />,
+        ]}
+
+        {/* Bulk-delete action */}
+        {hasSelection && [
+          <MenuItem
+            key="delete-selected"
+            onClick={() => {
+              setToDeleteNotif([...selected]); // store the array of IDs
+              setDeleteDialogOpen(true); // open confirmation
+            }}
+            sx={{ bgcolor: "#fef2f2", "&:hover": { bgcolor: "#fee2e2" } }}
+          >
+            <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+            Delete selected
+          </MenuItem>,
+          <Divider key="ds-divider" />,
+        ]}
+
+        {/* Individual notifications */}
         {notifications.length === 0 ? (
-          <MenuItem disabled>No new notifications</MenuItem>
+          <MenuItem key="no-notifs" disabled>
+            No new notifications
+          </MenuItem>
         ) : (
           notifications.map((notif) => (
             <MenuItem
