@@ -1,16 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+
 function getTimeAgo(createdAt) {
   const created = createdAt?.seconds ? new Date(createdAt.seconds * 1000) : new Date(createdAt);
   const now = new Date();
   const diffMs = now - created;
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
 
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
-  return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 }
 
 export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit }) {
@@ -414,7 +418,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
 
           <div style={{ display: "flex", gap: 14 }}>
             <button
-              onClick={() => onEdit?.(recipe)} // send back to review
+               onClick={() => navigate(`/edit_recipe/${recipe.id}`)}// send back to review
               style={{
                 height: 36,
                 padding: "0 18px",
