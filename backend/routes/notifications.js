@@ -85,4 +85,27 @@ router.delete("/:uid", async (req, res) => {
   }
 });
 
+router.delete("/:uid/bulk", async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const { ids } = req.body; // <- we need this
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "ids array required" });
+    }
+
+    const batch = db.batch();
+    ids.forEach((id) => {
+      const ref = db.collection("users").doc(uid).collection("notifications").doc(id);
+      batch.delete(ref);
+    });
+    await batch.commit();
+
+    return res.json({ ok: true, deleted: ids.length });
+  } catch (e) {
+    console.error("Bulk-delete error:", e);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
 export default router;

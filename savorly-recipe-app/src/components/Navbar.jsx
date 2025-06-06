@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -29,6 +29,7 @@ import { AuthContext } from "../AuthContext";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DeleteIcon from "@mui/icons-material/Delete";
+import notiSound from "../assets/sounds/notis.mp3";
 
 import LoginModal from "./LoginModal";
 import { timeAgo } from "../utils/timeAgo";
@@ -48,6 +49,8 @@ export default function Navbar() {
   const [notifications, setNotifications] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [toDeleteNotif, setToDeleteNotif] = useState(null);
+  const audioRef = useRef(null);
+  const prevUnread = useRef(0);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -120,6 +123,15 @@ export default function Navbar() {
           };
         });
         setNotifications(arr);
+
+        const newUnread = arr.filter((n) => !n.read).length;
+        if (newUnread > prevUnread.current && audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(() => {
+            /* ignore autoplay block */
+          });
+        }
+        prevUnread.current = newUnread;
       },
       (err) => {
         console.error("Notification listener error:", err);
@@ -163,6 +175,11 @@ export default function Navbar() {
     setDeleteDialogOpen(true);
   };
 
+  const askDeleteAll = () => {
+    setToDeleteNotif("__ALL__");
+    setDeleteDialogOpen(true);
+  };
+
   // Confirm deletion: actually delete from Firestore + local state
   const confirmDelete = async () => {
     if (!user || !user.uid || !toDeleteNotif) {
@@ -171,10 +188,31 @@ export default function Navbar() {
       return;
     }
 
+    let ids = [];
+
+    if (toDeleteNotif === "__ALL__") {
+      // special for “delete every notification”
+      ids = notifications.map((n) => n.id);
+    } else if (Array.isArray(toDeleteNotif)) {
+      ids = toDeleteNotif;
+    } else {
+      ids = [toDeleteNotif]; // single id
+    }
+
     try {
-      await axios.delete(`/api/notifications/${user.uid}/${toDeleteNotif}`);
-      // Remove it from local state
-      setNotifications((prev) => prev.filter((n) => n.id !== toDeleteNotif));
+      if (ids.length === 1) {
+        // single-delete route
+        await axios.delete(`/api/notifications/${user.uid}/${ids[0]}`);
+      } else {
+        // bulk route
+        await axios.delete(`/api/notifications/${user.uid}/bulk`, {
+          data: { ids },
+        });
+      }
+
+      // UI update
+      setNotifications((prev) => prev.filter((n) => !ids.includes(n.id)));
+      setSelected((sel) => sel.filter((id) => !ids.includes(id)));
     } catch (err) {
       console.error("Failed to delete notification:", err);
     } finally {
@@ -428,10 +466,24 @@ export default function Navbar() {
           },
         }}
       >
+        {notifications.length > 0 && (
+          <>
+            <MenuItem
+              onClick={askDeleteAll}
+              sx={{ bgcolor: "#fff5f5", "&:hover": { bgcolor: "#fee2e2" } }}
+            >
+              Delete all
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         {hasSelection && (
           <>
             <MenuItem
-              onClick={handleBulkDelete}
+              onClick={() => {
+                setToDeleteNotif([...selected]); // store the array of IDs
+                setDeleteDialogOpen(true); // open confirmation
+              }}
               sx={{ bgcolor: "#fef2f2", "&:hover": { bgcolor: "#fee2e2" } }}
             >
               <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
@@ -485,11 +537,25 @@ export default function Navbar() {
         )}
       </Menu>
 
+      <audio ref={audioRef} src={notiSound} preload="auto" />
+
       {/* Delete-confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
-        <DialogTitle>Delete Notification</DialogTitle>
+        <DialogTitle>
+          {toDeleteNotif === "__ALL__"
+            ? "Delete ALL notifications"
+            : Array.isArray(toDeleteNotif)
+            ? "Delete selected notifications"
+            : "Delete notification"}
+        </DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this notification?</Typography>
+          <Typography>
+            {toDeleteNotif === "__ALL__"
+              ? "This will permanently remove every notification in your inbox."
+              : Array.isArray(toDeleteNotif)
+              ? "This will permanently remove all selected notifications."
+              : "This will permanently remove the notification."}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete}>Cancel</Button>
