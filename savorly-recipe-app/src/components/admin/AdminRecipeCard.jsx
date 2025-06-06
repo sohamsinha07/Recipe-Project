@@ -156,7 +156,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#718096",
-              fontSize: 14,
+              fontSize: 13,
               fontFamily: "Inter, sans-serif",
               fontWeight: 400,
               marginBottom: 12,
@@ -372,7 +372,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           <div
             style={{
               color: "#718096",
-              fontSize: 14,
+              fontSize: 13,
               marginBottom: 12,
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -572,7 +572,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
         <div
           style={{
             color: "#718096",
-            fontSize: 14,
+            fontSize: 13,
             fontFamily: "Inter, sans-serif",
             fontWeight: 400,
             marginBottom: 12,

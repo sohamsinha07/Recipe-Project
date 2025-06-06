@@ -6,13 +6,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
-
 import BasicInfoSection from "../components/createRecipe/BasicInfoSection";
 import ImageUploader from "../components/createRecipe/ImageUploader";
 import CategoriesSection from "../components/createRecipe/CategoriesSection";
 import IngredientsSection from "../components/createRecipe/IngredientsSection";
 import InstructionsSection from "../components/createRecipe/InstructionsSection";
-
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
@@ -52,12 +50,51 @@ const schema = yup.object({
   url: yup.string().url().nullable(),
 });
 
-function parseArrayOrString(val) {
-  if (Array.isArray(val)) return val;
-  if (typeof val === "string") {
+function parseIngredientString(str) {
+  if (!str || typeof str !== "string") return { qty: "", unit: "", item: "" };
+  const parts = str.trim().split(" ");
+  if (parts.length < 2) return { qty: "", unit: "", item: str };
+  const qty = parts[0];
+  const unit = parts[1];
+  const item = parts.slice(2).join(" ") || unit;
+  return { qty, unit: item === unit ? "" : unit, item };
+}
+
+function parseIngredients(raw) {
+  if (Array.isArray(raw)) {
+    if (typeof raw[0] === "string") {
+      return raw.map(parseIngredientString);
+    }
+    if (typeof raw[0] === "object") {
+      return raw;
+    }
+    return [];
+  }
+  if (typeof raw === "string") {
     try {
-      const arr = JSON.parse(val);
-      return Array.isArray(arr) ? arr : [];
+      const arr = JSON.parse(raw);
+      return parseIngredients(arr);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
+function parseInstructions(raw) {
+  if (Array.isArray(raw)) {
+    if (typeof raw[0] === "string") {
+      return raw.map((step) => ({ value: step }));
+    }
+    if (typeof raw[0] === "object") {
+      return raw;
+    }
+    return [];
+  }
+  if (typeof raw === "string") {
+    try {
+      const arr = JSON.parse(raw);
+      return parseInstructions(arr);
     } catch {
       return [];
     }
@@ -107,9 +144,8 @@ export default function EditRecipePage() {
           return;
         }
         const data = docSnap.data();
-
-        const ingrArray = parseArrayOrString(data.ingredients);
-        const instrArray = parseArrayOrString(data.instructions);
+        const ingrArray = parseIngredients(data.ingredients);
+        const instrArray = parseInstructions(data.instructions);
 
         methods.reset({
           title: data.title || "",
@@ -132,16 +168,11 @@ export default function EditRecipePage() {
     }
 
     fetchRecipe();
-    // Don't include methods in deps, or RHF will warn and re-trigger endlessly.
     // eslint-disable-next-line
   }, [id]);
 
   const onSubmit = async (values) => {
-    if (!id) {
-      alert("No recipe ID to update");
-      return;
-    }
-
+    console.log(values);
     try {
       const payload = {
         title: values.title,
@@ -150,14 +181,17 @@ export default function EditRecipePage() {
         calories: values.calories ? Number(values.calories) : null,
         mealType: values.mealType,
         servings: Number(values.servings),
-        ingredients: Array.isArray(values.ingredients) ? values.ingredients : [],
-        instructions: Array.isArray(values.instructions) ? values.instructions : [],
+        ingredients: values.ingredients.map(obj => 
+          typeof obj === "string" ? obj : [obj.qty, obj.unit, obj.item].filter(Boolean).join(" ")
+        ),
+        instructions: values.instructions.map(obj =>
+          typeof obj === "string" ? obj : obj.value
+        ),
         image: values.imageDataURL,
         url: values.url || "",
       };
-
-      const docRef = doc(db, "recipes", id);
-      await updateDoc(docRef, payload);
+      console.log("Will update recipe:", id, payload);
+      await updateDoc(doc(db, "recipes", id), payload);
 
       setToastOpen(true);
       setTimeout(() => {
@@ -166,7 +200,7 @@ export default function EditRecipePage() {
       }, 1000);
     } catch (err) {
       console.error("Error updating recipe:", err);
-      alert("Failed to save changes.  Please try again.");
+      alert("Failed to save changes. Please try again.");
     }
   };
 
@@ -202,7 +236,6 @@ export default function EditRecipePage() {
         >
           Back
         </Button>
-
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stack spacing={4} alignItems="center">
             <Box width="90%">
@@ -231,7 +264,6 @@ export default function EditRecipePage() {
             </Button>
           </Stack>
         </form>
-
         <Snackbar
           open={toastOpen}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
