@@ -33,7 +33,7 @@ export default function UsernameField({
           sx: {
             color:
               usernameStatus === "available"
-                ? "lightgreen"
+                ? "rgb(14, 165, 8)"
                 : usernameStatus === "checking"
                 ? "#555"
                 : "tomato",

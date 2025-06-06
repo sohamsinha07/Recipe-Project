@@ -34,7 +34,7 @@ export default function EmailField({
           sx: {
             color:
               emailStatus === "available"
-                ? "lightgreen"
+                ? "rgb(14, 165, 8)"
                 : emailStatus === "checking"
                 ? "#555"
                 : emailErrorMessage
