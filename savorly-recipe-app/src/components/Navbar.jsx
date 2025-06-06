@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -17,15 +17,19 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
+  Checkbox,
+  Divider,
 } from "@mui/material";
+
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
 
-import SearchIcon from "@mui/icons-material/Search";
+// import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DeleteIcon from "@mui/icons-material/Delete";
+import notiSound from "../assets/sounds/notis.mp3";
 
 import LoginModal from "./LoginModal";
 import { timeAgo } from "../utils/timeAgo";
@@ -45,10 +49,18 @@ export default function Navbar() {
   const [notifications, setNotifications] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [toDeleteNotif, setToDeleteNotif] = useState(null);
+  const audioRef = useRef(null);
+  const prevUnread = useRef(0);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const [selected, setSelected] = useState([]); // doc IDs checked
+  const hasSelection = selected.length > 0;
+
+  const toggleSelect = (id) =>
+    setSelected((sel) => (sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]));
 
   useEffect(() => {
     const onScroll = () => {
@@ -98,6 +110,15 @@ export default function Navbar() {
           };
         });
         setNotifications(arr);
+
+        const newUnread = arr.filter((n) => !n.read).length;
+        if (newUnread > prevUnread.current && audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.play().catch(() => {
+            /* ignore autoplay block */
+          });
+        }
+        prevUnread.current = newUnread;
       },
       (err) => {
         console.error("Notification listener error:", err);
@@ -141,6 +162,11 @@ export default function Navbar() {
     setDeleteDialogOpen(true);
   };
 
+  const askDeleteAll = () => {
+    setToDeleteNotif("__ALL__");
+    setDeleteDialogOpen(true);
+  };
+
   // Confirm deletion: actually delete from Firestore + local state
   const confirmDelete = async () => {
     if (!user || !user.uid || !toDeleteNotif) {
@@ -149,10 +175,31 @@ export default function Navbar() {
       return;
     }
 
+    let ids = [];
+
+    if (toDeleteNotif === "__ALL__") {
+      // special for “delete every notification”
+      ids = notifications.map((n) => n.id);
+    } else if (Array.isArray(toDeleteNotif)) {
+      ids = toDeleteNotif;
+    } else {
+      ids = [toDeleteNotif]; // single id
+    }
+
     try {
-      await axios.delete(`/api/notifications/${user.uid}/${toDeleteNotif}`);
-      // Remove it from local state
-      setNotifications((prev) => prev.filter((n) => n.id !== toDeleteNotif));
+      if (ids.length === 1) {
+        // single-delete route
+        await axios.delete(`/api/notifications/${user.uid}/${ids[0]}`);
+      } else {
+        // bulk route
+        await axios.delete(`/api/notifications/${user.uid}/bulk`, {
+          data: { ids },
+        });
+      }
+
+      // UI update
+      setNotifications((prev) => prev.filter((n) => !ids.includes(n.id)));
+      setSelected((sel) => sel.filter((id) => !ids.includes(id)));
     } catch (err) {
       console.error("Failed to delete notification:", err);
     } finally {
@@ -288,9 +335,9 @@ export default function Navbar() {
 
           {/* Search, Bell, Avatar */}
           <Box sx={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton size="large" aria-label="search">
+            {/* <IconButton size="large" aria-label="search">
               <SearchIcon sx={{ color: "#555" }} />
-            </IconButton>
+            </IconButton> */}
             <IconButton size="large" aria-label="notifications" onClick={handleBellClick}>
               <Badge
                 badgeContent={unreadCount}
@@ -397,10 +444,41 @@ export default function Navbar() {
         anchorEl={anchorElNotif}
         open={menuOpenNotif}
         onClose={handleNotifClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        sx={{ mt: 1 }}
+        PaperProps={{
+          sx: {
+            // 5 items tall then scroll
+            maxHeight: 5 * 64, // 64 px ≈ one MenuItem
+            width: 320,
+            overflowY: "auto",
+          },
+        }}
       >
+        {notifications.length > 0 && (
+          <>
+            <MenuItem
+              onClick={askDeleteAll}
+              sx={{ bgcolor: "#fff5f5", "&:hover": { bgcolor: "#fee2e2" } }}
+            >
+              Delete all
+            </MenuItem>
+            <Divider />
+          </>
+        )}
+        {hasSelection && (
+          <>
+            <MenuItem
+              onClick={() => {
+                setToDeleteNotif([...selected]); // store the array of IDs
+                setDeleteDialogOpen(true); // open confirmation
+              }}
+              sx={{ bgcolor: "#fef2f2", "&:hover": { bgcolor: "#fee2e2" } }}
+            >
+              <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+              Delete selected
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         {notifications.length === 0 ? (
           <MenuItem disabled>No new notifications</MenuItem>
         ) : (
@@ -415,6 +493,14 @@ export default function Navbar() {
               onMouseEnter={() => markAsRead(notif.id)}
             >
               <Box sx={{ display: "flex", width: "100%", alignItems: "flex-start" }}>
+                <Checkbox
+                  edge="start"
+                  checked={selected.includes(notif.id)}
+                  onChange={() => toggleSelect(notif.id)}
+                  tabIndex={-1}
+                  disableRipple
+                  sx={{ p: 0.5 }}
+                />
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="body2">{notif.message}</Typography>
                   <Typography variant="caption" color="text.secondary">
@@ -438,11 +524,25 @@ export default function Navbar() {
         )}
       </Menu>
 
+      <audio ref={audioRef} src={notiSound} preload="auto" />
+
       {/* Delete-confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
-        <DialogTitle>Delete Notification</DialogTitle>
+        <DialogTitle>
+          {toDeleteNotif === "__ALL__"
+            ? "Delete ALL notifications"
+            : Array.isArray(toDeleteNotif)
+            ? "Delete selected notifications"
+            : "Delete notification"}
+        </DialogTitle>
         <DialogContent>
-          <Typography>Are you sure you want to delete this notification?</Typography>
+          <Typography>
+            {toDeleteNotif === "__ALL__"
+              ? "This will permanently remove every notification in your inbox."
+              : Array.isArray(toDeleteNotif)
+              ? "This will permanently remove all selected notifications."
+              : "This will permanently remove the notification."}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={cancelDelete}>Cancel</Button>
