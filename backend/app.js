@@ -17,6 +17,7 @@ import authRouter from "./routes/auth.js";
 import createRouter from "./routes/create.js";
 import adminRouter from "./routes/admin.js";
 import notificationsRouter from "./routes/notifications.js";
+import myKitchenRecipesRouter from "./routes/myKitchenRecipes.js"
 
 // use middleware to parse json request bodies
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/auth", authRouter);
 app.use("/create_recipe", createRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/notifications", notificationsRouter);
+app.use("/my_kitchen/recipes", myKitchenRecipesRouter);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

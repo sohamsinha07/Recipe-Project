@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  getDoc,
-  doc,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useAuth } from "../../AuthContext";
 
@@ -24,50 +17,52 @@ export default function useKitchenRecipes() {
       return;
     }
 
-    async function fetchRecipes() {
+    async function fetchAllRecipes() {
       setLoading(true);
-
       try {
-        const recipesRef = collection(db, "recipes");
-        const q = query(recipesRef, where("authorUid", "==", user.uid));
-        const mySnap = await getDocs(q);
-        const myList = mySnap.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
-
         const userDocRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userDocRef);
 
-        let savedList = [];
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const savedIDs = Array.isArray(userData.savedRecipes)
-            ? userData.savedRecipes
-            : [];
-
-          if (savedIDs.length > 0) {
-            const fetched = await Promise.all(
-              savedIDs.map(async (rid) => {
-                try {
-                  const rDoc = await getDoc(doc(db, "recipes", rid));
-                  if (rDoc.exists()) {
-                    return { id: rDoc.id, ...rDoc.data() };
-                  } else {
-                    return null;
-                  }
-                } catch (e) {
-                  console.warn("Could not fetch saved recipe ID:", rid, e);
-                  return null;
-                }
-              })
-            );
-            savedList = fetched.filter((r) => r !== null);
-          }
+        if (!userSnap.exists()) {
+          setMyRecipes([]);
+          setSavedRecipes([]);
+          setLoading(false);
+          return;
         }
 
-        setMyRecipes(myList);
-        setSavedRecipes(savedList);
+        const userData = userSnap.data();
+        const draftIDs     = Array.isArray(userData.draftRecipes)     ? userData.draftRecipes     : [];
+        const publishedIDs = Array.isArray(userData.publishedRecipes) ? userData.publishedRecipes : [];
+        const savedIDs     = Array.isArray(userData.savedRecipes)     ? userData.savedRecipes     : [];
+
+        async function fetchByIds(idArray) {
+          const arr = await Promise.all(
+            idArray.map(async (rid) => {
+              try {
+                const rSnap = await getDoc(doc(db, "recipes", rid));
+                if (rSnap.exists()) {
+                  return { id: rSnap.id, ...rSnap.data() };
+                }
+                return null;
+              } catch (e) {
+                console.warn("Could not fetch recipe ID:", rid, e);
+                return null;
+              }
+            })
+          );
+          return arr.filter((r) => r !== null);
+        }
+
+        const [draftRecipesList, publishedRecipesList, savedRecipesList] = await Promise.all([
+          fetchByIds(draftIDs),
+          fetchByIds(publishedIDs),
+          fetchByIds(savedIDs),
+        ]);
+
+        const combinedMy = [...draftRecipesList, ...publishedRecipesList];
+
+        setMyRecipes(combinedMy);
+        setSavedRecipes(savedRecipesList);
       } catch (err) {
         console.error("Error fetching kitchen recipes:", err);
         setMyRecipes([]);
@@ -77,7 +72,7 @@ export default function useKitchenRecipes() {
       }
     }
 
-    fetchRecipes();
+    fetchAllRecipes();
   }, [user]);
 
   return { myRecipes, savedRecipes, loading };
