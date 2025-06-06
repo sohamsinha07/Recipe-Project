@@ -372,6 +372,7 @@ export default function Navbar() {
                       width: 40,
                       height: 40,
                       fontWeight: "bold",
+                      filter: "drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25))",
                       "&:hover": {
                         filter: "drop-shadow(0 3px 6px rgba(0, 0, 0, 0.49))",
                       },
