@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
       { path: "categories", element: <CategoriesPage /> },
       { path: "my_kitchen", element: <MyKitchenPage /> },
       { path: "recipe/:type/:id", element: <RecipeDetailsPage /> },
-    { path: "create_recipe", element: <CreateRecipePage /> },
+      { path: "create_recipe", element: <CreateRecipePage /> },
       { path: "admin", element: <AdminPage /> },
     ],
   },
