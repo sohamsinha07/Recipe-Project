@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Stack } from "@mui/material";
+import { Grid, Stack, Box } from "@mui/material";
 import RecipeCard from "./RecipeCard";
 
 export default function RecipeGrid({
@@ -31,7 +31,16 @@ export default function RecipeGrid({
   return (
     <Grid container spacing={3}>
       {recipes.map((r) => (
-        <Grid key={r.id} item xs={12} sm={6} md={4}>
+        <Grid 
+          key={r.id} 
+          item 
+          xs={12} 
+          sm={6} 
+          md={4}
+          sx={{
+            display: "flex",
+          }}
+        >
           <RecipeCard
             data={r}
             view="grid"
