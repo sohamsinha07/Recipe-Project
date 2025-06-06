@@ -1,29 +1,53 @@
-import { Card, CardContent, CardMedia, Typography, Box, Chip, Stack, IconButton } from "@mui/material";
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Box,
+  Chip,
+  Stack,
+  IconButton,
+} from "@mui/material";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";            // <-- import filled heart
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-export default function RecipeCard({ data, view }) {
+export default function RecipeCard({
+  data,
+  view,
+  onView,
+  onDelete,
+  onEdit,
+  onRemove,
+}) {
   const isList = view === "list";
+  const gradientBackground = data.gradient || "linear-gradient(to right, #ddd, #eee)";
 
   return (
     <Card
       sx={{
         display: isList ? "flex" : "block",
-        height: isList ? 150 : "auto",
+        height: isList ? 200 : "auto",
         boxShadow: 1,
+        cursor: "pointer",
+        borderRadius: 2,
       }}
+      onClick={() => onView(data.id)}
     >
+      {/* IMAGE / HEADER AREA */}
       <CardMedia
         sx={{
-          width: isList ? 260 : "100%",
+          width: isList ? 240 : "100%",
           height: isList ? "100%" : 140,
-          background: data.gradient,
+          background: gradientBackground,
           position: "relative",
         }}
       >
         <Chip
-          label={data.status}
+          label={data.status || "Draft"}
           size="small"
           color={data.status === "Published" ? "success" : "default"}
           sx={{ position: "absolute", top: 12, left: 12 }}
@@ -44,6 +68,7 @@ export default function RecipeCard({ data, view }) {
         </Box>
       </CardMedia>
 
+      {/* CONTENT AREA */}
       <CardContent
         sx={{
           flex: 1,
@@ -53,18 +78,42 @@ export default function RecipeCard({ data, view }) {
           pb: "16px !important",
         }}
       >
-        <Typography variant="subtitle1" fontWeight={600}>
+        {/* TITLE */}
+        <Typography
+          variant="subtitle1"
+          fontWeight={600}
+          sx={{
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}
+        >
           {data.title}
         </Typography>
 
+        {/* DESCRIPTION (clamped to 3 lines in grid) */}
         {data.description && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={
+              view === "grid"
+                ? {
+                    overflow: "hidden",
+                    display: "-webkit-box",
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: "vertical",
+                  }
+                : {}
+            }
+          >
             {data.description}
           </Typography>
         )}
 
         <Box sx={{ flexGrow: 1 }} />
 
+        {/* FOOTER ICONS */}
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -72,21 +121,47 @@ export default function RecipeCard({ data, view }) {
           spacing={2}
           sx={{ mt: 1 }}
         >
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <VisibilityIcon fontSize="small" />
-              <Typography variant="caption">{data.views}</Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={0.5} alignItems="center">
-              <FavoriteBorderIcon fontSize="small" />
-              <Typography variant="caption">{data.likes}</Typography>
-            </Stack>
+          {/* Left: views + likes */}
+          <Stack >
           </Stack>
 
-          <IconButton size="small" sx={{ p: 0.5 }}>
-            <EditIcon fontSize="small" />
-          </IconButton>
+          {/* Right: action buttons */}
+          <Stack direction="row" spacing={1}>
+            {onRemove && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(data.id);
+                }}
+              >
+                {/* Show a filled heart (red) in saved‐tab mode */}
+                <FavoriteIcon sx={{ color: "error.main" }} fontSize="small" />
+              </IconButton>
+            )}
+            {onEdit && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(data.id);
+                }}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            )}
+            {onDelete && (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(data.id);
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Stack>
         </Stack>
       </CardContent>
     </Card>
