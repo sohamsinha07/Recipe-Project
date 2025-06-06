@@ -18,6 +18,7 @@
     "@mui/x-date-pickers": "^8.5.0",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "firebase": "^11.8.1",
     "firestore": "^1.1.6",
     "mui": "^0.0.1",
