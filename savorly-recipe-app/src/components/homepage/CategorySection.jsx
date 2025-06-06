@@ -4,7 +4,7 @@ import LunchDiningOutlinedIcon from "@mui/icons-material/LunchDiningOutlined";
 import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
 import CakeOutlinedIcon from "@mui/icons-material/CakeOutlined";
 
-import "../../styles/homepage.css";
+import "../../styles/homePage.css";
 
 export default function CategorySection({ loading }) {
   if (loading) {
