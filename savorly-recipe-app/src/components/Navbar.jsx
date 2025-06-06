@@ -275,14 +275,27 @@ export default function Navbar() {
           {/* Logo + Site Name */}
           <Box component={Link} to="/" sx={{ display: "flex", alignItems: "center" }}>
             {/* Logo */}
-            <Avatar src={SavorlyLogo} alt="Savorly Logo" sx={{ width: 37, height: 37, mr: 1.5 }} />
+            <Avatar
+              src={SavorlyLogo}
+              alt="Savorly Logo"
+              sx={{
+                width: 37,
+                height: 37,
+                mr: 1.5,
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.25))",
+              }}
+            />
             <Typography
               sx={{
                 textDecoration: "none",
+                filter: "drop-shadow(0 2px 4px rgba(0, 0, 0, 0.27))",
                 fontWeight: 700,
                 fontSize: "1.3rem",
                 color: "black",
-                "&:hover": { color: "#F25C54" },
+                "&:hover": {
+                  color: "#F25C54",
+                  filter: "drop-shadow(0 3px 6px rgba(242, 92, 84, 0.21))",
+                },
               }}
             >
               Savorly
@@ -359,6 +372,9 @@ export default function Navbar() {
                       width: 40,
                       height: 40,
                       fontWeight: "bold",
+                      "&:hover": {
+                        filter: "drop-shadow(0 3px 6px rgba(0, 0, 0, 0.49))",
+                      },
                     }}
                   >
                     {user.firstName?.[0]?.toUpperCase() || "U"}
