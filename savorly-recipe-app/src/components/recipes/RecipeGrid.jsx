@@ -16,6 +16,8 @@ export default function RecipeGrid() {
   const [source, setSource] = useState("firestore");
   const [searchTerm, setSearchTerm] = useState("");
 
+//   console.log(recipes);
+
   useEffect(() => {
     console.log(source);
     async function fetchRecipes() {

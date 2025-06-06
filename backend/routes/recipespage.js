@@ -1,7 +1,7 @@
 import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
-import { getFirestore, collection, doc, updateDoc, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, doc, arrayUnion, arrayRemove, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
 
 dotenv.config();
@@ -30,21 +30,33 @@ function shuffleArray(arr) {
   return arr.sort(() => Math.random() - 0.5);
 }
 
-router.patch("/firestore/:id/favorite", async (req, res) => {
+router.patch("/save/:id", async (req, res) => {
   const recipeId = req.params.id;
-  const { favorited } = req.body;
+  const { userId } = req.body;
 
-  if (typeof favorited !== "boolean") {
-    return res.status(400).json({ error: "'favorited' must be a boolean" });
-  }
+  if (!userId) return res.status(400).json({ error: "Missing userId" });
 
   try {
-    const docRef = doc(db, "recipes", recipeId);
-    await updateDoc(docRef, { favorited });
-    res.json({ favorited });
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userData = userSnap.data();
+    const alreadySaved = userData.savedRecipes?.includes(recipeId);
+
+    await updateDoc(userRef, {
+      savedRecipes: alreadySaved
+        ? arrayRemove(recipeId)
+        : arrayUnion(recipeId),
+    });
+
+    res.json({ success: true, isSaved: !alreadySaved });
   } catch (err) {
-    console.error("❌ Failed to update favorite:", err);
-    res.status(500).json({ error: "Failed to update favorite" });
+    console.error("❌ Error saving recipe to user:", err);
+    res.status(500).json({ error: "Failed to save recipe" });
   }
 });
 
@@ -73,7 +85,9 @@ router.get("/edamam", async (req, res) => {
       });
 
       const hits = response.data.hits || [];
+	  console.log(hits);
       const formatted = hits.map((hit) => ({
+		uri: hit.recipe.uri,
         title: hit.recipe.label,
         description: hit.recipe.ingredientLines.slice(0, 2).join(", "),
         rating: (Math.random() * 1 + 4).toFixed(1),

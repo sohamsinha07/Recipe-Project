@@ -1,7 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   AppBar,
+  Badge,
   Toolbar,
   IconButton,
   Typography,
@@ -16,13 +18,17 @@ import {
   DialogActions,
   Tooltip,
 } from "@mui/material";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
 
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import LoginModal from "./LoginModal";
+import { timeAgo } from "../utils/timeAgo";
 import SavorlyLogo from "../assets/icon.png";
 
 export default function Navbar() {
@@ -33,28 +39,17 @@ export default function Navbar() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const menuOpen = Boolean(anchorEl);
-  const handleAvatarClick = (e) => {
-    setAnchorEl(e.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+
+  const [anchorElNotif, setAnchorElNotif] = useState(null);
+  const menuOpenNotif = Boolean(anchorElNotif);
+  const [notifications, setNotifications] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [toDeleteNotif, setToDeleteNotif] = useState(null);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const openConfirm = () => {
-    setAnchorEl(null);
-    setConfirmOpen(true);
-  };
-  const closeConfirm = () => {
-    setConfirmOpen(false);
-  };
-  const handleLogout = () => {
-    logout();
-    setConfirmOpen(false);
-    navigate("/");
-  };
-
   const [showScrollTop, setShowScrollTop] = useState(false);
+
   useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > 300) {
@@ -78,6 +73,139 @@ export default function Navbar() {
       setLoginOpen(true);
     }
   }, [location.search]);
+
+  useEffect(() => {
+    if (!user || !user.uid) {
+      setNotifications([]);
+      return;
+    }
+
+    // Build a query on the subcollection:
+    const notifsRef = collection(db, "users", user.uid, "notifications");
+    const q = query(notifsRef, orderBy("createdAt", "desc"));
+
+    // Subscribe with onSnapshot:
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const arr = snapshot.docs.map((docSnap) => {
+          const data = docSnap.data();
+          return {
+            id: docSnap.id,
+            message: data.message,
+            createdAt: data.createdAt,
+            read: data.read || false,
+          };
+        });
+        setNotifications(arr);
+      },
+      (err) => {
+        console.error("Notification listener error:", err);
+      }
+    );
+
+    // Cleanup on unmount or user‐logout:
+    return () => unsubscribe();
+  }, [user]);
+
+  const markAsRead = async (notifId) => {
+    if (!user || !user.uid) return;
+
+    // If it’s already read, do nothing
+    const idx = notifications.findIndex((n) => n.id === notifId);
+    if (idx === -1 || notifications[idx].read) return;
+
+    // Immediately update local state so UI flips to white
+    setNotifications((prev) =>
+      prev.map((n) =>
+        n.id === notifId
+          ? {
+              ...n,
+              read: true,
+            }
+          : n
+      )
+    );
+
+    // Fire off the PATCH request to the server
+    try {
+      await axios.patch(`/api/notifications/${user.uid}/${notifId}/read`);
+    } catch (err) {
+      console.error("Failed to mark notification read:", err);
+    }
+  };
+
+  // Handle deletion of a notification (open confirmation dialog)
+  const handleDeleteClick = (notifId) => {
+    setToDeleteNotif(notifId);
+    setDeleteDialogOpen(true);
+  };
+
+  // Confirm deletion: actually delete from Firestore + local state
+  const confirmDelete = async () => {
+    if (!user || !user.uid || !toDeleteNotif) {
+      setDeleteDialogOpen(false);
+      setToDeleteNotif(null);
+      return;
+    }
+
+    try {
+      await axios.delete(`/api/notifications/${user.uid}/${toDeleteNotif}`);
+      // Remove it from local state
+      setNotifications((prev) => prev.filter((n) => n.id !== toDeleteNotif));
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
+    } finally {
+      setDeleteDialogOpen(false);
+      setToDeleteNotif(null);
+    }
+  };
+
+  // Cancel deletion
+  const cancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setToDeleteNotif(null);
+  };
+
+  const handleNavClick = (path) => {
+    if (user) {
+      navigate(path);
+    } else {
+      setLoginOpen(true);
+    }
+  };
+
+  const handleAvatarClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Notification menu handlers
+  const handleBellClick = (e) => {
+    if (!user) {
+      setLoginOpen(true);
+      return;
+    }
+    setAnchorElNotif(e.currentTarget);
+  };
+  const handleNotifClose = () => {
+    setAnchorElNotif(null);
+  };
+
+  const openConfirm = () => {
+    setAnchorEl(null);
+    setConfirmOpen(true);
+  };
+  const closeConfirm = () => {
+    setConfirmOpen(false);
+  };
+  const handleLogout = () => {
+    logout();
+    setConfirmOpen(false);
+    navigate("/");
+  };
 
   const navLinkStyles = {
     fontWeight: "bold",
@@ -125,8 +253,7 @@ export default function Navbar() {
             }}
           >
             <Button
-              component={NavLink}
-              to="/recipes"
+              onClick={() => handleNavClick("/recipes")}
               sx={{
                 color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
                 ...navLinkStyles,
@@ -134,19 +261,8 @@ export default function Navbar() {
             >
               Recipes
             </Button>
-            {/* <Button
-              component={NavLink}
-              to="/Community"
-              sx={{
-                color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
-                ...navLinkStyles,
-              }}
-            >
-              Community
-            </Button> */}
             <Button
-              component={NavLink}
-              to="/my_kitchen"
+              onClick={() => handleNavClick("/my_kitchen")}
               sx={{
                 color: (theme) => (theme.palette.mode === "light" ? "#777" : "#EEE"),
                 ...navLinkStyles,
@@ -175,8 +291,16 @@ export default function Navbar() {
             <IconButton size="large" aria-label="search">
               <SearchIcon sx={{ color: "#555" }} />
             </IconButton>
-            <IconButton size="large" aria-label="notifications">
-              <NotificationsIcon sx={{ color: "#555" }} />
+            <IconButton size="large" aria-label="notifications" onClick={handleBellClick}>
+              <Badge
+                badgeContent={unreadCount}
+                color="error"
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                // when unreadCount is zero, the badge will be hidden automatically
+                showZero={false}
+              >
+                <NotificationsIcon sx={{ color: "#555" }} />
+              </Badge>
             </IconButton>
 
             {user ? (
@@ -185,8 +309,8 @@ export default function Navbar() {
                   <Avatar
                     sx={{
                       bgcolor: "#F25C54",
-                      width: 32,
-                      height: 32,
+                      width: 40,
+                      height: 40,
                       fontWeight: "bold",
                     }}
                   >
@@ -268,6 +392,65 @@ export default function Navbar() {
           </IconButton>
         </Tooltip>
       )}
+
+      <Menu
+        anchorEl={anchorElNotif}
+        open={menuOpenNotif}
+        onClose={handleNotifClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        sx={{ mt: 1 }}
+      >
+        {notifications.length === 0 ? (
+          <MenuItem disabled>No new notifications</MenuItem>
+        ) : (
+          notifications.map((notif) => (
+            <MenuItem
+              key={notif.id}
+              sx={{
+                backgroundColor: notif.read ? "white" : "#e3f2fd",
+                whiteSpace: "normal",
+                alignItems: "flex-start",
+              }}
+              onMouseEnter={() => markAsRead(notif.id)}
+            >
+              <Box sx={{ display: "flex", width: "100%", alignItems: "flex-start" }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography variant="body2">{notif.message}</Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {timeAgo(notif.createdAt)}
+                  </Typography>
+                </Box>
+                <IconButton
+                  size="small"
+                  onClick={() => handleDeleteClick(notif.id)}
+                  sx={{
+                    ml: 1,
+                    p: 0.5,
+                    "&:hover": { backgroundColor: "#f8d7da" },
+                  }}
+                >
+                  <DeleteIcon fontSize="small" color="error" />
+                </IconButton>
+              </Box>
+            </MenuItem>
+          ))
+        )}
+      </Menu>
+
+      {/* Delete-confirmation dialog */}
+      <Dialog open={deleteDialogOpen} onClose={cancelDelete}>
+        <DialogTitle>Delete Notification</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this notification?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelDelete}>Cancel</Button>
+          <Button color="error" onClick={confirmDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

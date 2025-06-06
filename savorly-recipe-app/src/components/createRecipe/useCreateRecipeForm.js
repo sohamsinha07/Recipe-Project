@@ -30,9 +30,19 @@ const schema = yup.object({
       })
     )
     .min(1),
+  imageDataURL: yup
+    .string()
+    .required("Please upload an image for your recipe")
+    .test(
+      "is-data-url",
+      "Upload a valid JPEG or PNG",
+      (val) => typeof val === "string" && val.startsWith("data:image/")
+    ),
+
+  url: yup.string().url().nullable(),
 });
 
-export default function useCreateRecipeForm(onSuccess) {
+export default function useCreateRecipeForm(onSuccess, user) {
   const navigate = useNavigate();
 
   const methods = useForm({
@@ -46,26 +56,40 @@ export default function useCreateRecipeForm(onSuccess) {
       servings: "",
       ingredients: [],
       instructions: [],
+      imageDataURL: "",
+      url: "",
     },
   });
 
   /* --------------------------- submit ---------------------------- */
   const onSubmit = async (values) => {
     try {
-      const fd = new FormData();
+      // Build a plain‐object payload (no FormData, because we’re just sending JSON)
+      const payload = {
+        title: values.title,
+        description: values.description,
+        totalTime: Number(values.totalTime),
+        calories: values.calories ? Number(values.calories) : null,
+        mealType: values.mealType,
+        servings: Number(values.servings),
+        ingredients: JSON.stringify(values.ingredients),
+        instructions: JSON.stringify(values.instructions),
 
-      Object.entries(values).forEach(([k, v]) => {
-        if (k === "ingredients" || k === "instructions") {
-          fd.append(k, JSON.stringify(v));
-        } else {
-          fd.append(k, v);
-        }
-      });
+        // THIS is the base64 string
+        image: values.imageDataURL,
 
-      await axios.post("/create_recipe", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+        // author / createdBy / source / status / url
+        author:
+          user && user.firstName && user.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : "Anonymous",
+        createdBy: user?.uid || "",
+        source: "user",
+        status: "pending",
+        url: values.url || "",
+      };
 
+      await axios.post("/create_recipe", payload);
       onSuccess?.();
     } catch (err) {
       console.error("save failed:", err.response?.data || err);

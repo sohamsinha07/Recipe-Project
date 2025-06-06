@@ -2,12 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import { db } from "../firebase.js";
 import admin from "firebase-admin";
+import axios from "axios";
 
 const router = express.Router();
 dotenv.config();
 
 const apiKey = process.env.VITE_EDAMAM_API_KEY;
 const appId = process.env.VITE_EDAMAM_APP_ID;
+
+const EDAMAM_BASE_URL = "https://api.edamam.com/api/recipes/v2/";
 
 router.get("/", async (req, res) => {
   const { id } = req.query;
@@ -17,24 +20,30 @@ router.get("/", async (req, res) => {
   }
 
   try {
-    const decodedId = decodeURIComponent(id);
-    const url = `https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${decodedId}&app_id=${appId}&app_key=${apiKey}`;
+    const recipeId = decodeURIComponent(id);
+	// console.log(uri);
+	// const recipeId = uri.split('recipe_')[1];
+	// console.log(recipeId);
 
-    const response = await fetch(url);
+    // const url = `https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${decodedId}&app_id=${appId}&app_key=${apiKey}`;
 
-    if (!response.ok) {
-      throw new Error(`Edamam API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    const recipe = data.hits?.[0]?.recipe || data.recipe || null;
-
-    if (!recipe) {
+	const response = await axios.get(EDAMAM_BASE_URL+recipeId, {
+        params: {
+          type: "public",
+		//   id: 'f88956b66fa84afb981eebd5942b62af',
+          app_id: process.env.VITE_EDAMAM_APP_ID,
+          app_key: process.env.VITE_EDAMAM_API_KEY,
+        },
+        headers: {
+          "Edamam-Account-User": "imjel",
+        },
+    });
+	
+	if (!response) {
       return res.status(404).json({ error: "Recipe not found from Edamam" });
     }
+	res.json( response.data );
 
-    res.json({ recipe });
   } catch (err) {
     console.error("Error fetching recipe from Edamam:", err.message);
     res.status(500).json({ error: "Failed to fetch recipe from Edamam" });

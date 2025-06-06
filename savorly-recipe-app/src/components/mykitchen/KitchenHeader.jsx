@@ -24,9 +24,15 @@ export default function KitchenHeader() {
         component={RouterLink}
         to="/create_recipe"
         variant="contained"
-        color="error"
         startIcon={<AddIcon />}
-        sx={{ alignSelf: { xs: "flex-start", sm: "center" } }}
+        sx={{
+          alignSelf: {
+            xs: "flex-start",
+            sm: "center",
+            backgroundColor: "#fe5f55",
+            fontWeight: "bold",
+          },
+        }}
       >
         Create Recipe
       </Button>
