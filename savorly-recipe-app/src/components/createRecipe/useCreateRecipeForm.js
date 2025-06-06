@@ -25,9 +25,7 @@ const schema = yup.object({
   instructions: yup
     .array()
     .of(
-      yup.object({
-        value: yup.string().required(),
-      })
+      yup.string().required()
     )
     .min(1),
   imageDataURL: yup
