@@ -135,9 +135,7 @@ const RecipeDetailsPage = () => {
 
   if (!recipe) {
     return (
-      <div className="details-page">
-        <div className="error">Recipe not found</div>
-      </div>
+		<RecipeDetailsSkeleton/>
     );
   }
 
@@ -172,7 +170,7 @@ const RecipeDetailsPage = () => {
       </div>
       <div className="recipe-content">
         <div className="recipe-img-container">
-          {recipe.image && <img className="recipe-img" src={recipe.image} alt={recipe.title}></img>}
+          	<img className="recipe-img" src={recipe.image} alt={recipe.title} />
         </div>
 
         <h1 className="recipe-title">{recipe.title}</h1>
@@ -184,49 +182,63 @@ const RecipeDetailsPage = () => {
               <Rating name="read-only" value={averageRating} readOnly precision={0.5} />
             </span>
           )}
-          {/* <span className='rating'>
-						<Rating
-							name="read-only"
-							value={averageRating}
-							readOnly
-							precision={0.5}
-						/>
-					</span> */}
+		  {recipe.source && recipe.type === 'edamam' && (
+			<div className="meta-item">
+              <HiUser />
+              <span>{recipe.source}</span>
+            </div>
+		  )}
           {recipe.author && (
             <div className="meta-item">
               <HiUser />
               <span>By: {recipe.author}</span>
             </div>
           )}
-          {recipe.totalTime && (
+          {recipe.totalTime > 0 ? (
             <div className="meta-item">
               <FaClock />
               <span>{recipe.totalTime} min</span>
             </div>
-          )}
+          ) : (
+			<div className="meta-item">
+              <FaClock />
+              <span>N/A</span>
+            </div>
+		  )}
           {recipe.servings && (
             <div className="meta-item">
               <HiUsers />
               <span>{recipe.servings} servings</span>
             </div>
           )}
+		  {recipe.yield && (
+			<div className="meta-item">
+              <HiUsers />
+              <span>{recipe.yield} servings</span>
+            </div>
+		  )}
         </div>
 
         <div className="recipe-steps">
           {/* left side */}
           <div className="ingredients-instructions">
-            {/* ingredient.text should be conditional on edamam vs. firebase */}
+
+            {/* ingredient.text conditional on edamam vs. firebase */}
             <div className="ingredients-section">
               <h2>Ingredients</h2>
               <ul className="ingredients-list">
                 {(recipe.ingredients || []).map((ingredient, index) => {
-                  const text =
+				  let text;
+				  if (recipe.type === 'edamam') {
+					text = ingredient.text;
+				  } else {
+					text =
                     typeof ingredient === "string"
                       ? ingredient
                       : `${ingredient.qty || ""} ${ingredient.unit || ""} ${
                           ingredient.item || ""
                         }`.trim();
-
+				  }
                   return (
                     <li key={index}>
                       <input type="checkbox" id={`ingredient-${index}`} />
@@ -239,38 +251,32 @@ const RecipeDetailsPage = () => {
             <div className="instructions-section">
               <h2>Instructions</h2>
               {recipe.instructions && recipe.instructions.length > 0 ? (
-                (() => {
-                  // Normalize instructions into an array of strings
-                  const raw = Array.isArray(recipe.instructions)
-                    ? recipe.instructions.map((item) =>
-                        typeof item === "string" ? item : item.value
-                      )
-                    : typeof recipe.instructions === "string"
-                    ? recipe.instructions.split("\n")
-                    : [];
-
-                  // Filter out empty lines
-                  const steps = raw.filter((step) => step.trim());
-
-                  return (
-                    <ol className="instructions-list">
-                      {steps.map((step, idx) => (
-                        <li key={idx}>
-                          <span className="step-number">{idx + 1}</span>
-                          <span>{step}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  );
-                })()
+                 <ol className="instructions-list">
+     			 {(Array.isArray(recipe.instructions)
+        		? recipe.instructions
+        		: recipe.instructions.split("\n")
+      			)
+       			 .filter((step) => typeof step === "string" && step.trim())
+        		.map((step, idx) => (
+          			<li key={idx}>
+            			<span className="step-number">{idx + 1}</span>
+           				<span>{step}</span>
+          			</li>
+       				 ))}
+    			</ol>
               ) : (
                 <div className="no-instructions">
-                  <p>Detailed instructions not available.</p>
-                  {recipe.url && (
-                    <a href={recipe.url} target="_blank" rel="noopener noreferrer">
-                      View full recipe at source
-                    </a>
-                  )}
+					{recipe.type === 'edamam' ? (
+						<>
+						<p>Detailed instructions not available for external recipes. </p>
+						{recipe.url && (
+                   			 <a className='source-link' href={recipe.url} target="_blank" rel="noopener noreferrer"> View full recipe at source.
+                    		</a>
+                  		)}
+						</>
+					) : (
+                  		<p>Detailed instructions not available.</p>
+					)}
                 </div>
               )}
             </div>
