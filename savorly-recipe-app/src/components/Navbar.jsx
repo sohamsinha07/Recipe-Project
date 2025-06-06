@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   AppBar,
+  Badge,
   Toolbar,
   IconButton,
   Typography,
@@ -44,6 +45,7 @@ export default function Navbar() {
   const [notifications, setNotifications] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [toDeleteNotif, setToDeleteNotif] = useState(null);
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -290,7 +292,15 @@ export default function Navbar() {
               <SearchIcon sx={{ color: "#555" }} />
             </IconButton>
             <IconButton size="large" aria-label="notifications" onClick={handleBellClick}>
-              <NotificationsIcon sx={{ color: "#555" }} />
+              <Badge
+                badgeContent={unreadCount}
+                color="error"
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                // when unreadCount is zero, the badge will be hidden automatically
+                showZero={false}
+              >
+                <NotificationsIcon sx={{ color: "#555" }} />
+              </Badge>
             </IconButton>
 
             {user ? (
