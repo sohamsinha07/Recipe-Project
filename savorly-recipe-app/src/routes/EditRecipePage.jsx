@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Container, Grid, Button, Snackbar, Alert, Typography } from "@mui/material";
+import { Container, Box, Button, Snackbar, Alert, Typography, Stack } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FormProvider, useForm } from "react-hook-form";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -181,11 +181,7 @@ export default function EditRecipePage() {
         <Typography color="error" variant="h6">
           {initialLoadError}
         </Typography>
-        <Button
-          variant="outlined"
-          sx={{ mt: 2 }}
-          onClick={() => navigate("/my_kitchen")}
-        >
+        <Button variant="outlined" sx={{ mt: 2 }} onClick={() => navigate("/my_kitchen")}>
           Back to My Kitchen
         </Button>
       </Container>
@@ -213,30 +209,37 @@ export default function EditRecipePage() {
         </Button>
 
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <Grid container spacing={4}>
-            {/* LEFT: Basic Info, Image, Ingredients, Instructions */}
-            <Grid item xs={12} md={8} display="flex" flexDirection="column" gap={4}>
-              <BasicInfoSection />
+          <Stack spacing={4} alignItems="center">
+            {/* Full-width sections */}
+            <Box width="90%">
               <ImageUploader />
+            </Box>
+            <Box width="90%">
+              <BasicInfoSection />
+            </Box>
+            <Box width="90%">
               <IngredientsSection />
+            </Box>
+            <Box width="90%">
               <InstructionsSection />
-            </Grid>
+            </Box>
 
-            {/* RIGHT: Categories/Tags */}
-            <Grid item xs={12} md={4} display="flex" flexDirection="column" gap={4}>
+            {/* Narrower category section */}
+            <Box width="90%" maxWidth={400}>
               <CategoriesSection />
-            </Grid>
-          </Grid>
+            </Box>
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="error"
-            sx={{ mt: 4 }}
-            disabled={methods.formState.isSubmitting}
-          >
-            {methods.formState.isSubmitting ? "Saving…" : "Save Changes"}
-          </Button>
+            {/* Centered Save button */}
+            <Button
+              type="submit"
+              variant="contained"
+              color="error"
+              disabled={methods.formState.isSubmitting}
+              sx={{ alignSelf: "center", mt: 2 }}
+            >
+              {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
+            </Button>
+          </Stack>
         </form>
 
         <Snackbar
