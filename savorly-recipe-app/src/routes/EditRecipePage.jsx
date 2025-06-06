@@ -145,7 +145,28 @@ export default function EditRecipePage() {
         }
         const data = docSnap.data();
         const ingrArray = parseIngredients(data.ingredients);
-        const instrArray = parseInstructions(data.instructions);
+        let instrArray = [];
+if (Array.isArray(data.instructions)) {
+  instrArray = data.instructions.map((step) =>
+    typeof step === "string"
+      ? step
+      : (step && typeof step === "object" && "value" in step ? step.value : "")
+  );
+} else if (typeof data.instructions === "string") {
+  try {
+    const arr = JSON.parse(data.instructions);
+    instrArray = Array.isArray(arr)
+      ? arr.map((step) =>
+          typeof step === "string"
+            ? step
+            : (step && typeof step === "object" && "value" in step ? step.value : "")
+        )
+      : [];
+  } catch {
+    instrArray = [];
+  }
+}
+
 
         methods.reset({
           title: data.title || "",
