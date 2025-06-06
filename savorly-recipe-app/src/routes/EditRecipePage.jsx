@@ -167,7 +167,7 @@ export default function EditRecipePage() {
       setToastOpen(true);
       setTimeout(() => {
         setToastOpen(false);
-        navigate("/my_kitchen");
+        navigate("/admin");
       }, 1000);
     } catch (err) {
       console.error("Error updating recipe:", err);
@@ -237,7 +237,7 @@ export default function EditRecipePage() {
               disabled={methods.formState.isSubmitting}
               sx={{ alignSelf: "center", mt: 2 }}
             >
-              {methods.formState.isSubmitting ? "Saving…" : "Save Recipe"}
+              {methods.formState.isSubmitting ? "Saving…" : "Save Changes"}
             </Button>
           </Stack>
         </form>
@@ -249,7 +249,7 @@ export default function EditRecipePage() {
           onClose={() => setToastOpen(false)}
         >
           <Alert severity="success" sx={{ width: "100%" }}>
-            Recipe updated! Returning to My Kitchen…
+            Recipe updated! Returning to Admin Page
           </Alert>
         </Snackbar>
       </Container>

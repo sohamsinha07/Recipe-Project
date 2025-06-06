@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link , useNavigate} from "react-router-dom";
 
 
 function getTimeAgo(createdAt) {
@@ -18,6 +18,7 @@ function getTimeAgo(createdAt) {
 }
 
 export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit }) {
+  const navigate = useNavigate();
   // Published or Approved card
   if (recipe.status === "published" || recipe.status === "approved") {
     return (
@@ -206,7 +207,7 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           {/* Buttons */}
           <div style={{ display: "flex", gap: 14 }}>
             <button
-              onClick={() => onEdit?.(recipe)}
+              onClick={() => navigate(`/edit/${recipe.id}`)}
               style={{
                 height: 36,
                 padding: "0 18px",
