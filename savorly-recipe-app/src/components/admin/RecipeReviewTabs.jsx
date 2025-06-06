@@ -1,44 +1,45 @@
-import React from "react";
-
 export default function RecipeReviewTabs({
   view = "grid",
   setView = () => {},
   tab = "pending",
   setTab,
-  counts = { all: recipes.length,
-    pending: recipes.filter(r => r.status === "pending").length,
-    approved: recipes.filter(r => r.status === "approved").length },
+  counts = { all: 0, pending: 0, approved: 0, rejected: 0 }, // safe default
   sort = "newest",
-  setSort
+  setSort,
 }) {
   return (
-    
-    <div style={{
-      alignSelf: "stretch",
-      padding: 24,
-      background: "white",
-      borderRadius: 12,
-      outline: "1px #E2E8F0 solid",
-      outlineOffset: "-1px",
-      flexDirection: "column",
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
-      gap: 16,
-      display: "flex"
-    }}>
-      <div style={{
+    <div
+      style={{
         alignSelf: "stretch",
-        justifyContent: "space-between",
-        alignItems: "center",
-        display: "flex"
-      }}>
-        {/* Tabs */}
-        <div style={{
-          justifyContent: "flex-start",
+        padding: 24,
+        background: "white",
+        borderRadius: 12,
+        outline: "1px #E2E8F0 solid",
+        outlineOffset: "-1px",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 16,
+        display: "flex",
+      }}
+    >
+      <div
+        style={{
+          alignSelf: "stretch",
+          justifyContent: "space-between",
           alignItems: "center",
-          gap: 12,
-          display: "flex"
-        }}>
+          display: "flex",
+        }}
+      >
+        {/* Tabs */}
+        <div
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: 12,
+            display: "flex",
+          }}
+        >
           <button
             style={{
               height: 40,
@@ -51,17 +52,19 @@ export default function RecipeReviewTabs({
               display: "flex",
               alignItems: "center",
               cursor: "pointer",
-              fontWeight: tab === "all" ? 700 : 500
+              fontWeight: tab === "all" ? 700 : 500,
             }}
             onClick={() => setTab?.("all")}
           >
-            <span style={{
-              color: "#4A5568",
-              fontSize: 14,
-              fontFamily: "Inter, sans-serif",
-              fontWeight: tab === "all" ? 700 : 500,
-              lineHeight: "16.8px"
-            }}>
+            <span
+              style={{
+                color: "#4A5568",
+                fontSize: 14,
+                fontFamily: "Inter, sans-serif",
+                fontWeight: tab === "all" ? 700 : 500,
+                lineHeight: "16.8px",
+              }}
+            >
               All ({counts.all})
             </span>
           </button>
@@ -69,25 +72,27 @@ export default function RecipeReviewTabs({
             style={{
               height: 40,
               padding: "0 16px",
-              background: "#FFF5F5",
+              background: "#EDF2F7",
               borderRadius: 8,
-              outline: "1px #FEB2B2 solid",
+              outline: "1px #CBD5E0 solid",
               outlineOffset: "-1px",
               border: "none",
               display: "flex",
               alignItems: "center",
               cursor: "pointer",
-              fontWeight: tab === "pending" ? 700 : 500
+              fontWeight: tab === "pending" ? 700 : 500,
             }}
             onClick={() => setTab?.("pending")}
           >
-            <span style={{
-              color: "#C53030",
-              fontSize: 14,
-              fontFamily: "Inter, sans-serif",
-              fontWeight: tab === "pending" ? 700 : 500,
-              lineHeight: "16.8px"
-            }}>
+            <span
+              style={{
+                color: "#4A5568",
+                fontSize: 14,
+                fontFamily: "Inter, sans-serif",
+                fontWeight: tab === "pending" ? 700 : 500,
+                lineHeight: "16.8px",
+              }}
+            >
               Pending ({counts.pending})
             </span>
           </button>
@@ -103,39 +108,73 @@ export default function RecipeReviewTabs({
               display: "flex",
               alignItems: "center",
               cursor: "pointer",
-              fontWeight: tab === "approved" ? 700 : 500
+              fontWeight: tab === "approved" ? 700 : 500,
             }}
             onClick={() => setTab?.("approved")}
           >
-            <span style={{
-              color: "#38A169",
-              fontSize: 14,
-              fontFamily: "Inter, sans-serif",
-              fontWeight: tab === "approved" ? 700 : 500,
-              lineHeight: "16.8px"
-            }}>
+            <span
+              style={{
+                color: "#38A169",
+                fontSize: 14,
+                fontFamily: "Inter, sans-serif",
+                fontWeight: tab === "approved" ? 700 : 500,
+                lineHeight: "16.8px",
+              }}
+            >
               Approved ({counts.approved})
+            </span>
+          </button>
+
+          <button
+            style={{
+              height: 40,
+              padding: "0 16px",
+              background: "#FFF5F5",
+              borderRadius: 8,
+              outline: "1px #FEB2B2 solid",
+              outlineOffset: "-1px",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+              fontWeight: tab === "rejected" ? 700 : 500,
+            }}
+            onClick={() => setTab?.("rejected")}
+          >
+            <span
+              style={{
+                color: "#C53030",
+                fontSize: 14,
+                fontFamily: "Inter, sans-serif",
+                fontWeight: tab === "rejected" ? 700 : 500,
+              }}
+            >
+              Rejected ({counts.rejected})
             </span>
           </button>
         </div>
         {/* Sort Dropdown & View Toggle */}
-        <div style={{
-          justifyContent: "flex-start",
-          alignItems: "center",
-          gap: 12,
-          display: "flex"
-        }}>
-          {/* Sort Dropdown */}
-          <div style={{
-            position: "relative",
-            width: 160,
-            height: 40,
+        <div
+          style={{
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: 12,
             display: "flex",
-            alignItems: "center"
-          }}>
+          }}
+        >
+          {/* Sort Dropdown */}
+          <div
+            style={{
+              position: "relative",
+              width: 160,
+              height: 40,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <select
               value={sort}
-              onChange={e => setSort?.(e.target.value)}
+              onChange={(e) => setSort?.(e.target.value)}
               style={{
                 width: "100%",
                 height: "100%",
@@ -151,7 +190,7 @@ export default function RecipeReviewTabs({
                 lineHeight: "16.8px",
                 appearance: "none",
                 border: "none",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               <option value="newest">Newest First</option>
@@ -164,7 +203,7 @@ export default function RecipeReviewTabs({
                 right: 16,
                 top: "50%",
                 transform: "translateY(-50%)",
-                pointerEvents: "none"
+                pointerEvents: "none",
               }}
               width="16"
               height="16"
@@ -175,7 +214,7 @@ export default function RecipeReviewTabs({
                 style={{
                   fill: "none",
                   stroke: "#718096",
-                  strokeWidth: 1.5
+                  strokeWidth: 1.5,
                 }}
               />
             </svg>
@@ -195,14 +234,14 @@ export default function RecipeReviewTabs({
                 justifyContent: "center",
                 alignItems: "center",
                 display: "flex",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16">
-                <rect x="2" y="2" width="4" height="4" fill="white"/>
-                <rect x="10" y="2" width="4" height="4" fill="white"/>
-                <rect x="2" y="10" width="4" height="4" fill="white"/>
-                <rect x="10" y="10" width="4" height="4" fill="white"/>
+                <rect x="2" y="2" width="4" height="4" fill="white" />
+                <rect x="10" y="2" width="4" height="4" fill="white" />
+                <rect x="2" y="10" width="4" height="4" fill="white" />
+                <rect x="10" y="10" width="4" height="4" fill="white" />
               </svg>
             </div>
             {/* List Button */}
@@ -218,12 +257,24 @@ export default function RecipeReviewTabs({
                 justifyContent: "center",
                 alignItems: "center",
                 display: "flex",
-                cursor: "pointer"
+                cursor: "pointer",
               }}
             >
               <svg width="16" height="16" viewBox="0 0 16 16">
-                <rect x="3" y="4" width="10" height="2" fill={view === "list" ? "white" : "#4A5568"} />
-                <rect x="3" y="10" width="10" height="2" fill={view === "list" ? "white" : "#4A5568"} />
+                <rect
+                  x="3"
+                  y="4"
+                  width="10"
+                  height="2"
+                  fill={view === "list" ? "white" : "#4A5568"}
+                />
+                <rect
+                  x="3"
+                  y="10"
+                  width="10"
+                  height="2"
+                  fill={view === "list" ? "white" : "#4A5568"}
+                />
               </svg>
             </div>
           </div>

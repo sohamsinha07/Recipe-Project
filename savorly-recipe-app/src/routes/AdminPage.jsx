@@ -4,7 +4,7 @@ import AdminRecipeGrid from "../components/admin/AdminRecipeGrid";
 import AdminHeader from "../components/admin/AdminHeader";
 import Footer from "../components/homepage/Footer";
 import "../styles/admin.css";
-import { getDocs, collection, query, where } from "firebase/firestore";
+import { updateDoc, doc, getDocs, collection, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import axios from "axios";
 
@@ -46,11 +46,13 @@ export default function AdminPage() {
   // Compute counts (used in header/tabs)
   const pendingCount = allRecipes.filter((r) => r.status === "pending").length;
   const approvedCount = allRecipes.filter((r) => r.status === "published").length;
+  const rejectedCount = allRecipes.filter((r) => r.status === "rejected").length;
 
   const counts = {
     all: allRecipes.length,
     pending: pendingCount,
     approved: approvedCount,
+    rejected: rejectedCount,
   };
 
   // Fetch recipes
@@ -62,6 +64,8 @@ export default function AdminPage() {
         q = collection(db, "recipes");
       } else if (filter === "approved") {
         q = query(collection(db, "recipes"), where("status", "==", "published"));
+      } else if (filter === "rejected") {
+        q = query(collection(db, "recipes"), where("status", "==", "rejected"));
       } else {
         q = query(collection(db, "recipes"), where("status", "==", filter));
       }
@@ -102,7 +106,7 @@ export default function AdminPage() {
   const rejectRecipe = async (recipe) => {
     if (!recipe?.id) return;
     // Immediately remove from local state so UI looks snappier:
-    setRecipes((prev) => prev.filter((r) => r.id !== recipe.id));
+    setRecipes((prev) => prev.map((r) => (r.id === recipe.id ? { ...r, status: "rejected" } : r)));
 
     try {
       await axios.patch(`/api/admin/recipes/${recipe.id}/reject`);
@@ -125,6 +129,16 @@ export default function AdminPage() {
     setReloadKey((k) => k + 1);
   };
 
+  const resetToPending = async (recipe) => {
+    if (!recipe?.id) return;
+
+    // Update in Firestore (no notification logic on the server side)
+    await updateDoc(doc(db, "recipes", recipe.id), { status: "pending" });
+
+    // Move the card back into the pending list in the UI
+    setReloadKey((k) => k + 1); // simply re-fetches lists
+  };
+
   return (
     <div className="admin-page">
       <AdminHeader pendingCount={pendingCount} approvedCount={approvedCount} />
@@ -142,6 +156,7 @@ export default function AdminPage() {
         recipes={sortedRecipes}
         onApprove={approveRecipe}
         onReject={rejectRecipe}
+        onEdit={resetToPending}
         loading={loading}
       />
       <Footer />

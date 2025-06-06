@@ -18,11 +18,12 @@ import {
   DialogActions,
   Tooltip,
 } from "@mui/material";
+
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../AuthContext";
 
-import SearchIcon from "@mui/icons-material/Search";
+// import SearchIcon from "@mui/icons-material/Search";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -288,9 +289,9 @@ export default function Navbar() {
 
           {/* Search, Bell, Avatar */}
           <Box sx={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 2 }}>
-            <IconButton size="large" aria-label="search">
+            {/* <IconButton size="large" aria-label="search">
               <SearchIcon sx={{ color: "#555" }} />
-            </IconButton>
+            </IconButton> */}
             <IconButton size="large" aria-label="notifications" onClick={handleBellClick}>
               <Badge
                 badgeContent={unreadCount}
