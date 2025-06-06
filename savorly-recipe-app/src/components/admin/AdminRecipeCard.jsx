@@ -26,10 +26,12 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           borderRadius: 12,
           outline: "1px #E2E8F0 solid",
           outlineOffset: "-1px",
-          display: "flex",
           flexDirection: "column",
-          overflow: "hidden",
           boxSizing: "border-box",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
         }}
       >
         {/* Recipe image */}
@@ -256,8 +258,11 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
           borderRadius: 12,
           outline: "1px #E2E8F0 solid",
           outlineOffset: "-1px",
-          display: "flex",
           flexDirection: "column",
+          boxSizing: "border-box",
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
           overflow: "hidden",
         }}
       >
@@ -440,10 +445,12 @@ export default function AdminRecipeCard({ recipe, onApprove, onReject, onEdit })
         borderRadius: 12,
         outline: "1px #E2E8F0 solid",
         outlineOffset: "-1px",
-        display: "flex",
         flexDirection: "column",
-        overflow: "hidden",
         boxSizing: "border-box",
+        display: "-webkit-box",
+        WebkitLineClamp: 2,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
       }}
     >
       {/* Recipe image */}

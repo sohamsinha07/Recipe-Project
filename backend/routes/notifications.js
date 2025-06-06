@@ -63,4 +63,26 @@ router.delete("/:uid/:notifId", async (req, res) => {
   }
 });
 
+router.delete("/:uid", async (req, res) => {
+  try {
+    const { uid } = req.params;
+    const { ids = [] } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: "No ids supplied" });
+    }
+
+    const batch = db.batch();
+    ids.forEach((id) => {
+      const ref = db.doc(`users/${uid}/notifications/${id}`);
+      batch.delete(ref);
+    });
+    await batch.commit();
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error("Bulk-delete error:", err);
+    res.status(500).json({ error: "Failed to delete notifications" });
+  }
+});
+
 export default router;

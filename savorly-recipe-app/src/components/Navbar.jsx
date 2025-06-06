@@ -17,6 +17,8 @@ import {
   DialogContent,
   DialogActions,
   Tooltip,
+  Checkbox,
+  Divider,
 } from "@mui/material";
 
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
@@ -50,6 +52,25 @@ export default function Navbar() {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  const [selected, setSelected] = useState([]); // doc IDs checked
+  const hasSelection = selected.length > 0;
+
+  const toggleSelect = (id) =>
+    setSelected((sel) => (sel.includes(id) ? sel.filter((x) => x !== id) : [...sel, id]));
+
+  const handleBulkDelete = async () => {
+    try {
+      await axios.delete(`/api/notifications/${user.uid}`, {
+        data: { ids: selected },
+      });
+      // filter them out locally so UI is instant
+      setNotifications((nots) => nots.filter((n) => !selected.includes(n.id)));
+      setSelected([]);
+    } catch (e) {
+      console.error("Bulk delete failed:", e);
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -398,10 +419,27 @@ export default function Navbar() {
         anchorEl={anchorElNotif}
         open={menuOpenNotif}
         onClose={handleNotifClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
-        sx={{ mt: 1 }}
+        PaperProps={{
+          sx: {
+            // 5 items tall then scroll
+            maxHeight: 5 * 64, // 64 px ≈ one MenuItem
+            width: 320,
+            overflowY: "auto",
+          },
+        }}
       >
+        {hasSelection && (
+          <>
+            <MenuItem
+              onClick={handleBulkDelete}
+              sx={{ bgcolor: "#fef2f2", "&:hover": { bgcolor: "#fee2e2" } }}
+            >
+              <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
+              Delete selected
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         {notifications.length === 0 ? (
           <MenuItem disabled>No new notifications</MenuItem>
         ) : (
@@ -416,6 +454,14 @@ export default function Navbar() {
               onMouseEnter={() => markAsRead(notif.id)}
             >
               <Box sx={{ display: "flex", width: "100%", alignItems: "flex-start" }}>
+                <Checkbox
+                  edge="start"
+                  checked={selected.includes(notif.id)}
+                  onChange={() => toggleSelect(notif.id)}
+                  tabIndex={-1}
+                  disableRipple
+                  sx={{ p: 0.5 }}
+                />
                 <Box sx={{ flexGrow: 1 }}>
                   <Typography variant="body2">{notif.message}</Typography>
                   <Typography variant="caption" color="text.secondary">
